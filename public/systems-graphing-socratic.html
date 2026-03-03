@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Systems of Equations - Graphing Method</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg: #080d1c;
+  --bg-elevated: #0e1528;
+  --card: rgba(14, 21, 40, 0.65);
+  --card-solid: #111a30;
+  --card-border: rgba(255,255,255,0.06);
+  --accent: #e8a832;
+  --accent2: #8b5cf6;
+  --success: #34d399;
+  --error: #f87171;
+  --warning: #fbbf24;
+  --text: #ede9f4;
+  --text-dim: #6b7a9a;
+  --line1-color: #4fc3f7;
+  --line2-color: #ff6ec7;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background:
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,0.018) 1px, transparent 0) 0 0 / 32px 32px,
+    var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 5% 10%, rgba(139,92,246,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 70% at 95% 85%, rgba(79,195,247,0.05) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(232,168,50,0.025) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.016;
+  pointer-events: none;
+  z-index: 10000;
+  mix-blend-mode: overlay;
+}
+
+/* === TOP BAR === */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 28px;
+  background: rgba(8, 13, 28, 0.75);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.top-bar-left { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+
+.top-bar-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.01em;
+}
+
+.progress-bar-container { display: flex; align-items: center; gap: 10px; }
+.progress-dots { display: flex; gap: 7px; }
+
+.pdot {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: rgba(255,255,255,0.03);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-dim);
+  border: 1.5px solid rgba(255,255,255,0.07);
+  cursor: default;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.pdot.done-ok {
+  background: rgba(52,211,153,0.12);
+  color: var(--success);
+  border-color: rgba(52,211,153,0.35);
+  box-shadow: 0 0 14px rgba(52,211,153,0.18);
+}
+
+.pdot.done-no {
+  background: rgba(248,113,113,0.1);
+  color: var(--error);
+  border-color: rgba(248,113,113,0.3);
+}
+
+.pdot.current {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(232,168,50,0.1);
+  animation: currentPulse 2.2s ease-in-out infinite;
+}
+
+.pdot.avail {
+  cursor: pointer;
+  border-color: rgba(139,92,246,0.35);
+  color: var(--accent2);
+  background: rgba(139,92,246,0.06);
+}
+
+.pdot.avail:hover {
+  transform: scale(1.12);
+  box-shadow: 0 0 16px rgba(139,92,246,0.3);
+  border-color: var(--accent2);
+}
+
+@keyframes currentPulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 rgba(232,168,50,0); }
+  50% { transform: scale(1.08); box-shadow: 0 0 18px rgba(232,168,50,0.2); }
+}
+
+.score-display {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+}
+.score-display span { color: var(--success); font-weight: 700; }
+
+.top-bar-right { display: flex; align-items: center; gap: 12px; }
+
+.lang-toggle {
+  display: flex;
+  background: rgba(255,255,255,0.04);
+  border-radius: 11px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.07);
+  padding: 2px;
+}
+
+.lang-btn {
+  padding: 6px 14px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  font-family: 'Outfit', sans-serif;
+  transition: all 0.25s ease;
+  border-radius: 9px;
+  letter-spacing: 0.06em;
+}
+
+.lang-btn.active { background: var(--accent); color: var(--bg); }
+.lang-btn:hover:not(.active) { color: var(--text); }
+
+.next-step-btn {
+  padding: 10px 24px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border: none;
+  border-radius: 13px;
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: none;
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 20px rgba(139,92,246,0.2);
+}
+.next-step-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(139,92,246,0.3);
+}
+.next-step-btn.visible { display: block; }
+
+/* === LAYOUT === */
+.main-container {
+  display: flex;
+  gap: 22px;
+  padding: 22px 28px;
+  max-width: 1440px;
+  margin: 0 auto;
+  min-height: calc(100vh - 60px);
+  position: relative;
+  z-index: 1;
+}
+.left-panel { flex: 1; display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.right-panel { width: 420px; display: flex; flex-direction: column; gap: 18px; flex-shrink: 0; }
+
+/* === CARDS === */
+.card {
+  background: var(--card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  padding: 24px;
+  transition: border-color 0.3s ease;
+}
+
+.problem-card {
+  position: relative;
+  overflow: hidden;
+  animation: cardReveal 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both;
+}
+.problem-card::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 14px; bottom: 14px;
+  width: 3px;
+  background: linear-gradient(180deg, var(--accent), var(--accent2));
+  border-radius: 0 3px 3px 0;
+}
+
+.graph-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  animation: cardReveal 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+}
+
+.chat-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  animation: cardReveal 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
+}
+.chat-panel::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 14px; bottom: 14px;
+  width: 3px;
+  background: linear-gradient(180deg, var(--accent2), var(--accent));
+  border-radius: 3px 0 0 3px;
+  z-index: 2;
+}
+
+@keyframes cardReveal {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* === PROBLEM DISPLAY === */
+.problem-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  color: var(--accent);
+  margin-bottom: 14px;
+  opacity: 0.85;
+}
+
+.equation-display { display: flex; flex-direction: column; gap: 12px; }
+.equation-row { display: flex; align-items: center; gap: 14px; }
+
+.eq-badge {
+  width: 32px; height: 32px;
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.68rem; font-weight: 700; flex-shrink: 0;
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: 0.03em;
+}
+.eq-badge.eq1 {
+  background: rgba(79,195,247,0.1);
+  color: var(--line1-color);
+  border: 1.5px solid rgba(79,195,247,0.22);
+}
+.eq-badge.eq2 {
+  background: rgba(255,110,199,0.1);
+  color: var(--line2-color);
+  border: 1.5px solid rgba(255,110,199,0.22);
+}
+
+.equation-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* === GRAPH TOOLBAR === */
+.graph-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.graph-toolbar-left { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+.graph-tool-btn {
+  padding: 7px 15px;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  color: var(--text-dim);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.graph-tool-btn:hover {
+  border-color: rgba(255,255,255,0.15);
+  color: var(--text);
+  background: rgba(255,255,255,0.06);
+  transform: translateY(-1px);
+}
+.graph-tool-btn.erase-mode {
+  border-color: rgba(248,113,113,0.4);
+  color: var(--error);
+  background: rgba(248,113,113,0.08);
+}
+
+.line-selector { display: flex; gap: 7px; }
+
+.line-select-btn {
+  padding: 6px 15px;
+  border: 2px solid;
+  border-radius: 10px;
+  background: transparent;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.02em;
+}
+.line-select-btn.line1 { border-color: var(--line1-color); color: var(--line1-color); }
+.line-select-btn.line2 { border-color: var(--line2-color); color: var(--line2-color); }
+.line-select-btn.active { color: var(--bg); }
+.line-select-btn.line1.active {
+  background: var(--line1-color);
+  box-shadow: 0 0 18px rgba(79,195,247,0.25);
+}
+.line-select-btn.line2.active {
+  background: var(--line2-color);
+  box-shadow: 0 0 18px rgba(255,110,199,0.25);
+}
+
+/* === CANVAS === */
+canvas#graphCanvas {
+  width: 100%;
+  border-radius: 16px;
+  cursor: crosshair;
+  background: #090f1e;
+  border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: inset 0 2px 24px rgba(0,0,0,0.35);
+}
+
+.graph-feedback {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 24px;
+  border-radius: 13px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: none;
+  z-index: 10;
+  max-width: 90%;
+  text-align: center;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: 0.01em;
+  animation: feedbackSlide 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes feedbackSlide {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.graph-feedback.error {
+  display: block;
+  background: rgba(248,113,113,0.12);
+  border: 1px solid rgba(248,113,113,0.3);
+  color: var(--error);
+}
+.graph-feedback.success {
+  display: block;
+  background: rgba(52,211,153,0.12);
+  border: 1px solid rgba(52,211,153,0.3);
+  color: var(--success);
+}
+.graph-feedback.warning {
+  display: block;
+  background: rgba(251,191,36,0.12);
+  border: 1px solid rgba(251,191,36,0.3);
+  color: var(--warning);
+}
+
+.coord-tooltip {
+  position: absolute;
+  background: rgba(14,21,40,0.92);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(79,195,247,0.25);
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--line1-color);
+  pointer-events: none;
+  z-index: 50;
+  display: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+}
+
+.check-graph-btn {
+  padding: 12px 28px;
+  background: linear-gradient(135deg, var(--success), #059669);
+  border: none;
+  border-radius: 13px;
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: none;
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 18px rgba(52,211,153,0.18);
+}
+.check-graph-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(52,211,153,0.28);
+}
+.check-graph-btn.visible { display: inline-block; }
+
+/* === CHAT PANEL === */
+.chat-header {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  color: var(--accent2);
+  margin-bottom: 14px;
+  opacity: 0.85;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  padding-right: 8px;
+  max-height: 600px;
+}
+.chat-messages::-webkit-scrollbar { width: 4px; }
+.chat-messages::-webkit-scrollbar-track { background: transparent; }
+.chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.07); border-radius: 10px; }
+.chat-messages::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.14); }
+
+.chat-msg {
+  padding: 14px 18px;
+  border-radius: 18px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  animation: msgReveal 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes msgReveal {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.chat-msg.tutor {
+  background: rgba(139,92,246,0.07);
+  border: 1px solid rgba(139,92,246,0.12);
+  border-radius: 20px 20px 20px 6px;
+  margin-right: 16px;
+}
+.chat-msg.student {
+  background: rgba(79,195,247,0.06);
+  border: 1px solid rgba(79,195,247,0.12);
+  border-radius: 20px 20px 6px 20px;
+  align-self: flex-end;
+  max-width: 88%;
+  margin-left: 16px;
+}
+.chat-msg.correct-msg {
+  background: rgba(52,211,153,0.07);
+  border: 1px solid rgba(52,211,153,0.15);
+}
+.chat-msg.incorrect-msg {
+  background: rgba(248,113,113,0.07);
+  border: 1px solid rgba(248,113,113,0.15);
+}
+.chat-msg.eq-box {
+  background: rgba(79,195,247,0.04);
+  border: 1px dashed rgba(79,195,247,0.18);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  padding: 12px 16px;
+  border-radius: 14px;
+}
+
+/* === MC OPTIONS === */
+.mc-options { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+
+.mc-option {
+  padding: 13px 18px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 13px;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.88rem;
+  color: var(--text);
+  text-align: left;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  line-height: 1.5;
+  position: relative;
+  overflow: hidden;
+}
+.mc-option::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.mc-option:hover {
+  border-color: rgba(139,92,246,0.35);
+  background: rgba(139,92,246,0.05);
+  transform: translateX(4px);
+}
+.mc-option:hover::before { opacity: 1; }
+.mc-option.selected {
+  border-color: var(--accent);
+  background: rgba(232,168,50,0.08);
+  color: var(--accent);
+}
+.mc-option:disabled { cursor: default; opacity: 0.65; }
+
+/* === INPUTS === */
+.input-row { display: flex; gap: 8px; margin-top: 10px; }
+
+.text-input {
+  flex: 1;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1.5px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  outline: none;
+  transition: all 0.25s ease;
+}
+.text-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(232,168,50,0.1);
+  background: rgba(255,255,255,0.06);
+}
+.text-input::placeholder { color: var(--text-dim); opacity: 0.5; }
+
+.submit-btn {
+  padding: 10px 22px;
+  background: linear-gradient(135deg, var(--accent), #d97706);
+  border: none;
+  border-radius: 12px;
+  color: var(--bg);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+.submit-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(232,168,50,0.25);
+}
+
+.hint-btn {
+  margin-top: 8px;
+  padding: 8px 18px;
+  background: rgba(251,191,36,0.06);
+  border: 1px solid rgba(251,191,36,0.2);
+  border-radius: 10px;
+  color: var(--warning);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  letter-spacing: 0.02em;
+}
+.hint-btn:hover {
+  background: rgba(251,191,36,0.12);
+  border-color: rgba(251,191,36,0.35);
+  transform: translateY(-1px);
+}
+.hint-btn:disabled { opacity: 0.35; cursor: default; transform: none; }
+
+/* === MODAL === */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 200;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.modal-overlay.visible { display: flex; }
+
+.modal {
+  background: rgba(14,21,40,0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 28px;
+  padding: 40px 36px;
+  max-width: 480px;
+  width: 90%;
+  text-align: center;
+  animation: modalPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.04),
+    0 28px 64px rgba(0,0,0,0.45),
+    0 0 100px rgba(139,92,246,0.08);
+}
+@keyframes modalPop {
+  from { opacity: 0; transform: scale(0.88) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: var(--success);
+  letter-spacing: -0.02em;
+}
+.modal p {
+  color: var(--text-dim);
+  margin-bottom: 24px;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.modal-buttons { display: flex; flex-direction: column; gap: 10px; }
+
+.modal-btn {
+  padding: 14px 28px;
+  border-radius: 14px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.02em;
+}
+.modal-btn.primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff;
+  box-shadow: 0 4px 22px rgba(139,92,246,0.2);
+}
+.modal-btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(139,92,246,0.3);
+}
+.modal-btn.secondary {
+  background: rgba(255,255,255,0.04);
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.modal-btn.secondary:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.18);
+  transform: translateY(-1px);
+}
+
+/* === RESPONSIVE === */
+@media(max-width:900px) {
+  .main-container { flex-direction: column; padding: 16px; }
+  .right-panel { width: 100%; }
+  .chat-messages { max-height: 350px; }
+  .top-bar { padding: 12px 16px; }
+}
+
+/* === KATEX === */
+.katex { font-size: 1.1em !important; }
+.equation-text .katex { font-size: 1.15em !important; }
+.eq-box .katex { font-size: 1.05em !important; }
+.chat-msg .katex { font-size: 1em !important; }
+.equation-row .katex { vertical-align: middle; }
+
+/* === SELECTION === */
+::selection {
+  background: rgba(232,168,50,0.25);
+  color: var(--text);
+}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <div class="top-bar-left">
+    <div class="top-bar-title" id="topTitle">Systems by Graphing</div>
+    <div class="progress-bar-container">
+      <div class="progress-dots" id="progressDots"></div>
+      <div class="score-display"><span id="correctCount">0</span>/<span id="totalAttempted">0</span></div>
+    </div>
+  </div>
+  <div class="top-bar-right">
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('es')">ES</button>
+    </div>
+    <button class="next-step-btn" id="nextStepBtn" onclick="goNext()">Next Problem &#10148;</button>
+  </div>
+</div>
+<div class="main-container">
+  <div class="left-panel">
+    <div class="card problem-card">
+      <div class="problem-label" id="problemLabel">Problem <span id="problemNum">1</span></div>
+      <div class="equation-display" id="equationDisplay"></div>
+    </div>
+    <div class="card graph-card">
+      <div class="graph-toolbar"><div class="graph-toolbar-left">
+        <div class="line-selector">
+          <button class="line-select-btn line1 active" id="selLine1" onclick="selectLine(1)">Line 1</button>
+          <button class="line-select-btn line2" id="selLine2" onclick="selectLine(2)">Line 2</button>
+        </div>
+        <button class="graph-tool-btn" id="eraseBtn" onclick="toggleEraseMode()">&#128465;&#65039; <span id="eraseTxt">Erase</span></button>
+        <button class="graph-tool-btn" onclick="undoLast()">&#8617;&#65039; <span id="undoTxt">Undo</span></button>
+        <button class="graph-tool-btn" onclick="clearGraph()">&#10005; <span id="clearTxt">Clear All</span></button>
+      </div></div>
+      <div class="graph-canvas-wrapper" style="position:relative;flex:1">
+        <canvas id="graphCanvas" width="560" height="560"></canvas>
+        <div class="coord-tooltip" id="coordTooltip"></div>
+        <div class="graph-feedback" id="graphFeedback"></div>
+      </div>
+      <button class="check-graph-btn" id="checkGraphBtn" onclick="checkGraph()">&#10003; Check My Graph</button>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="card chat-panel">
+      <div class="chat-header" id="chatHeader">&#129504; Step-by-Step Guide</div>
+      <div class="chat-messages" id="chatMessages"></div>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="milestoneModal">
+  <div class="modal">
+    <h2 id="modalTitle"></h2><p id="modalText"></p>
+    <div class="modal-buttons" id="modalButtons"></div>
+  </div>
+</div>
+
+<script>
+// ===== TRANSLATIONS =====
+let lang='en';
+const L={en:{
+topTitle:"\u{1F4CA} Systems by Graphing",probLbl:"Problem",l1:"Line 1",l2:"Line 2",
+erase:"Erase",undo:"Undo",clearAll:"Clear All",checkG:"\u2713 Check My Graph",
+guide:"\u{1F9E0} Step-by-Step Guide",nextP:"Next Problem \u279C",submit:"Submit",eq1:"Eq 1",eq2:"Eq 2",
+welcome:"Welcome! Let's solve this system of equations by graphing.",
+firstQstd:"What should be our first step? Notice that one equation is in <strong>standard form</strong>.",
+firstQsi:"Both equations are already in <strong>slope-intercept form</strong>. What should we do first?",
+mcA:"Convert the equation(s) to slope-intercept form (y = mx + b)",
+mcB:"Graph both equations immediately on the coordinate plane",
+mcC:"Identify and plot the y-intercept of each equation first",
+mcD:"Plot random points until the lines appear",
+okConvert:"Correct! We need to rewrite the standard form equation as y = mx + b so we can identify the slope and y-intercept. Let's work through it step by step!",
+okGraphBoth:"Correct! Since both are already in slope-intercept form, let's graph them directly! Select Line 1 and plot 2 points for each line.",
+badRandom:"Not quite. Plotting random points isn't efficient. We need to use the equation's structure.",
+badGraph:"That's our end goal, but we need a strategy first!",
+badIdentifyNeedConvert:"Good instinct! But first we need to convert the standard form equation to y = mx + b.",
+badConvertNotNeeded:"No conversion needed \u2014 both are already in y = mx + b! Let's graph them directly.",
+convStep1:"Let's convert <strong style='color:var(--line1-color)'>{eq}</strong> to slope-intercept form. What variable do we need to isolate?",
+convAnsY:"y",convAnsX:"x",convAnsB:"b",convAnsM:"m",
+okIsolateY:"Correct! We isolate <strong>y</strong> to get y = mx + b.",
+badIsolateY:"Not quite \u2014 we need to isolate <strong>y</strong> to get the equation into y = mx + b form.",
+convStep2:"Starting with <strong>{eq}</strong>, what do we do first to get y by itself?",
+convMoveX:"Subtract/move the x-term to the other side",convDivY:"Divide everything by the coefficient of y",convMulY:"Multiply both sides by y",
+okConvMove:"Right! We move the x-term to the other side of the equation.",
+badConvMove:"Not quite \u2014 the first step is to move the x-term to the other side.",
+convStep3:"After moving the x-term we get: <strong>{mid}</strong>. What's the next step?",
+okConvDiv:"Correct! We divide every term by the coefficient of y to isolate it.",
+badConvDiv:"We need to divide every term by the number in front of y.",
+convDone:"\u2705 The converted equation is: <strong style='color:var(--line1-color)'>{si}</strong>",
+alreadySI:"\u2713 Already in slope-intercept form",
+readyGraph:"Both equations are now in slope-intercept form. Let's graph them one at a time!",
+freeGraph:"Select <strong style='color:var(--line1-color)'>Line 1</strong>, plot the y-intercept then use rise/run for a 2nd point. Then switch to <strong style='color:var(--line2-color)'>Line 2</strong> and do the same!",
+startEq:"\u{1F4CC} <strong style='color:{c}'>{lbl}: {eq}</strong>",
+askB:"<strong>Step 1 \u2014 y-intercept:</strong> What is b? (the constant in y = mx + <u>b</u>)",
+okB:"\u2705 b = <strong>{b}</strong> \u2192 the line crosses the y-axis at <strong>(0, {b})</strong>. Plot it on the graph!",
+badB:"Not quite. b is the constant at the end of y = mx + b (the number without x).",
+badBsign:"Almost! Watch the sign. b = <strong>{b}</strong>, not {w}.",
+askM:"<strong>Step 2 \u2014 slope:</strong> What is m? (the coefficient of x in y = <u>m</u>x + b)",
+okM:"\u2705 m = <strong>{m}</strong>!",
+badM:"Not quite. m is the number multiplied by x.",
+badMsign:"Almost! Watch the sign. m = <strong>{m}</strong>, not {w}.",
+rise:"<strong>Step 3 \u2014 Rise/Run:</strong> slope {m} = <strong>rise {r} / run {n}</strong>. From (0, {b}): go <strong>{rd} {ra}</strong> then <strong>{ud} {ua}</strong>. Plot your second point!",
+up:"up",down:"down",right:"right",
+lineOk:"\u2713 That line is correct!",lineBad:"That line isn't right. Check your y-intercept and rise/run. Use Undo or Erase to fix.",
+nowL2:"\u{1F3AF} Now let's do the same for the second equation!",
+bothDone:"Both lines are graphed! \u{1F50D} Where do they <strong>intersect</strong>? That point is the <strong>solution</strong>.",
+askInt:"What is the intersection point? Enter as (x, y):",
+okInt:"\u{1F389} The solution to this system is",
+badInt:"Not quite. Look carefully at where the two lines cross.",
+badIntSign:"So close! Check your positive/negative signs.",
+eraseOn:"Erase mode: click near a point to remove.",undone:"Last action undone.",noUndo:"Nothing to undo.",
+need2:"Need 2 points on each line.",l1bad:"Line 1 incorrect.",l2bad:"Line 2 incorrect.",bothOk:"Both lines correct!",
+enterB:"Enter b:",enterM:"Enter m (e.g. -2/3):",
+hintBtn:"\u{1F4A1} Nudge",hintB:"Hint: b is the number at the very end of y = mx + b (no x attached).",
+hintM:"Hint: m is the number right in front of x in y = mx + b.",hintConv:"Hint: isolate y by moving the x-term first, then divide.",
+hintInt:"Hint: look at the exact grid point where both colored lines cross.",
+modalComplete:"\u{1F389} Nice work!",
+modalMoveOn:"\u{1F680} Move on to Substitution Method",modalPractice:"\u{1F4DD} Keep Practicing",
+modalFinish:"\u2705 Complete Challenge & Continue",
+modalPracticeMore:"You can click any incomplete problem dot above, or finish the challenge:",
+},es:{
+topTitle:"\u{1F4CA} Sistemas por Gr\u00e1ficas",probLbl:"Problema",l1:"L\u00ednea 1",l2:"L\u00ednea 2",
+erase:"Borrar",undo:"Deshacer",clearAll:"Borrar Todo",checkG:"\u2713 Verificar Mi Gr\u00e1fica",
+guide:"\u{1F9E0} Gu\u00eda Paso a Paso",nextP:"Siguiente \u279C",submit:"Enviar",eq1:"Ec 1",eq2:"Ec 2",
+welcome:"\u00a1Bienvenido! Vamos a resolver este sistema de ecuaciones graficando.",
+firstQstd:"\u00bfCu\u00e1l es el primer paso? Nota que una ecuaci\u00f3n est\u00e1 en <strong>forma est\u00e1ndar</strong>.",
+firstQsi:"Ambas ecuaciones ya est\u00e1n en <strong>forma pendiente-intercepto</strong>. \u00bfQu\u00e9 hacemos primero?",
+mcA:"Convertir la ecuaci\u00f3n a forma pendiente-intercepto (y = mx + b)",
+mcB:"Graficar ambas ecuaciones inmediatamente en el plano",
+mcC:"Identificar y graficar el intercepto en y primero",
+mcD:"Graficar puntos al azar hasta que aparezcan las l\u00edneas",
+okConvert:"\u00a1Correcto! Necesitamos reescribir la ecuaci\u00f3n est\u00e1ndar como y = mx + b. \u00a1Hag\u00e1moslo paso a paso!",
+okGraphBoth:"\u00a1Correcto! Como ambas est\u00e1n en y = mx + b, \u00a1grafiquemos directamente! Selecciona L\u00ednea 1 y grafica 2 puntos por l\u00ednea.",
+badRandom:"Graficar al azar no es eficiente. Usa la estructura de la ecuaci\u00f3n.",
+badGraph:"\u00a1Ese es el objetivo, pero necesitamos estrategia!",
+badIdentifyNeedConvert:"\u00a1Buen instinto! Pero primero convirtamos la ecuaci\u00f3n est\u00e1ndar a y = mx + b.",
+badConvertNotNeeded:"\u00a1No necesitan conversi\u00f3n \u2014 ambas ya est\u00e1n en y = mx + b! Grafiquemos directamente.",
+convStep1:"Convirtamos <strong style='color:var(--line1-color)'>{eq}</strong> a y = mx + b. \u00bfQu\u00e9 variable debemos aislar?",
+convAnsY:"y",convAnsX:"x",convAnsB:"b",convAnsM:"m",
+okIsolateY:"\u00a1Correcto! Aislamos <strong>y</strong> para obtener y = mx + b.",
+badIsolateY:"Necesitamos aislar <strong>y</strong> para obtener y = mx + b.",
+convStep2:"Empezando con <strong>{eq}</strong>, \u00bfqu\u00e9 hacemos primero para aislar y?",
+convMoveX:"Restar/mover el t\u00e9rmino x al otro lado",convDivY:"Dividir todo por el coeficiente de y",convMulY:"Multiplicar ambos lados por y",
+okConvMove:"\u00a1Correcto! Movemos el t\u00e9rmino x al otro lado.",
+badConvMove:"Primero mueve el t\u00e9rmino x al otro lado de la ecuaci\u00f3n.",
+convStep3:"Despu\u00e9s de mover el t\u00e9rmino x: <strong>{mid}</strong>. \u00bfQu\u00e9 sigue?",
+okConvDiv:"\u00a1Correcto! Dividimos cada t\u00e9rmino por el coeficiente de y.",
+badConvDiv:"Necesitamos dividir cada t\u00e9rmino por el n\u00famero frente a y.",
+convDone:"\u2705 La ecuaci\u00f3n convertida es: <strong style='color:var(--line1-color)'>{si}</strong>",
+alreadySI:"\u2713 Ya est\u00e1 en forma pendiente-intercepto",
+readyGraph:"Ambas ecuaciones est\u00e1n en forma pendiente-intercepto. \u00a1Grafiquemos las una a la vez!",
+freeGraph:"Selecciona <strong style='color:var(--line1-color)'>L\u00ednea 1</strong>, grafica el intercepto en y, usa subida/corrida. Luego <strong style='color:var(--line2-color)'>L\u00ednea 2</strong>.",
+startEq:"\u{1F4CC} <strong style='color:{c}'>{lbl}: {eq}</strong>",
+askB:"<strong>Paso 1 \u2014 intercepto en y:</strong> \u00bfCu\u00e1l es b? (la constante en y = mx + <u>b</u>)",
+okB:"\u2705 b = <strong>{b}</strong> \u2192 cruza el eje y en <strong>(0, {b})</strong>. \u00a1Graf\u00edcalo!",
+badB:"No exactamente. b es la constante al final de y = mx + b.",
+badBsign:"\u00a1Casi! F\u00edjate en el signo. b = <strong>{b}</strong>, no {w}.",
+askM:"<strong>Paso 2 \u2014 pendiente:</strong> \u00bfCu\u00e1l es m? (coeficiente de x en y = <u>m</u>x + b)",
+okM:"\u2705 m = <strong>{m}</strong>!",
+badM:"No exactamente. m es el n\u00famero que multiplica a x.",
+badMsign:"\u00a1Casi! F\u00edjate en el signo. m = <strong>{m}</strong>, no {w}.",
+rise:"<strong>Paso 3 \u2014 Subida/Corrida:</strong> pendiente {m} = <strong>sube {r} / corre {n}</strong>. Desde (0, {b}): <strong>{rd} {ra}</strong> luego <strong>{ud} {ua}</strong>. \u00a1Grafica el segundo punto!",
+up:"arriba",down:"abajo",right:"a la derecha",
+lineOk:"\u2713 \u00a1L\u00ednea correcta!",lineBad:"Esa l\u00ednea no es correcta. Verifica intercepto y subida/corrida.",
+nowL2:"\u{1F3AF} \u00a1Ahora lo mismo con la segunda ecuaci\u00f3n!",
+bothDone:"\u00a1Ambas l\u00edneas graficadas! \u{1F50D} \u00bfD\u00f3nde se <strong>intersecan</strong>? Esa es la <strong>soluci\u00f3n</strong>.",
+askInt:"\u00bfCu\u00e1l es el punto de intersecci\u00f3n? Escribe (x, y):",
+okInt:"\u{1F389} La soluci\u00f3n es",
+badInt:"No es correcto. Mira d\u00f3nde se cruzan las l\u00edneas.",
+badIntSign:"\u00a1Muy cerca! Revisa los signos.",
+eraseOn:"Modo borrar activado.",undone:"Deshecho.",noUndo:"Nada que deshacer.",
+need2:"Necesitas 2 puntos en cada l\u00ednea.",l1bad:"L\u00ednea 1 incorrecta.",l2bad:"L\u00ednea 2 incorrecta.",bothOk:"\u00a1Ambas correctas!",
+enterB:"Escribe b:",enterM:"Escribe m (ej. -2/3):",
+hintBtn:"\u{1F4A1} Pista",hintB:"Pista: b es el n\u00famero al final de y = mx + b (sin x).",
+hintM:"Pista: m es el n\u00famero justo antes de x en y = mx + b.",hintConv:"Pista: a\u00edsla y moviendo el t\u00e9rmino x primero, luego divide.",
+hintInt:"Pista: busca el punto exacto donde ambas l\u00edneas de colores se cruzan.",
+modalComplete:"\u{1F389} \u00a1Buen trabajo!",
+modalMoveOn:"\u{1F680} Continuar a Sustituci\u00f3n",modalPractice:"\u{1F4DD} Seguir Practicando",
+modalFinish:"\u2705 Completar Reto y Continuar",
+modalPracticeMore:"Puedes hacer clic en un problema incompleto arriba, o terminar el reto:",
+}};
+function t(k){return L[lang][k]||L.en[k]||k}
+
+// ===== STATE =====
+const MAX_PROBS=4;
+let probs=[],cpIdx=0,okCnt=0,totCnt=0,cp=null,sStep=0,selLn=1,eraseMode=false;
+let phase='init',challengeComplete=false,practiceMode=false;
+const gs={l1:[],l2:[],hist:[]};
+
+// ===== LANG TOGGLE =====
+function setLang(l){lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim()===l.toUpperCase()));updUI();replayChat()}
+function updUI(){
+  document.getElementById('topTitle').textContent=t('topTitle');
+  document.getElementById('problemLabel').innerHTML=t('probLbl')+' <span id="problemNum">'+(cpIdx+1)+'</span>';
+  document.getElementById('selLine1').textContent=t('l1');document.getElementById('selLine2').textContent=t('l2');
+  document.getElementById('eraseTxt').textContent=t('erase');document.getElementById('undoTxt').textContent=t('undo');
+  document.getElementById('clearTxt').textContent=t('clearAll');document.getElementById('checkGraphBtn').textContent=t('checkG');
+  document.getElementById('chatHeader').textContent=t('guide');document.getElementById('nextStepBtn').textContent=t('nextP');
+  renderEqs();
+}
+
+// ===== MATH =====
+function fmtF(n){if(Math.abs(n-1/3)<.01)return'\u2153';if(Math.abs(n+1/3)<.01)return'-\u2153';if(Math.abs(n-2/3)<.01)return'\u2154';if(Math.abs(n+2/3)<.01)return'-\u2154';if(Math.abs(n-.5)<.01)return'\u00bd';if(Math.abs(n+.5)<.01)return'-\u00bd';if(Number.isInteger(n))return''+n;for(let d=2;d<=6;d++)if(Math.abs(Math.round(n*d)-n*d)<.001)return Math.round(n*d)+'/'+d;return n.toFixed(2)}
+function fmtC(n){return n===1?'':n===-1?'-':fmtF(n)}
+function fmtSI(m,b){let s='y = ';if(!m)s+=fmtF(b);else{s+=fmtC(m)+'x';if(b>.001)s+=' + '+fmtF(b);else if(b<-.001)s+=' - '+fmtF(Math.abs(b))}return s}
+function fmtEq(m,b,f){if(f==='si')return fmtSI(m,b);let A=-m,B=1,C=b;for(let d=1;d<=6;d++)if(Number.isInteger(Math.round(A*d))&&Number.isInteger(Math.round(B*d))&&Number.isInteger(Math.round(C*d))){A=Math.round(A*d);B=Math.round(B*d);C=Math.round(C*d);break}if(A<0){A=-A;B=-B;C=-C}let s='';if(A)s+=(A===1?'':A===-1?'-':A)+'x';if(B>0)s+=(A?' + ':'')+(B===1?'':B)+'y';else if(B<0)s+=' - '+(B===-1?'':Math.abs(B))+'y';return s+' = '+C}
+function riseRun(m){for(let d=1;d<=6;d++)if(Math.abs(Math.round(m*d)-m*d)<.001)return{r:Math.round(m*d),n:d};return{r:m,n:1}}
+function parseNum(s){s=s.trim().replace(/\s/g,'');if(s.includes('/')){const p=s.split('/');return parseFloat(p[0])/parseFloat(p[1])}const fm={'\u00bd':.5,'\u2153':1/3,'\u2154':2/3,'\u00bc':.25,'\u00be':.75};if(s[0]==='-'&&fm[s.slice(1)])return-fm[s.slice(1)];if(fm[s])return fm[s];return parseFloat(s)}
+function parsePt(s){s=s.replace(/[()]/g,'').trim();const p=s.split(',').map(x=>parseFloat(x.trim()));return p.length===2&&!isNaN(p[0])&&!isNaN(p[1])?{x:p[0],y:p[1]}:null}
+// Build intermediate form for conversion display
+function midForm(m,b){let A=-m,B=1,C=b;for(let d=1;d<=6;d++)if(Number.isInteger(Math.round(A*d))&&Number.isInteger(Math.round(B*d))&&Number.isInteger(Math.round(C*d))){A=Math.round(A*d);B=Math.round(B*d);C=Math.round(C*d);break}if(A<0){A=-A;B=-B;C=-C}
+  // After moving Ax: By = -Ax + C
+  let nA=-A,s='';s+=B+'y = ';if(nA===1)s+='x';else if(nA===-1)s+='-x';else s+=nA+'x';if(C>0)s+=' + '+C;else if(C<0)s+=' - '+Math.abs(C);return s}
+
+// ===== KATEX HELPERS =====
+function texF(n){
+  if(Number.isInteger(n))return''+n;
+  for(let d=2;d<=6;d++){
+    if(Math.abs(Math.round(n*d)-n*d)<.001){
+      const num=Math.round(n*d);
+      if(num<0)return'-\\frac{'+Math.abs(num)+'}{'+d+'}';
+      return'\\frac{'+num+'}{'+d+'}';
+    }
+  }
+  return n.toFixed(2);
+}
+function texC(n){return n===1?'':n===-1?'-':texF(n)}
+function texSI(m,b){
+  if(!m)return'y = '+texF(b);
+  let s='y = '+texC(m)+'x';
+  if(b>.001)s+=' + '+texF(b);
+  else if(b<-.001)s+=' - '+texF(Math.abs(b));
+  return s;
+}
+function texEq(m,b,f){
+  if(f==='si')return texSI(m,b);
+  let A=-m,B=1,C=b;
+  for(let d=1;d<=6;d++)if(Number.isInteger(Math.round(A*d))&&Number.isInteger(Math.round(B*d))&&Number.isInteger(Math.round(C*d))){A=Math.round(A*d);B=Math.round(B*d);C=Math.round(C*d);break}
+  if(A<0){A=-A;B=-B;C=-C}
+  let s='';
+  if(A)s+=(A===1?'':A===-1?'-':A)+'x';
+  if(B>0)s+=(A?' + ':'')+(B===1?'':B)+'y';
+  else if(B<0)s+=' - '+(B===-1?'':Math.abs(B))+'y';
+  return s+' = '+C;
+}
+function kx(tex){
+  if(typeof katex!=='undefined'){
+    try{return katex.renderToString(tex,{throwOnError:false})}catch(e){}
+  }
+  return tex;
+}
+
+// ===== PROBLEM GEN =====
+function genProb(forceType){
+  const sl=[-3,-2,-1,-.5,.5,1,2,3,1/3,-1/3,2/3,-2/3,3/2,-3/2,4/3,-4/3,-4,-5,4,5];
+  let m1,m2,b1,b2,ix,iy;
+  for(let tries=0;tries<300;tries++){
+    ix=Math.floor(Math.random()*15)-7;iy=Math.floor(Math.random()*15)-7;
+    m1=sl[Math.floor(Math.random()*sl.length)];
+    do{m2=sl[Math.floor(Math.random()*sl.length)]}while(m2===m1);
+    b1=iy-m1*ix;b2=iy-m2*ix;
+    if(Number.isInteger(b1)&&Number.isInteger(b2)&&Math.abs(b1)<=10&&Math.abs(b2)<=10&&ix!==0&&iy!==0)break;
+  }
+  // Mix: ~60% one std + one si, ~40% both si. Never both standard.
+  let f1,f2;
+  if(forceType==='std'){f1='std';f2='si'}
+  else if(forceType==='si'){f1='si';f2='si'}
+  else{f1=Math.random()<.6?'std':'si';f2='si'}
+  return{m1,b1,m2,b2,f1,f2,hasSt:f1==='std',sol:{x:ix,y:iy},
+    d1:fmtEq(m1,b1,f1),d2:fmtEq(m2,b2,f2),si1:fmtSI(m1,b1),si2:fmtSI(m2,b2),
+    tx1:texEq(m1,b1,f1),tx2:texEq(m2,b2,f2),txSI1:texSI(m1,b1),txSI2:texSI(m2,b2),
+    res:null}
+}
+
+// ===== INIT =====
+function init(){for(let i=0;i<MAX_PROBS;i++)probs.push(genProb());cpIdx=0;loadProb(0);setupCanvas()}
+function loadProb(idx){
+  if(probs[idx].res)return; // already done
+  cpIdx=idx;cp=probs[idx];sStep=0;phase='init';selLn=1;eraseMode=false;
+  gs.l1=[];gs.l2=[];gs.hist=[];
+  renderEqs();renderDots();clearChat();clearGC();updToolbar();
+  document.getElementById('checkGraphBtn').classList.remove('visible');
+  document.getElementById('nextStepBtn').classList.remove('visible');
+  hideFB();startFlow();
+}
+function renderEqs(){if(!cp)return;
+  document.getElementById('equationDisplay').innerHTML=`
+    <div class="equation-row"><span class="eq-badge eq1">${t('eq1')}</span><span class="equation-text" style="color:var(--line1-color)">${kx(cp.tx1)}</span></div>
+    <div class="equation-row"><span class="eq-badge eq2">${t('eq2')}</span><span class="equation-text" style="color:var(--line2-color)">${kx(cp.tx2)}</span></div>`;
+  document.getElementById('problemLabel').innerHTML=t('probLbl')+' <span id="problemNum">'+(cpIdx+1)+'</span>';
+}
+function renderDots(){
+  const c=document.getElementById('progressDots');c.innerHTML='';
+  for(let i=0;i<MAX_PROBS;i++){const d=document.createElement('div');d.className='pdot';d.textContent=i+1;
+    if(probs[i].res==='ok')d.classList.add('done-ok');
+    else if(probs[i].res==='no')d.classList.add('done-no');
+    else if(i===cpIdx)d.classList.add('current');
+    else{d.classList.add('avail');d.onclick=(()=>{const ii=i;return()=>loadProb(ii)})()}
+    c.appendChild(d)}
+  document.getElementById('correctCount').textContent=okCnt;
+  document.getElementById('totalAttempted').textContent=totCnt;
+}
+
+// ===== CHAT =====
+function addT(h){const c=document.getElementById('chatMessages'),d=document.createElement('div');d.className='chat-msg tutor';d.innerHTML=h;c.appendChild(d);c.scrollTop=c.scrollHeight}
+function addS(tx){const c=document.getElementById('chatMessages'),d=document.createElement('div');d.className='chat-msg student';d.textContent=tx;c.appendChild(d);c.scrollTop=c.scrollHeight}
+function addOk(h){const c=document.getElementById('chatMessages'),d=document.createElement('div');d.className='chat-msg correct-msg';d.innerHTML='\u2705 '+h;c.appendChild(d);c.scrollTop=c.scrollHeight}
+function addBad(h){const c=document.getElementById('chatMessages'),d=document.createElement('div');d.className='chat-msg incorrect-msg';d.innerHTML='\u274C '+h;c.appendChild(d);c.scrollTop=c.scrollHeight}
+function addEqBox(){const c=document.getElementById('chatMessages'),d=document.createElement('div');d.className='chat-msg eq-box';
+  d.innerHTML=`<span style="color:var(--line1-color)">${t('eq1')}: ${kx(cp.tx1)}</span><br><span style="color:var(--line2-color)">${t('eq2')}: ${kx(cp.tx2)}</span>`;
+  c.appendChild(d);c.scrollTop=c.scrollHeight}
+function addMC(opts,cb){const c=document.getElementById('chatMessages'),w=document.createElement('div');w.className='mc-options';
+  const lbl=['a)','b)','c)','d)'];
+  opts.forEach((o,i)=>{const b=document.createElement('button');b.className='mc-option';b.textContent=(lbl[i]||'')+' '+o.text;
+    b.onclick=()=>{w.querySelectorAll('.mc-option').forEach(x=>x.disabled=true);b.classList.add('selected');cb(o.val)};w.appendChild(b)});
+  c.appendChild(w);c.scrollTop=c.scrollHeight}
+function addIn(ph,cb,hintKey){
+  const c=document.getElementById('chatMessages'),wrap=document.createElement('div');
+  const row=document.createElement('div');row.className='input-row';
+  const inp=document.createElement('input');inp.className='text-input';inp.placeholder=ph;
+  const btn=document.createElement('button');btn.className='submit-btn';btn.textContent=t('submit');
+  let hb=null;
+  const go=()=>{if(!inp.value.trim())return;inp.disabled=true;btn.disabled=true;btn.style.opacity='.5';if(hb)hb.disabled=true;cb(inp.value.trim())};
+  btn.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go()};
+  row.appendChild(inp);row.appendChild(btn);wrap.appendChild(row);
+  if(hintKey){hb=document.createElement('button');hb.className='hint-btn';hb.textContent=t('hintBtn');
+    hb.onclick=()=>{hb.disabled=true;addT(t(hintKey))};wrap.appendChild(hb)}
+  c.appendChild(wrap);c.scrollTop=c.scrollHeight;setTimeout(()=>inp.focus(),100)}
+function clearChat(){document.getElementById('chatMessages').innerHTML=''}
+
+// ===== SOCRATIC FLOW =====
+function startFlow(){
+  addT(t('welcome'));addEqBox();
+  setTimeout(()=>{phase='mc';addT(cp.hasSt?t('firstQstd'):t('firstQsi'));showMC()},400);
+}
+function showMC(){
+  let opts=[{text:t('mcA'),val:'A'},{text:t('mcB'),val:'B'},{text:t('mcC'),val:'C'},{text:t('mcD'),val:'D'}];
+  opts.sort((a,b)=>a.text.localeCompare(b.text));
+  addMC(opts,handleMC);
+}
+function handleMC(v){
+  if(cp.hasSt){ // One is standard form — correct = A (convert)
+    if(v==='A'){addS(t('mcA'));addOk(t('okConvert'));phase='conv';setTimeout(startConv,500)}
+    else if(v==='C'){addS(t('mcC'));addBad(t('badIdentifyNeedConvert'));setTimeout(showMC,400)}
+    else if(v==='D'){addS(t('mcD'));addBad(t('badRandom'));setTimeout(showMC,400)}
+    else if(v==='B'){addS(t('mcB'));addBad(t('badGraph'));setTimeout(showMC,400)}
+  } else { // Both SI — correct = B (graph both)
+    if(v==='B'){addS(t('mcB'));addOk(t('okGraphBoth'));phase='free';setTimeout(startFreeGraph,500)}
+    else if(v==='A'){addS(t('mcA'));addBad(t('badConvertNotNeeded'));setTimeout(showMC,400)}
+    else if(v==='D'){addS(t('mcD'));addBad(t('badRandom'));setTimeout(showMC,400)}
+    else{addS(t('mcC'));addBad(t('badGraph'));setTimeout(showMC,400)}
+  }
+}
+
+// ===== STEP-BY-STEP CONVERSION =====
+function startConv(){
+  addT(t('convStep1').replace('{eq}',kx(cp.tx1)));
+  addMC([{text:t('convAnsY'),val:'y'},{text:t('convAnsX'),val:'x'},{text:t('convAnsB'),val:'b'},{text:t('convAnsM'),val:'m'}].sort((a,b)=>a.text.localeCompare(b.text)),v=>{
+    if(v==='y'){addS('y');addOk(t('okIsolateY'));setTimeout(convS2,400)}
+    else{addS(v);addBad(t('badIsolateY'));setTimeout(startConv,300)}
+  });
+}
+function convS2(){
+  addT(t('convStep2').replace('{eq}',kx(cp.tx1)));
+  addMC([{text:t('convMoveX'),val:'move'},{text:t('convDivY'),val:'div'},{text:t('convMulY'),val:'mul'}].sort((a,b)=>a.text.localeCompare(b.text)),v=>{
+    if(v==='move'){addS(t('convMoveX'));addOk(t('okConvMove'));setTimeout(convS3,400)}
+    else{addS(v==='div'?t('convDivY'):t('convMulY'));addBad(t('badConvMove'));setTimeout(convS2,300)}
+  });
+}
+function convS3(){
+  const mid=midForm(cp.m1,cp.b1);
+  addT(t('convStep3').replace('{mid}',kx(mid)));
+  addMC([{text:t('convDivY'),val:'div'},{text:t('convMoveX'),val:'move'},{text:t('convMulY'),val:'mul'}].sort((a,b)=>a.text.localeCompare(b.text)),v=>{
+    if(v==='div'){addS(t('convDivY'));addOk(t('okConvDiv'));setTimeout(convDone,400)}
+    else{addS(v==='move'?t('convMoveX'):t('convMulY'));addBad(t('badConvDiv'));setTimeout(convS3,300)}
+  });
+}
+function convDone(){
+  addOk(t('convDone').replace('{si}',kx(cp.txSI1)));
+  addT(`<span style="color:var(--line2-color)">${t('eq2')}: ${kx(cp.tx2)}</span> \u2014 ${t('alreadySI')}`);
+  setTimeout(()=>{addT(t('readyGraph'));addEqBox();startEqFlow(1)},600);
+}
+
+// ===== FREE GRAPH (both SI) =====
+function startFreeGraph(){
+  addEqBox();addT(t('freeGraph'));
+  phase='free';sStep=3;
+  document.getElementById('checkGraphBtn').classList.add('visible');
+  selectLine(1);
+}
+
+// ===== PER-EQUATION GUIDED FLOW =====
+function startEqFlow(eq){
+  const lbl=eq===1?t('eq1'):t('eq2'),c=eq===1?'var(--line1-color)':'var(--line2-color)',tx=eq===1?cp.txSI1:cp.txSI2;
+  addT(t('startEq').replace('{c}',c).replace('{lbl}',lbl).replace('{eq}',kx(tx)));
+  phase=eq===1?'e1b':'e2b';
+  setTimeout(()=>askB(eq),300);
+}
+function askB(eq){
+  const b=eq===1?cp.b1:cp.b2;
+  addT(t('askB'));
+  addIn(t('enterB'),ans=>{
+    const v=parseNum(ans);
+    if(isNaN(v)){addS(ans);addBad(t('badB'));askB(eq);return}
+    if(Math.abs(v-b)<.01){addS(ans);addOk(t('okB').replace(/{b}/g,()=>kx(texF(b))));phase=eq===1?'e1m':'e2m';setTimeout(()=>askM(eq),300)}
+    else if(b!==0&&Math.abs(v+b)<.01){addS(ans);addBad(t('badBsign').replace('{b}',kx(texF(b))).replace('{w}',kx(texF(v))));askB(eq)}
+    else{addS(ans);addBad(t('badB'));askB(eq)}
+  },'hintB');
+}
+function askM(eq){
+  const m=eq===1?cp.m1:cp.m2;
+  addT(t('askM'));
+  addIn(t('enterM'),ans=>{
+    const v=parseNum(ans);
+    if(isNaN(v)){addS(ans);addBad(t('badM'));askM(eq);return}
+    if(Math.abs(v-m)<.01){addS(ans);addOk(t('okM').replace('{m}',kx(texF(m))));setTimeout(()=>showRise(eq),300)}
+    else if(m!==0&&Math.abs(v+m)<.01){addS(ans);addBad(t('badMsign').replace('{m}',kx(texF(m))).replace('{w}',kx(texF(v))));askM(eq)}
+    else{addS(ans);addBad(t('badM'));askM(eq)}
+  },'hintM');
+}
+function showRise(eq){
+  const m=eq===1?cp.m1:cp.m2,b=eq===1?cp.b1:cp.b2;
+  const rr=riseRun(m),rd=rr.r>=0?t('up'):t('down'),ud=t('right');
+  addT(t('rise').replace('{m}',kx(texF(m))).replace('{r}',Math.abs(rr.r)).replace('{n}',rr.n)
+    .replace('{b}',kx(texF(b))).replace('{rd}',rd).replace('{ra}',Math.abs(rr.r)).replace('{ud}',ud).replace('{ua}',rr.n));
+  phase=eq===1?'e1g':'e2g';sStep=3;
+  document.getElementById('checkGraphBtn').classList.add('visible');selectLine(eq);
+}
+
+// ===== GRAPH VALIDATION =====
+function valLine(ln){
+  const pts=ln===1?gs.l1:gs.l2,m=ln===1?cp.m1:cp.m2,b=ln===1?cp.b1:cp.b2;
+  if(pts.length<2)return;
+  if(lineOk(pts,m,b)){
+    showFB('success',t('lineOk'));
+    if(phase==='free'){
+      // Auto-advance in free mode
+      if(ln===1&&gs.l2.length<2){setTimeout(()=>{addOk(t('lineOk'));addT(t('nowL2'));addEqBox();selectLine(2)},700)}
+      else if(ln===2&&lineOk(gs.l1,cp.m1,cp.b1)){setTimeout(()=>{addOk(t('lineOk'));phase='int';addT(t('bothDone'));askInt()},700)}
+      else if(ln===1&&gs.l2.length>=2&&lineOk(gs.l2,cp.m2,cp.b2)){setTimeout(()=>{addOk(t('lineOk'));phase='int';addT(t('bothDone'));askInt()},700)}
+    } else {
+      if(ln===1&&phase==='e1g'){setTimeout(()=>{addOk(t('lineOk'));addT(t('nowL2'));startEqFlow(2)},700)}
+      else if(ln===2&&phase==='e2g'){if(lineOk(gs.l1,cp.m1,cp.b1)){setTimeout(()=>{addOk(t('lineOk'));phase='int';addT(t('bothDone'));askInt()},700)}}
+    }
+  } else {showFB('error',t('lineBad'));addBad(t('lineBad'))}
+}
+function lineOk(pts,m,b){if(pts.length<2)return false;for(const p of pts)if(Math.abs(p.y-(m*p.x+b))>.1)return false;return true}
+function checkGraph(){
+  if(gs.l1.length<2||gs.l2.length<2){showFB('warning',t('need2'));return}
+  if(!lineOk(gs.l1,cp.m1,cp.b1)){showFB('error',t('l1bad'));selectLine(1);return}
+  if(!lineOk(gs.l2,cp.m2,cp.b2)){showFB('error',t('l2bad'));selectLine(2);return}
+  showFB('success',t('bothOk'));
+  if(phase!=='int'&&phase!=='done'){phase='int';addT(t('bothDone'));askInt()}
+}
+function askInt(){
+  addT(t('askInt'));addEqBox();
+  addIn('(x, y)',ans=>{
+    const p=parsePt(ans),s=cp.sol;
+    if(p&&p.x===s.x&&p.y===s.y){addS(ans);addOk(t('okInt')+` (${s.x}, ${s.y}) \u2728`);phase='done';probDone(true)}
+    else if(p&&((p.x===-s.x&&p.y===s.y)||(p.x===s.x&&p.y===-s.y)||(p.x===-s.x&&p.y===-s.y))){addS(ans);addBad(t('badIntSign'));askInt()}
+    else{addS(ans);addBad(t('badInt'));askInt()}
+  },'hintInt');
+}
+function probDone(ok){
+  cp.res=ok?'ok':'no';if(ok)okCnt++;totCnt++;renderDots();
+  // Check if we should show milestone (completed 2+ correctly)
+  if(okCnt>=2){setTimeout(showMilestone,1000)}
+  else{
+    // Find next available problem
+    const next=probs.findIndex((p,i)=>!p.res&&i!==cpIdx);
+    if(next!==-1){document.getElementById('nextStepBtn').classList.add('visible')}
+  }
+}
+
+// ===== MILESTONE MODAL =====
+function showMilestone(){
+  const modal=document.getElementById('milestoneModal');
+  document.getElementById('modalTitle').textContent=t('modalComplete');
+  const remaining=probs.filter(p=>!p.res).length;
+  if(remaining>0){
+    document.getElementById('modalText').textContent=`${okCnt}/${totCnt} correct! ${remaining} problem${remaining>1?'s':''} remaining.`;
+  } else {
+    document.getElementById('modalText').textContent=`${okCnt}/${totCnt} correct! All problems completed.`;
+  }
+  const btns=document.getElementById('modalButtons');btns.innerHTML='';
+  // Always show "Move on" button
+  const b1=document.createElement('button');b1.className='modal-btn primary';b1.textContent=t('modalMoveOn');
+  b1.onclick=()=>{modal.classList.remove('visible');challengeComplete=true;
+    addT(lang==='es'?'\u{1F680} \u00a1Avanzando al M\u00e9todo de Sustituci\u00f3n!':'\u{1F680} Moving on to the Substitution Method!')};
+  btns.appendChild(b1);
+  // Show practice button if there are remaining problems
+  if(remaining>0){
+    const b2=document.createElement('button');b2.className='modal-btn secondary';b2.textContent=t('modalPractice');
+    b2.onclick=()=>{modal.classList.remove('visible');practiceMode=true;showPracticeUI()};
+    btns.appendChild(b2);
+  }
+  modal.classList.add('visible');
+}
+function showPracticeUI(){
+  addT(t('modalPracticeMore'));
+  renderDots(); // dots become clickable for incomplete ones
+  // Show "Complete Challenge" button
+  const finBtn=document.createElement('button');finBtn.className='modal-btn primary';finBtn.textContent=t('modalFinish');
+  finBtn.style.marginTop='10px';
+  finBtn.onclick=()=>{showMilestone()};
+  document.getElementById('chatMessages').appendChild(finBtn);
+  document.getElementById('chatMessages').scrollTop=document.getElementById('chatMessages').scrollHeight;
+}
+
+// ===== NAV =====
+function goNext(){
+  document.getElementById('nextStepBtn').classList.remove('visible');
+  const next=probs.findIndex((p,i)=>!p.res&&i!==cpIdx);
+  if(next!==-1)loadProb(next);
+}
+
+// ===== LANGUAGE REPLAY =====
+function replayChat(){
+  clearChat();if(!cp)return;
+  addT(t('welcome'));addEqBox();
+  if(phase==='init')return;
+  addT(cp.hasSt?t('firstQstd'):t('firstQsi'));
+  if(phase==='mc'){showMC();return}
+  if(cp.hasSt){addOk(t('okConvert'));
+    // Show conversion result summary
+    addOk(t('convDone').replace('{si}',kx(cp.txSI1)));
+    addT(`<span style="color:var(--line2-color)">${t('eq2')}: ${kx(cp.tx2)}</span> \u2014 ${t('alreadySI')}`);
+    if(phase==='conv')return;
+    addT(t('readyGraph'));addEqBox();
+  } else {addOk(t('okGraphBoth'));
+    if(phase==='free'){addEqBox();addT(t('freeGraph'));return}
+  }
+  replayEq(1);
+  if(['e2b','e2m','e2g','int','done'].includes(phase)){addOk(t('lineOk'));addT(t('nowL2'));replayEq(2)}
+  if(phase==='int'){addOk(t('lineOk'));addT(t('bothDone'));askInt()}
+  else if(phase==='done'){addOk(t('lineOk'));addT(t('bothDone'));addOk(t('okInt')+` (${cp.sol.x}, ${cp.sol.y}) \u2728`)}
+}
+function replayEq(eq){
+  const pre=eq===1?'e1':'e2',lbl=eq===1?t('eq1'):t('eq2'),c=eq===1?'var(--line1-color)':'var(--line2-color)',tx=eq===1?cp.txSI1:cp.txSI2;
+  const m=eq===1?cp.m1:cp.m2,b=eq===1?cp.b1:cp.b2;
+  addT(t('startEq').replace('{c}',c).replace('{lbl}',lbl).replace('{eq}',kx(tx)));
+  if(phase===pre+'b'){askB(eq);return}
+  addOk(t('okB').replace(/{b}/g,()=>kx(texF(b))));
+  if(phase===pre+'m'){askM(eq);return}
+  addOk(t('okM').replace('{m}',kx(texF(m))));
+  const rr=riseRun(m),rd=rr.r>=0?t('up'):t('down'),ud=t('right');
+  addT(t('rise').replace('{m}',kx(texF(m))).replace('{r}',Math.abs(rr.r)).replace('{n}',rr.n)
+    .replace('{b}',kx(texF(b))).replace('{rd}',rd).replace('{ra}',Math.abs(rr.r)).replace('{ud}',ud).replace('{ua}',rr.n));
+  if(phase===pre+'g')return;
+}
+
+// ===== CANVAS =====
+const GS=10;let canvas,ctx,cSize=560,cell;
+function setupCanvas(){canvas=document.getElementById('graphCanvas');rszC();
+  canvas.addEventListener('click',cClick);canvas.addEventListener('mousemove',cMove);
+  canvas.addEventListener('mouseleave',()=>document.getElementById('coordTooltip').style.display='none');
+  window.addEventListener('resize',rszC);draw()}
+function rszC(){const w=Math.min(canvas.parentElement.clientWidth,600);cSize=w;canvas.width=w*2;canvas.height=w*2;canvas.style.width=w+'px';canvas.style.height=w+'px';cell=cSize*2/(GS*2+2);ctx=canvas.getContext('2d');draw()}
+function toPx(x,y){return{x:(x+GS+1)*cell,y:(GS+1-y)*cell}}
+function toGr(px,py){const r=canvas.getBoundingClientRect(),sx=canvas.width/r.width,sy=canvas.height/r.height;return{x:Math.round(px*sx/cell-GS-1),y:Math.round(GS+1-py*sy/cell)}}
+function draw(){if(!ctx)return;const w=canvas.width;ctx.clearRect(0,0,w,w);
+  ctx.strokeStyle='#1a2a45';ctx.lineWidth=1;
+  for(let i=-GS;i<=GS;i++){let a=toPx(i,-GS),b=toPx(i,GS);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();a=toPx(-GS,i);b=toPx(GS,i);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()}
+  ctx.strokeStyle='#3a5888';ctx.lineWidth=2;let p=toPx(0,-GS),q=toPx(0,GS);ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);ctx.stroke();p=toPx(-GS,0);q=toPx(GS,0);ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);ctx.stroke();
+  ctx.fillStyle='#5a7090';ctx.font=Math.round(cell*.4)+'px "JetBrains Mono","Fira Code",monospace';ctx.textAlign='center';ctx.textBaseline='top';
+  for(let i=-GS;i<=GS;i++){if(!i)continue;const px=toPx(i,0);ctx.fillText(i,px.x,px.y+4);const py=toPx(0,i);ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(i,py.x-6,py.y);ctx.textAlign='center';ctx.textBaseline='top'}
+  drawLn(gs.l1,'#4fc3f7');drawLn(gs.l2,'#ff6ec7');
+  if(gs.l1.length>=2&&gs.l2.length>=2&&lineOk(gs.l1,cp.m1,cp.b1)&&lineOk(gs.l2,cp.m2,cp.b2)){
+    const ip=toPx(cp.sol.x,cp.sol.y);ctx.beginPath();ctx.arc(ip.x,ip.y,10,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,.9)';ctx.fill();ctx.strokeStyle='#ffd54f';ctx.lineWidth=3;ctx.stroke()}}
+function drawLn(pts,col){if(!pts.length)return;
+  pts.forEach(pt=>{const p=toPx(pt.x,pt.y);ctx.beginPath();ctx.arc(p.x,p.y,7,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke()});
+  if(pts.length>=2){const[a,b]=pts;if(b.x===a.x){const p=toPx(a.x,-GS),q=toPx(a.x,GS);ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y)}else{const s=(b.y-a.y)/(b.x-a.x),i=a.y-s*a.x,p=toPx(-GS,s*-GS+i),q=toPx(GS,s*GS+i);ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y)}ctx.strokeStyle=col;ctx.lineWidth=3;ctx.globalAlpha=.8;ctx.stroke();ctx.globalAlpha=1}}
+function clearGC(){gs.l1=[];gs.l2=[];gs.hist=[];draw()}
+function clearGraph(){clearGC();hideFB()}
+function cClick(e){if(sStep<3)return;const r=canvas.getBoundingClientRect(),g=toGr(e.clientX-r.left,e.clientY-r.top);
+  if(g.x<-GS||g.x>GS||g.y<-GS||g.y>GS)return;
+  if(eraseMode){eraseAt(g);return}
+  const pts=selLn===1?gs.l1:gs.l2;if(pts.length>=2)return;if(pts.some(p=>p.x===g.x&&p.y===g.y))return;
+  gs.hist.push({a:'add',ln:selLn,pt:{x:g.x,y:g.y}});pts.push({x:g.x,y:g.y});draw();hideFB();
+  if(pts.length===2)valLine(selLn)}
+function cMove(e){const r=canvas.getBoundingClientRect(),g=toGr(e.clientX-r.left,e.clientY-r.top),tt=document.getElementById('coordTooltip');
+  if(g.x>=-GS&&g.x<=GS&&g.y>=-GS&&g.y<=GS){tt.textContent=`(${g.x}, ${g.y})`;tt.style.display='block';tt.style.left=(e.clientX-r.left+14)+'px';tt.style.top=(e.clientY-r.top-28)+'px'}else tt.style.display='none'}
+function toggleEraseMode(){eraseMode=!eraseMode;const b=document.getElementById('eraseBtn');
+  if(eraseMode){b.classList.add('erase-mode');canvas.style.cursor='not-allowed';showFB('warning',t('eraseOn'))}
+  else{b.classList.remove('erase-mode');canvas.style.cursor='crosshair';hideFB()}}
+function eraseAt(g){for(let ln=1;ln<=2;ln++){const pts=ln===1?gs.l1:gs.l2;const i=pts.findIndex(p=>Math.abs(p.x-g.x)<=1&&Math.abs(p.y-g.y)<=1);
+  if(i!==-1){gs.hist.push({a:'erase',ln,pt:{...pts[i]},idx:i});pts.splice(i,1);draw();hideFB();return}}}
+function undoLast(){if(!gs.hist.length){showFB('warning',t('noUndo'));setTimeout(hideFB,1500);return}
+  const h=gs.hist.pop(),pts=h.ln===1?gs.l1:gs.l2;
+  if(h.a==='add'){const i=pts.findIndex(p=>p.x===h.pt.x&&p.y===h.pt.y);if(i!==-1)pts.splice(i,1)}
+  else pts.splice(h.idx,0,h.pt);draw();showFB('warning',t('undone'));setTimeout(hideFB,1500)}
+function selectLine(n){selLn=n;document.getElementById('selLine1').classList.toggle('active',n===1);document.getElementById('selLine2').classList.toggle('active',n===2);if(eraseMode)toggleEraseMode()}
+function updToolbar(){document.getElementById('selLine1').classList.add('active');document.getElementById('selLine2').classList.remove('active');document.getElementById('eraseBtn').classList.remove('erase-mode');if(canvas)canvas.style.cursor='crosshair'}
+function showFB(t,x){const f=document.getElementById('graphFeedback');f.className='graph-feedback '+t;f.textContent=x;f.style.display='block'}
+function hideFB(){document.getElementById('graphFeedback').style.display='none'}
+
+window.addEventListener('load',init);
+</script>
+</body>
+</html>

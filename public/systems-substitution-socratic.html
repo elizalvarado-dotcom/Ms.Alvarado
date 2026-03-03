@@ -1,0 +1,1885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Systems of Equations: Substitution Method</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080d1c;
+  --bg-elevated: #0e1528;
+  --card: rgba(14, 21, 40, 0.65);
+  --card-solid: #111a30;
+  --card-border: rgba(255,255,255,0.06);
+  --accent: #e8a832;
+  --accent2: #8b5cf6;
+  --success: #34d399;
+  --error: #f87171;
+  --warning: #fbbf24;
+  --text: #ede9f4;
+  --text-dim: #6b7a9a;
+  --line1-color: #4fc3f7;
+  --line2-color: #ff6ec7;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+::selection {
+  background: rgba(232,168,50,0.25);
+  color: var(--text);
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,0.018) 1px, transparent 0) 0 0 / 32px 32px,
+    var(--bg);
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 5% 10%, rgba(139,92,246,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 70% at 95% 85%, rgba(79,195,247,0.05) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(232,168,50,0.025) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.016;
+  pointer-events: none;
+  z-index: 10000;
+  mix-blend-mode: overlay;
+}
+
+h1, h2, h3, .section-label { font-family: 'Syne', sans-serif; }
+
+.section-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  color: var(--text-dim);
+}
+
+/* ===== TOP BAR ===== */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 28px;
+  background: rgba(8, 13, 28, 0.75);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.top-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.top-bar-center {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.progress-dots { display: flex; gap: 8px; }
+
+.pdot {
+  width: 30px; height: 30px;
+  border-radius: 9px;
+  background: rgba(255,255,255,0.03);
+  border: 1.5px solid rgba(255,255,255,0.07);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--text-dim);
+  cursor: default;
+}
+
+.pdot.done-ok {
+  background: rgba(52,211,153,0.12);
+  border-color: rgba(52,211,153,0.35);
+  color: var(--success);
+  box-shadow: 0 0 12px rgba(52,211,153,0.15);
+}
+
+.pdot.done-no {
+  background: rgba(248,113,113,0.12);
+  border-color: rgba(248,113,113,0.35);
+  color: var(--error);
+}
+
+.pdot.current {
+  background: rgba(232,168,50,0.12);
+  border-color: rgba(232,168,50,0.4);
+  color: var(--accent);
+  animation: currentPulse 2s ease-in-out infinite;
+}
+
+.pdot.avail {
+  cursor: pointer;
+  border-color: rgba(139,92,246,0.25);
+  color: var(--accent2);
+}
+
+.pdot.avail:hover {
+  background: rgba(139,92,246,0.1);
+  border-color: rgba(139,92,246,0.45);
+  transform: scale(1.08);
+}
+
+.score-display {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.score-display span { color: var(--success); font-weight: 700; }
+
+.top-bar-right { display: flex; align-items: center; gap: 12px; }
+
+/* ===== LANG TOGGLE ===== */
+.lang-toggle {
+  background: rgba(255,255,255,0.04);
+  border-radius: 11px;
+  border: 1px solid rgba(255,255,255,0.07);
+  padding: 2px;
+  display: flex;
+}
+
+.lang-btn {
+  padding: 5px 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 9px;
+  transition: all 0.25s ease;
+}
+
+.lang-btn.active {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* ===== NEXT BUTTON ===== */
+.next-step-btn {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 12px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(139,92,246,0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.next-step-btn.visible { opacity: 1; pointer-events: auto; }
+.next-step-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(139,92,246,0.3); }
+
+/* ===== MAIN LAYOUT ===== */
+.main-container {
+  display: flex;
+  max-width: 1440px;
+  margin: 0 auto;
+  gap: 22px;
+  padding: 22px 28px;
+  position: relative;
+  z-index: 1;
+}
+
+.left-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-width: 0;
+}
+
+.right-panel {
+  width: 420px;
+  flex-shrink: 0;
+}
+
+/* ===== CARDS ===== */
+.card {
+  background: var(--card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  padding: 24px;
+  transition: border-color 0.3s ease;
+}
+
+.problem-card {
+  position: relative;
+  overflow: hidden;
+  animation: cardReveal 0.6s ease 0.1s both;
+}
+
+.problem-card::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 14px; bottom: 14px;
+  width: 3px;
+  background: linear-gradient(180deg, var(--accent), var(--accent2));
+  border-radius: 0 3px 3px 0;
+}
+
+.workspace-card {
+  position: relative;
+  overflow: hidden;
+  animation: cardReveal 0.6s ease 0.2s both;
+}
+
+.chat-panel {
+  position: relative;
+  overflow: hidden;
+  height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+  animation: cardReveal 0.6s ease 0.3s both;
+}
+
+.chat-panel::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 14px; bottom: 14px;
+  width: 3px;
+  background: linear-gradient(180deg, var(--accent2), var(--accent));
+  border-radius: 3px 0 0 3px;
+  z-index: 2;
+}
+
+/* ===== PROBLEM CARD ===== */
+.problem-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.equation-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.02);
+}
+
+.eq-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  min-width: 42px;
+}
+
+.equation-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.2rem;
+}
+
+.equation-text .katex { font-size: 1.15em !important; }
+
+/* ===== WORKSPACE ===== */
+.workspace-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.workspace-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ws-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.015);
+  border: 1px solid rgba(255,255,255,0.03);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.ws-step.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.ws-step.active {
+  border-color: rgba(232,168,50,0.2);
+  background: rgba(232,168,50,0.04);
+}
+
+.ws-step.completed {
+  border-color: rgba(52,211,153,0.15);
+  background: rgba(52,211,153,0.03);
+}
+
+.ws-step-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--accent);
+  background: rgba(232,168,50,0.1);
+  border-radius: 7px;
+  min-width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.ws-step.completed .ws-step-num {
+  color: var(--success);
+  background: rgba(52,211,153,0.12);
+}
+
+.ws-step-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.ws-step-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 4px;
+}
+
+.ws-step-math {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.ws-step-math .katex { font-size: 1.05em !important; }
+
+.ws-check {
+  color: var(--success);
+  font-size: 1.1rem;
+  margin-left: 8px;
+  flex-shrink: 0;
+  display: none;
+}
+
+/* ===== CHAT PANEL ===== */
+.chat-header { margin-bottom: 14px; flex-shrink: 0; }
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 6px;
+  scroll-behavior: smooth;
+}
+
+.chat-messages::-webkit-scrollbar { width: 5px; }
+.chat-messages::-webkit-scrollbar-track { background: transparent; }
+.chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
+
+.chat-msg {
+  padding: 13px 18px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  animation: msgReveal 0.35s ease both;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.chat-msg .katex { font-size: 1em !important; }
+
+.chat-msg.tutor {
+  background: rgba(139,92,246,0.07);
+  border: 1px solid rgba(139,92,246,0.12);
+  border-radius: 20px 20px 20px 6px;
+}
+
+.chat-msg.student {
+  background: rgba(79,195,247,0.06);
+  border: 1px solid rgba(79,195,247,0.12);
+  border-radius: 20px 20px 6px 20px;
+  align-self: flex-end;
+  max-width: 85%;
+}
+
+.chat-msg.correct-msg {
+  background: rgba(52,211,153,0.07);
+  border: 1px solid rgba(52,211,153,0.15);
+  border-radius: 20px 20px 20px 6px;
+}
+
+.chat-msg.incorrect-msg {
+  background: rgba(248,113,113,0.07);
+  border: 1px solid rgba(248,113,113,0.15);
+  border-radius: 20px 20px 20px 6px;
+}
+
+.chat-msg.eq-box {
+  background: rgba(79,195,247,0.04);
+  border: 1px dashed rgba(79,195,247,0.18);
+  border-radius: 14px;
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 2;
+}
+
+.eq-box .katex { font-size: 1.05em !important; }
+
+/* ===== MC OPTIONS ===== */
+.mc-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: msgReveal 0.35s ease both;
+}
+
+.mc-option {
+  padding: 13px 18px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 13px;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.88rem;
+  color: var(--text);
+  text-align: left;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  line-height: 1.5;
+}
+
+.mc-option:hover:not(:disabled) {
+  border-color: rgba(139,92,246,0.35);
+  background: rgba(139,92,246,0.05);
+  transform: translateX(4px);
+}
+
+.mc-option:hover:not(:disabled)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(139,92,246,0.05) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.mc-option:disabled { opacity: 0.5; cursor: default; }
+
+.mc-option.selected {
+  border-color: rgba(139,92,246,0.5);
+  background: rgba(139,92,246,0.1);
+  opacity: 1;
+}
+
+.mc-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  color: var(--accent2);
+  margin-right: 10px;
+  font-size: 0.8rem;
+}
+
+/* ===== INPUT ROW ===== */
+.input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  animation: msgReveal 0.35s ease both;
+}
+
+.text-input {
+  flex: 1;
+  background: rgba(255,255,255,0.04);
+  border: 1.5px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  color: var(--text);
+  outline: none;
+  transition: all 0.25s ease;
+}
+
+.text-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(232,168,50,0.1);
+}
+
+.text-input::placeholder { color: var(--text-dim); opacity: 0.6; }
+.text-input:disabled { opacity: 0.5; }
+
+.submit-btn {
+  background: linear-gradient(135deg, var(--accent), #d97706);
+  color: var(--bg);
+  border: none;
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(232,168,50,0.25);
+}
+
+.submit-btn:disabled { opacity: 0.5; cursor: default; }
+
+.hint-row { animation: msgReveal 0.35s ease both; margin-top: 4px; }
+
+.hint-btn {
+  background: rgba(251,191,36,0.06);
+  border: 1px solid rgba(251,191,36,0.2);
+  color: var(--warning);
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.hint-btn:hover { background: rgba(251,191,36,0.1); transform: translateY(-1px); }
+.hint-btn:disabled { opacity: 0.4; cursor: default; transform: none; }
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.show { opacity: 1; pointer-events: auto; }
+
+.modal {
+  background: rgba(14,21,40,0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 28px;
+  padding: 40px 36px;
+  max-width: 420px;
+  width: 90%;
+  text-align: center;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.04),
+    0 28px 64px rgba(0,0,0,0.45),
+    0 0 100px rgba(139,92,246,0.08);
+  animation: modalPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-emoji { font-size: 3rem; margin-bottom: 12px; }
+
+.modal-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.modal-sub {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.modal-score {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 2.4rem;
+  font-weight: 800;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.modal-btns { display: flex; flex-direction: column; gap: 10px; }
+
+.modal-btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff;
+  border: none;
+  padding: 14px 24px;
+  border-radius: 14px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.modal-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(139,92,246,0.3); }
+
+.modal-btn-secondary {
+  background: rgba(255,255,255,0.04);
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 12px 24px;
+  border-radius: 14px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.modal-btn-secondary:hover { background: rgba(255,255,255,0.07); transform: translateY(-1px); }
+
+.modal-practice-hint {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-top: 14px;
+  line-height: 1.5;
+}
+
+/* ===== KATEX ===== */
+.katex { font-size: 1.1em !important; }
+.equation-row .katex { vertical-align: middle; }
+
+/* ===== ANIMATIONS ===== */
+@keyframes cardReveal {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes msgReveal {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes currentPulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 rgba(232,168,50,0); }
+  50%      { transform: scale(1.08); box-shadow: 0 0 18px rgba(232,168,50,0.2); }
+}
+
+@keyframes modalPop {
+  from { opacity: 0; transform: scale(0.88) translateY(20px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px) {
+  .main-container { flex-direction: column; padding: 16px; }
+  .right-panel { width: 100%; }
+  .chat-panel { height: auto; max-height: 520px; }
+  .chat-messages { max-height: 380px; }
+  .top-bar { padding: 12px 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="top-title" id="topTitle"></div>
+  <div class="top-bar-center">
+    <div class="progress-dots" id="progressDots"></div>
+    <div class="score-display">
+      <span id="correctCount">0</span> / <span id="totalAttempted">0</span>
+    </div>
+  </div>
+  <div class="top-bar-right">
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('es')">ES</button>
+    </div>
+    <button class="next-step-btn" id="nextStepBtn" onclick="goNext()"></button>
+  </div>
+</div>
+
+<!-- MAIN CONTAINER -->
+<div class="main-container">
+  <div class="left-panel">
+    <div class="card problem-card" id="problemCard">
+      <div class="problem-header">
+        <span class="section-label" id="problemLabel"></span>
+      </div>
+      <div id="equationDisplay"></div>
+    </div>
+    <div class="card workspace-card" id="workspaceCard">
+      <div class="workspace-header">
+        <span class="section-label" id="workspaceLabel"></span>
+      </div>
+      <div class="workspace-steps" id="workspaceSteps"></div>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="card chat-panel">
+      <div class="chat-header">
+        <span class="section-label" id="chatLabel"></span>
+      </div>
+      <div class="chat-messages" id="chatMessages"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-emoji" id="modalEmoji">&#127881;</div>
+    <div class="modal-title" id="modalTitle"></div>
+    <div class="modal-score" id="modalScore"></div>
+    <div class="modal-sub" id="modalSub"></div>
+    <div class="modal-btns" id="modalBtns"></div>
+    <div class="modal-practice-hint" id="modalPracticeHint"></div>
+  </div>
+</div>
+
+<script>
+/* ================================================================
+   1. TRANSLATIONS
+   ================================================================ */
+let lang = 'en';
+const L = {
+  en: {
+    topTitle: "\ud83d\udcd0 Systems: Substitution Method",
+    probLbl: "Problem",
+    wsLbl: "\ud83d\udcdd Step-by-Step Workspace",
+    chatLbl: "\ud83e\udde0 Step-by-Step Guide",
+    nextP: "Next Problem \u27a1",
+    submit: "Submit",
+    hintBtn: "\ud83d\udca1 Nudge",
+
+    welcome: "Welcome! Let\u2019s solve this system of equations using the <strong>substitution method</strong>. I\u2019ll walk you through it step by step.",
+    identifyQ: "First, look at both equations. Which variable is <strong>easiest to isolate</strong>, and in which equation?",
+    identifyOk: "Correct! That variable is already isolated (or nearly so) in that equation, which saves us work. Let\u2019s use it!",
+    identifyBad: "Not the best choice here. Look again \u2014 one variable is already isolated in Equation 1. We\u2019ll go with that to save steps.",
+
+    isoAlreadyMsg: "Great \u2014 Equation 1 already gives us the variable isolated. Let\u2019s use this expression directly.",
+    isoShowExpr: "Isolated form:",
+
+    subQ: "Now <strong>substitute</strong> that expression into the other equation. Which substituted equation do you get?",
+    subOk: "Excellent! You substituted correctly. Now we have one equation in one unknown.",
+    subBad: "Watch the distribution! Remember to multiply the coefficient by <em>every</em> term inside the parentheses. The correct substitution is shown above.",
+
+    solveQ: "Solve for the remaining variable. What value do you get?",
+    solveOk: "That\u2019s it! One variable down, one to go.",
+    solveBad: "Not quite. Check your arithmetic carefully.",
+    solveHint: "Combine like terms, then isolate the variable by dividing both sides.",
+
+    bkQ: "Now plug that value back into the isolated expression to find the other variable. What do you get?",
+    bkOk: "Correct! We\u2019ve found both values.",
+    bkBad: "Not quite. Substitute carefully into the isolated expression and simplify.",
+    bkHint: "Substitute the value into the isolated equation and compute.",
+
+    verQ: "Let\u2019s verify \u2014 does this solution satisfy <strong>both</strong> original equations?",
+    verYes: "Yes, it satisfies both",
+    verNo: "No, it doesn\u2019t work",
+    verOk: "Correct! Plugging in confirms both equations balance. Well done \u2014 you solved the system by substitution!",
+    verBad: "Actually, it <strong>does</strong> satisfy both equations. When we plug in, both sides match. Our answer is correct!",
+
+    doneMsg: "\ud83c\udf1f Problem complete! Great work with the substitution method.",
+
+    wsIsolate: "Isolate",
+    wsSubstitute: "Substitute",
+    wsSimplify: "Simplify & Solve",
+    wsBacksub: "Back-substitute",
+    wsSolution: "Solution",
+
+    signErr: "Watch the sign! You may have a positive/negative mix-up.",
+    modalTitle: "\ud83c\udf89 Nice work!",
+    modalSub: "You\u2019ve shown solid understanding of the substitution method!",
+    modalMoveOn: "\ud83d\ude80 Continue",
+    modalPractice: "\ud83d\udcdd Keep Practicing",
+    modalFinish: "\u2705 Complete Challenge",
+    modalPracticeMore: "Click any incomplete problem dot above, or finish:",
+  },
+  es: {
+    topTitle: "\ud83d\udcd0 Sistemas: M\u00e9todo de Sustituci\u00f3n",
+    probLbl: "Problema",
+    wsLbl: "\ud83d\udcdd Espacio de Trabajo Paso a Paso",
+    chatLbl: "\ud83e\udde0 Gu\u00eda Paso a Paso",
+    nextP: "Siguiente \u27a1",
+    submit: "Enviar",
+    hintBtn: "\ud83d\udca1 Pista",
+
+    welcome: "\u00a1Bienvenido! Vamos a resolver este sistema de ecuaciones usando el <strong>m\u00e9todo de sustituci\u00f3n</strong>. Te guiar\u00e9 paso a paso.",
+    identifyQ: "Primero, mira ambas ecuaciones. \u00bfQu\u00e9 variable es <strong>m\u00e1s f\u00e1cil de despejar</strong>, y en cu\u00e1l ecuaci\u00f3n?",
+    identifyOk: "\u00a1Correcto! Esa variable ya est\u00e1 despejada (o casi) en esa ecuaci\u00f3n, lo que nos ahorra trabajo. \u00a1Us\u00e9mosla!",
+    identifyBad: "No es la mejor opci\u00f3n. Mira de nuevo \u2014 una variable ya est\u00e1 despejada en la Ecuaci\u00f3n 1. Usaremos esa para ahorrar pasos.",
+
+    isoAlreadyMsg: "Excelente \u2014 la Ecuaci\u00f3n 1 ya nos da la variable despejada. Usemos esta expresi\u00f3n directamente.",
+    isoShowExpr: "Forma despejada:",
+
+    subQ: "Ahora <strong>sustituye</strong> esa expresi\u00f3n en la otra ecuaci\u00f3n. \u00bfQu\u00e9 ecuaci\u00f3n sustituida obtienes?",
+    subOk: "\u00a1Excelente! Sustituiste correctamente. Ahora tenemos una ecuaci\u00f3n con una inc\u00f3gnita.",
+    subBad: "\u00a1Cuidado con la distribuci\u00f3n! Recuerda multiplicar el coeficiente por <em>cada</em> t\u00e9rmino dentro del par\u00e9ntesis. La sustituci\u00f3n correcta se muestra arriba.",
+
+    solveQ: "Resuelve para la variable restante. \u00bfQu\u00e9 valor obtienes?",
+    solveOk: "\u00a1Eso es! Una variable resuelta, falta una.",
+    solveBad: "No exactamente. Revisa tu aritm\u00e9tica con cuidado.",
+    solveHint: "Combina t\u00e9rminos semejantes, luego despeja dividiendo ambos lados.",
+
+    bkQ: "Ahora sustituye ese valor en la expresi\u00f3n despejada para encontrar la otra variable. \u00bfQu\u00e9 obtienes?",
+    bkOk: "\u00a1Correcto! Encontramos ambos valores.",
+    bkBad: "No exactamente. Sustituye con cuidado en la expresi\u00f3n despejada y simplifica.",
+    bkHint: "Sustituye el valor en la ecuaci\u00f3n despejada y calcula.",
+
+    verQ: "Verifiquemos \u2014 \u00bfesta soluci\u00f3n satisface <strong>ambas</strong> ecuaciones originales?",
+    verYes: "S\u00ed, satisface ambas",
+    verNo: "No, no funciona",
+    verOk: "\u00a1Correcto! Al sustituir, confirmamos que ambas ecuaciones se cumplen. \u00a1Bien hecho \u2014 resolviste el sistema por sustituci\u00f3n!",
+    verBad: "En realidad, <strong>s\u00ed</strong> satisface ambas ecuaciones. Al sustituir, ambos lados coinciden. \u00a1Nuestra respuesta es correcta!",
+
+    doneMsg: "\ud83c\udf1f \u00a1Problema completo! Excelente trabajo con el m\u00e9todo de sustituci\u00f3n.",
+
+    wsIsolate: "Despejar",
+    wsSubstitute: "Sustituir",
+    wsSimplify: "Simplificar y Resolver",
+    wsBacksub: "Retro-sustituir",
+    wsSolution: "Soluci\u00f3n",
+
+    signErr: "\u00a1Cuidado con el signo! Podr\u00edas tener una confusi\u00f3n de positivo/negativo.",
+    modalTitle: "\u00a1\ud83c\udf89 Buen trabajo!",
+    modalSub: "\u00a1Has demostrado buena comprensi\u00f3n del m\u00e9todo de sustituci\u00f3n!",
+    modalMoveOn: "\ud83d\ude80 Continuar",
+    modalPractice: "\ud83d\udcdd Seguir Practicando",
+    modalFinish: "\u2705 Completar Reto",
+    modalPracticeMore: "Haz clic en cualquier punto incompleto arriba, o termina:",
+  }
+};
+
+function t(k) { return L[lang][k] || L.en[k] || k; }
+
+/* ================================================================
+   2. STATE
+   ================================================================ */
+const MAX_PROBS = 4;
+let probs = [];
+let cpIdx = 0;
+let okCnt = 0;
+let totCnt = 0;
+let cp = null;
+let phase = 'init';
+let challengeComplete = false;
+let practiceMode = false;
+
+// Track what the student actually answered for replay
+let answers = {};
+
+/* ================================================================
+   3. LANG TOGGLE
+   ================================================================ */
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b =>
+    b.classList.toggle('active', b.textContent.trim() === l.toUpperCase())
+  );
+  updUI();
+  replayChat();
+}
+
+function updUI() {
+  document.getElementById('topTitle').textContent = t('topTitle');
+  document.getElementById('problemLabel').innerHTML =
+    t('probLbl') + ' <span id="problemNum">' + (cpIdx + 1) + '</span>';
+  document.getElementById('workspaceLabel').textContent = t('wsLbl');
+  document.getElementById('chatLabel').textContent = t('chatLbl');
+  document.getElementById('nextStepBtn').textContent = t('nextP');
+  renderEqs();
+  rebuildWorkspace();
+}
+
+/* ================================================================
+   4. MATH HELPERS
+   ================================================================ */
+function texF(n) {
+  if (Number.isInteger(n)) return '' + n;
+  for (let d = 2; d <= 12; d++) {
+    if (Math.abs(Math.round(n * d) - n * d) < 0.001) {
+      const num = Math.round(n * d);
+      if (num < 0) return '-\\frac{' + Math.abs(num) + '}{' + d + '}';
+      return '\\frac{' + num + '}{' + d + '}';
+    }
+  }
+  return n.toFixed(2);
+}
+
+function texC(n) {
+  if (n === 1) return '';
+  if (n === -1) return '-';
+  return texF(n);
+}
+
+function kx(tex) {
+  if (typeof katex !== 'undefined') {
+    try { return katex.renderToString(tex, { throwOnError: false }); } catch(e) {}
+  }
+  return tex;
+}
+
+function parseNum(s) {
+  s = s.trim().replace(/\s/g, '');
+  if (s.includes('/')) {
+    const p = s.split('/');
+    const n = parseFloat(p[0]), d = parseFloat(p[1]);
+    if (isNaN(n) || isNaN(d) || d === 0) return NaN;
+    return n / d;
+  }
+  const fm = { '\u00bd': 0.5, '\u2153': 1/3, '\u2154': 2/3, '\u00bc': 0.25, '\u00be': 0.75 };
+  if (s[0] === '-' && fm[s.slice(1)]) return -fm[s.slice(1)];
+  if (fm[s]) return fm[s];
+  return parseFloat(s);
+}
+
+/* Build LaTeX for "ax + by = c" */
+function texLinEq(a, b, c) {
+  let parts = [];
+  // x term
+  if (a !== 0) {
+    if (a === 1) parts.push('x');
+    else if (a === -1) parts.push('-x');
+    else parts.push(a + 'x');
+  }
+  // y term
+  if (b !== 0) {
+    if (parts.length === 0) {
+      if (b === 1) parts.push('y');
+      else if (b === -1) parts.push('-y');
+      else parts.push(b + 'y');
+    } else {
+      if (b === 1) parts.push('+ y');
+      else if (b === -1) parts.push('- y');
+      else if (b > 0) parts.push('+ ' + b + 'y');
+      else parts.push('- ' + Math.abs(b) + 'y');
+    }
+  }
+  if (parts.length === 0) parts.push('0');
+  return parts.join(' ') + ' = ' + c;
+}
+
+/* Build LaTeX for "v = mx + b" style isolated form */
+function texIsoForm(isoV, m, bConst) {
+  const other = (isoV === 'y') ? 'x' : 'y';
+  let expr = isoV + ' = ';
+  let parts = [];
+  if (m !== 0) {
+    if (m === 1) parts.push(other);
+    else if (m === -1) parts.push('-' + other);
+    else parts.push(m + other);
+  }
+  if (bConst !== 0) {
+    if (parts.length === 0) {
+      parts.push('' + bConst);
+    } else {
+      if (bConst > 0) parts.push('+ ' + bConst);
+      else parts.push('- ' + Math.abs(bConst));
+    }
+  }
+  if (parts.length === 0) parts.push('0');
+  return expr + parts.join(' ');
+}
+
+/* Build the raw expression (not "v = ...") for substitution display */
+function rawExpr(m, bConst, varName) {
+  let parts = [];
+  if (m !== 0) {
+    if (m === 1) parts.push(varName);
+    else if (m === -1) parts.push('-' + varName);
+    else parts.push(m + varName);
+  }
+  if (bConst !== 0) {
+    if (parts.length === 0) {
+      parts.push('' + bConst);
+    } else {
+      if (bConst > 0) parts.push('+ ' + bConst);
+      else parts.push('- ' + Math.abs(bConst));
+    }
+  }
+  if (parts.length === 0) return '0';
+  return parts.join(' ');
+}
+
+/* Build substituted equation as a display string (for MC and workspace)
+   We're substituting isoV = m*otherV + bConst into a2*x + b2*y = c2 */
+function buildSubEqStr(a2, b2, c2, isoV, m, bConst) {
+  const other = (isoV === 'y') ? 'x' : 'y';
+  const inner = rawExpr(m, bConst, other);
+
+  // Which coefficient multiplies the substituted expression?
+  const coefSub = (isoV === 'y') ? b2 : a2;
+  const coefKeep = (isoV === 'y') ? a2 : b2;
+  const keepVar = (isoV === 'y') ? 'x' : 'y';
+
+  let parts = [];
+
+  if (isoV === 'y') {
+    // Result: a2*x + b2*(expr) = c2
+    if (coefKeep !== 0) {
+      if (coefKeep === 1) parts.push('x');
+      else if (coefKeep === -1) parts.push('-x');
+      else parts.push(coefKeep + 'x');
+    }
+    // substitution part
+    let subPart = '';
+    if (coefSub === 1) subPart = '(' + inner + ')';
+    else if (coefSub === -1) subPart = '-(' + inner + ')';
+    else subPart = coefSub + '(' + inner + ')';
+
+    if (parts.length === 0) {
+      parts.push(subPart);
+    } else {
+      if (coefSub > 0) parts.push('+ ' + subPart);
+      else if (coefSub < 0) {
+        // coefSub already negative, subPart starts with '-' or coefSub
+        parts.push('+ ' + subPart); // the minus is in subPart
+      }
+    }
+  } else {
+    // isoV = x: a2*(expr) + b2*y = c2
+    let subPart = '';
+    if (coefSub === 1) subPart = '(' + inner + ')';
+    else if (coefSub === -1) subPart = '-(' + inner + ')';
+    else subPart = coefSub + '(' + inner + ')';
+    parts.push(subPart);
+
+    if (coefKeep !== 0) {
+      if (coefKeep === 1) parts.push('+ y');
+      else if (coefKeep === -1) parts.push('- y');
+      else if (coefKeep > 0) parts.push('+ ' + coefKeep + 'y');
+      else parts.push('- ' + Math.abs(coefKeep) + 'y');
+    }
+  }
+
+  return parts.join(' ') + ' = ' + c2;
+}
+
+/* Generate wrong substitution options */
+function makeWrongSubs(a2, b2, c2, isoV, m, bConst) {
+  const wrongs = new Set();
+  const correct = buildSubEqStr(a2, b2, c2, isoV, m, bConst);
+
+  // Wrong 1: sign error on constant
+  const w1 = buildSubEqStr(a2, b2, c2, isoV, m, -bConst);
+  if (w1 !== correct) wrongs.add(w1);
+
+  // Wrong 2: sign error on slope
+  const w2 = buildSubEqStr(a2, b2, c2, isoV, -m, bConst);
+  if (w2 !== correct) wrongs.add(w2);
+
+  // Wrong 3: swapped which equation is substituted into (use wrong constant)
+  const w3 = buildSubEqStr(a2, b2, c2 + (c2 > 0 ? 2 : -2), isoV, m, bConst);
+  if (w3 !== correct) wrongs.add(w3);
+
+  // Wrong 4: forgot distribution (just show combined coeff with constant separate)
+  const other = (isoV === 'y') ? 'x' : 'y';
+  const coefSub = (isoV === 'y') ? b2 : a2;
+  const coefKeep = (isoV === 'y') ? a2 : b2;
+  const combinedCoeff = coefKeep + coefSub * m; // correct combined
+  let w4parts = [];
+  if (combinedCoeff === 1) w4parts.push(other);
+  else if (combinedCoeff === -1) w4parts.push('-' + other);
+  else if (combinedCoeff !== 0) w4parts.push(combinedCoeff + other);
+  // forgot to multiply bConst by coefSub
+  if (bConst !== 0) {
+    if (w4parts.length === 0) w4parts.push('' + bConst);
+    else if (bConst > 0) w4parts.push('+ ' + bConst);
+    else w4parts.push('- ' + Math.abs(bConst));
+  }
+  if (w4parts.length === 0) w4parts.push('0');
+  const w4 = w4parts.join(' ') + ' = ' + c2;
+  if (w4 !== correct) wrongs.add(w4);
+
+  // Ensure at least 3 wrongs
+  if (wrongs.size < 3) {
+    const w5 = buildSubEqStr(a2, b2, c2, isoV, m, bConst + 1);
+    if (w5 !== correct) wrongs.add(w5);
+  }
+  if (wrongs.size < 3) {
+    const w6 = buildSubEqStr(a2, b2, c2 - 1, isoV, m, bConst);
+    if (w6 !== correct) wrongs.add(w6);
+  }
+
+  return [...wrongs].slice(0, 3);
+}
+
+/* ================================================================
+   5. PROBLEM GENERATION
+   ================================================================ */
+function randInt(lo, hi) {
+  return Math.floor(Math.random() * (hi - lo + 1)) + lo;
+}
+
+function genProb() {
+  for (let tries = 0; tries < 500; tries++) {
+    // Which variable is isolated in Eq 1
+    const isoV = Math.random() < 0.6 ? 'y' : 'x';
+    const otherV = (isoV === 'y') ? 'x' : 'y';
+
+    // Eq1: isoV = m1 * otherV + b1
+    let m1 = randInt(-4, 4);
+    if (m1 === 0) m1 = (Math.random() < 0.5 ? 1 : -1) * randInt(1, 3);
+    const b1 = randInt(-7, 7);
+
+    // Choose solution for otherV
+    const solOther = randInt(-7, 7);
+    const solIso = m1 * solOther + b1;
+    if (Math.abs(solIso) > 10 || Math.abs(solOther) > 10) continue;
+
+    const solX = (isoV === 'y') ? solOther : solIso;
+    const solY = (isoV === 'y') ? solIso : solOther;
+
+    // Eq2: a2*x + b2*y = c2
+    let a2 = randInt(-5, 5);
+    let b2 = randInt(-5, 5);
+    if (a2 === 0) a2 = (Math.random() < 0.5 ? 1 : -1) * randInt(1, 3);
+    if (b2 === 0) b2 = (Math.random() < 0.5 ? 1 : -1) * randInt(1, 3);
+    const c2 = a2 * solX + b2 * solY;
+    if (Math.abs(c2) > 50) continue;
+
+    // Must not be proportional to Eq1 in standard form
+    let a1s, b1s;
+    if (isoV === 'y') { a1s = -m1; b1s = 1; } else { a1s = 1; b1s = -m1; }
+    if (a1s * b2 - b1s * a2 === 0) continue;
+
+    // After substitution: coeff * otherV = constVal
+    const coefSub = (isoV === 'y') ? b2 : a2;
+    const coefKeep = (isoV === 'y') ? a2 : b2;
+    const combinedCoeff = coefKeep + coefSub * m1;
+    const constRHS = c2 - coefSub * b1;
+
+    if (combinedCoeff === 0) continue;
+    if (constRHS % combinedCoeff !== 0) continue;
+    const solvedOther = constRHS / combinedCoeff;
+    // Verify consistency
+    if (isoV === 'y' && solvedOther !== solX) continue;
+    if (isoV === 'x' && solvedOther !== solY) continue;
+
+    // Build LaTeX strings
+    const txIso = texIsoForm(isoV, m1, b1);
+    const txEq2 = texLinEq(a2, b2, c2);
+    const correctSubStr = buildSubEqStr(a2, b2, c2, isoV, m1, b1);
+    const wrongSubs = makeWrongSubs(a2, b2, c2, isoV, m1, b1);
+
+    return {
+      isoV, otherV, m1, b1,
+      a2, b2, c2,
+      solX, solY,
+      txIso, txEq2,
+      combinedCoeff, constRHS, solvedOther,
+      correctSubStr, wrongSubs,
+      res: null
+    };
+  }
+
+  // Fallback
+  return {
+    isoV: 'y', otherV: 'x', m1: 2, b1: 3,
+    a2: 3, b2: 2, c2: 20,
+    solX: 2, solY: 7,
+    txIso: 'y = 2x + 3',
+    txEq2: '3x + 2y = 20',
+    combinedCoeff: 7, constRHS: 14, solvedOther: 2,
+    correctSubStr: '3x + 2(2x + 3) = 20',
+    wrongSubs: ['3x + 2(2x - 3) = 20', '3x + 4x + 3 = 20', '3(2x + 3) + 2y = 20'],
+    res: null
+  };
+}
+
+/* ================================================================
+   6. INIT & LOAD
+   ================================================================ */
+function init() {
+  for (let i = 0; i < MAX_PROBS; i++) probs.push(genProb());
+  cpIdx = 0;
+  loadProb(0);
+}
+
+function loadProb(idx) {
+  if (probs[idx].res) return;
+  cpIdx = idx;
+  cp = probs[idx];
+  phase = 'init';
+  answers = {};
+  document.getElementById('nextStepBtn').classList.remove('visible');
+  updUI();
+  renderDots();
+  clearChat();
+  startFlow();
+}
+
+function renderEqs() {
+  if (!cp) return;
+  document.getElementById('equationDisplay').innerHTML =
+    '<div class="equation-row">' +
+      '<span class="eq-label" style="color:var(--line1-color)">Eq 1</span>' +
+      '<span class="equation-text" style="color:var(--line1-color)">' + kx(cp.txIso) + '</span>' +
+    '</div>' +
+    '<div class="equation-row">' +
+      '<span class="eq-label" style="color:var(--line2-color)">Eq 2</span>' +
+      '<span class="equation-text" style="color:var(--line2-color)">' + kx(cp.txEq2) + '</span>' +
+    '</div>';
+}
+
+function renderDots() {
+  const c = document.getElementById('progressDots');
+  c.innerHTML = '';
+  for (let i = 0; i < MAX_PROBS; i++) {
+    const d = document.createElement('div');
+    d.className = 'pdot';
+    d.textContent = i + 1;
+    if (probs[i].res === 'ok') d.classList.add('done-ok');
+    else if (probs[i].res === 'no') d.classList.add('done-no');
+    else if (i === cpIdx) d.classList.add('current');
+    else { d.classList.add('avail'); d.onclick = ((ii) => () => loadProb(ii))(i); }
+    c.appendChild(d);
+  }
+  document.getElementById('correctCount').textContent = okCnt;
+  document.getElementById('totalAttempted').textContent = totCnt;
+}
+
+/* ================================================================
+   7. CHAT SYSTEM
+   ================================================================ */
+function addT(html) {
+  const c = document.getElementById('chatMessages');
+  const d = document.createElement('div');
+  d.className = 'chat-msg tutor';
+  d.innerHTML = html;
+  c.appendChild(d);
+  c.scrollTop = c.scrollHeight;
+}
+
+function addS(html) {
+  const c = document.getElementById('chatMessages');
+  const d = document.createElement('div');
+  d.className = 'chat-msg student';
+  d.innerHTML = html;
+  c.appendChild(d);
+  c.scrollTop = c.scrollHeight;
+}
+
+function addOk(html) {
+  const c = document.getElementById('chatMessages');
+  const d = document.createElement('div');
+  d.className = 'chat-msg correct-msg';
+  d.innerHTML = '\u2705 ' + html;
+  c.appendChild(d);
+  c.scrollTop = c.scrollHeight;
+}
+
+function addBad(html) {
+  const c = document.getElementById('chatMessages');
+  const d = document.createElement('div');
+  d.className = 'chat-msg incorrect-msg';
+  d.innerHTML = '\u274c ' + html;
+  c.appendChild(d);
+  c.scrollTop = c.scrollHeight;
+}
+
+function addMC(opts, callback) {
+  const c = document.getElementById('chatMessages');
+  const g = document.createElement('div');
+  g.className = 'mc-group';
+  const labels = ['a)', 'b)', 'c)', 'd)', 'e)', 'f)'];
+  opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'mc-option';
+    btn.innerHTML = '<span class="mc-label">' + labels[i] + '</span> ' + opt.text;
+    btn.onclick = () => {
+      g.querySelectorAll('.mc-option').forEach(b => b.disabled = true);
+      btn.classList.add('selected');
+      callback(opt.val, opt.text);
+    };
+    g.appendChild(btn);
+  });
+  c.appendChild(g);
+  c.scrollTop = c.scrollHeight;
+}
+
+function addIn(placeholder, callback, hintFn) {
+  const c = document.getElementById('chatMessages');
+  const row = document.createElement('div');
+  row.className = 'input-row';
+  const inp = document.createElement('input');
+  inp.type = 'text';
+  inp.className = 'text-input';
+  inp.placeholder = placeholder;
+  const sub = document.createElement('button');
+  sub.className = 'submit-btn';
+  sub.textContent = t('submit');
+  row.appendChild(inp);
+  row.appendChild(sub);
+  c.appendChild(row);
+
+  const doSubmit = () => {
+    const v = inp.value.trim();
+    if (!v) return;
+    inp.disabled = true;
+    sub.disabled = true;
+    callback(v);
+  };
+  sub.onclick = doSubmit;
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') doSubmit(); });
+
+  if (hintFn) {
+    const hr = document.createElement('div');
+    hr.className = 'hint-row';
+    const hb = document.createElement('button');
+    hb.className = 'hint-btn';
+    hb.textContent = t('hintBtn');
+    hb.onclick = () => {
+      hb.disabled = true;
+      addT(typeof hintFn === 'function' ? hintFn() : t(hintFn));
+    };
+    hr.appendChild(hb);
+    c.appendChild(hr);
+  }
+
+  c.scrollTop = c.scrollHeight;
+  setTimeout(() => inp.focus(), 100);
+}
+
+function clearChat() {
+  document.getElementById('chatMessages').innerHTML = '';
+}
+
+function addEqBox() {
+  const c = document.getElementById('chatMessages');
+  const d = document.createElement('div');
+  d.className = 'chat-msg eq-box';
+  d.innerHTML =
+    '<span style="color:var(--line1-color)">Eq 1: ' + kx(cp.txIso) + '</span><br>' +
+    '<span style="color:var(--line2-color)">Eq 2: ' + kx(cp.txEq2) + '</span>';
+  c.appendChild(d);
+  c.scrollTop = c.scrollHeight;
+}
+
+/* ================================================================
+   8. SOCRATIC FLOW
+   ================================================================ */
+function startFlow() {
+  phase = 'init';
+  addT(t('welcome'));
+  addEqBox();
+  setTimeout(() => doIdentify(), 400);
+}
+
+/* --- IDENTIFY --- */
+function doIdentify() {
+  phase = 'identify';
+  addT(t('identifyQ'));
+
+  const optLabel = (v, n) => (lang === 'es' ? (v + ' en Ec ' + n) : (v + ' in Eq ' + n));
+
+  const opts = shuffle([
+    { text: optLabel('x', 1), val: 'x_1' },
+    { text: optLabel('y', 1), val: 'y_1' },
+    { text: optLabel('x', 2), val: 'x_2' },
+    { text: optLabel('y', 2), val: 'y_2' },
+  ]);
+
+  const correctVal = cp.isoV + '_1'; // always Eq1 has the isolated var
+
+  addMC(opts, (val, text) => {
+    addS(text);
+    answers.identify = val;
+    if (val === correctVal) {
+      addOk(t('identifyOk'));
+    } else {
+      addBad(t('identifyBad'));
+    }
+    setTimeout(() => doIsolate(), 500);
+  });
+}
+
+/* --- ISOLATE --- */
+function doIsolate() {
+  phase = 'isolate';
+  addT(t('isoAlreadyMsg'));
+  addT(t('isoShowExpr') + ' ' + kx(cp.txIso));
+  wsReveal(0, 'active');
+  setTimeout(() => doSubstitute(), 600);
+}
+
+/* --- SUBSTITUTE --- */
+function doSubstitute() {
+  phase = 'substitute';
+  wsComplete(0);
+  addT(t('subQ'));
+
+  const correctTex = kx(cp.correctSubStr);
+  let opts = [{ text: correctTex, val: 'correct' }];
+  cp.wrongSubs.forEach((ws, i) => {
+    opts.push({ text: kx(ws), val: 'wrong_' + i });
+  });
+  opts = shuffle(opts);
+
+  addMC(opts, (val, text) => {
+    addS(text);
+    answers.substitute = val;
+    if (val === 'correct') {
+      addOk(t('subOk'));
+    } else {
+      addBad(t('subBad'));
+      addT(kx(cp.correctSubStr));
+    }
+    wsReveal(1, 'active');
+    setTimeout(() => doSolve(), 500);
+  });
+}
+
+/* --- SOLVE --- */
+function doSolve() {
+  phase = 'solve';
+  wsComplete(1);
+  wsReveal(2, 'active');
+
+  const targetVar = cp.otherV;
+  const correctVal = cp.solvedOther;
+
+  addT(t('solveQ').replace(/the remaining variable/g,
+    kx(targetVar)).replace(/la variable restante/g, kx(targetVar)));
+
+  const hintFn = () => {
+    const coef = cp.combinedCoeff;
+    const rhs = cp.constRHS;
+    return t('solveHint') + '<br>' +
+      kx(texF(coef) + targetVar + ' = ' + texF(rhs)) +
+      ' &rarr; ' +
+      kx(targetVar + ' = ' + texF(correctVal));
+  };
+
+  addIn(targetVar + ' = ?', (raw) => {
+    const parsed = parseNum(raw);
+    addS(kx(targetVar + ' = ' + raw));
+    answers.solve = raw;
+
+    if (!isNaN(parsed) && Math.abs(parsed - correctVal) < 0.01) {
+      addOk(t('solveOk') + ' ' + kx(targetVar + ' = ' + texF(correctVal)));
+      answers.solveCorrect = true;
+    } else if (!isNaN(parsed) && Math.abs(parsed + correctVal) < 0.01) {
+      addBad(t('signErr') + ' ' + t('solveBad') + ' ' + kx(targetVar + ' = ' + texF(correctVal)));
+      answers.solveCorrect = false;
+    } else {
+      addBad(t('solveBad') + ' ' + kx(targetVar + ' = ' + texF(correctVal)));
+      answers.solveCorrect = false;
+    }
+    wsComplete(2);
+    setTimeout(() => doBacksolve(), 500);
+  }, hintFn);
+}
+
+/* --- BACKSOLVE --- */
+function doBacksolve() {
+  phase = 'backsolve';
+  wsReveal(3, 'active');
+
+  const plugVar = cp.otherV;
+  const plugVal = cp.solvedOther;
+  const findVar = cp.isoV;
+  const correctVal = (cp.isoV === 'y') ? cp.solY : cp.solX;
+
+  addT(t('bkQ').replace(/the other variable/g, kx(findVar)).replace(/la otra variable/g, kx(findVar))
+    + '<br>' + kx(plugVar + ' = ' + texF(plugVal))
+    + ' &rarr; find ' + kx(findVar));
+
+  const hintFn = () => {
+    return t('bkHint') + '<br>' + kx(cp.txIso) + '<br>' +
+      kx(findVar + ' = ' + texF(cp.m1) + '(' + texF(plugVal) + ')' +
+        (cp.b1 >= 0 ? ' + ' + cp.b1 : ' - ' + Math.abs(cp.b1)) +
+        ' = ' + texF(correctVal));
+  };
+
+  addIn(findVar + ' = ?', (raw) => {
+    const parsed = parseNum(raw);
+    addS(kx(findVar + ' = ' + raw));
+    answers.backsolve = raw;
+
+    if (!isNaN(parsed) && Math.abs(parsed - correctVal) < 0.01) {
+      addOk(t('bkOk') + ' ' + kx(findVar + ' = ' + texF(correctVal)));
+      answers.bkCorrect = true;
+    } else if (!isNaN(parsed) && Math.abs(parsed + correctVal) < 0.01) {
+      addBad(t('signErr') + ' ' + t('bkBad') + ' ' + kx(findVar + ' = ' + texF(correctVal)));
+      answers.bkCorrect = false;
+    } else {
+      addBad(t('bkBad') + ' ' + kx(findVar + ' = ' + texF(correctVal)));
+      answers.bkCorrect = false;
+    }
+    wsComplete(3);
+    setTimeout(() => doVerify(), 500);
+  }, hintFn);
+}
+
+/* --- VERIFY --- */
+function doVerify() {
+  phase = 'verify';
+  wsReveal(4, 'active');
+
+  addT(t('verQ') + '<br>' +
+    kx('(x, y) = (' + texF(cp.solX) + ',\\,' + texF(cp.solY) + ')'));
+
+  const opts = [
+    { text: t('verYes'), val: 'yes' },
+    { text: t('verNo'), val: 'no' },
+  ];
+
+  addMC(opts, (val, text) => {
+    addS(text);
+    answers.verify = val;
+    if (val === 'yes') {
+      addOk(t('verOk'));
+    } else {
+      addBad(t('verBad'));
+    }
+    wsComplete(4);
+    setTimeout(() => doDone(), 600);
+  });
+}
+
+/* --- DONE --- */
+function doDone() {
+  phase = 'done';
+  addT(t('doneMsg'));
+  // Determine if student got the core answers right
+  const ok = (answers.solveCorrect !== false) && (answers.bkCorrect !== false);
+  probDone(ok);
+}
+
+/* ================================================================
+   9. WORKSPACE
+   ================================================================ */
+function rebuildWorkspace() {
+  if (!cp) return;
+  const container = document.getElementById('workspaceSteps');
+  container.innerHTML = '';
+  const steps = wsSteps();
+  steps.forEach((s, i) => {
+    const el = document.createElement('div');
+    el.className = 'ws-step';
+    el.id = 'ws' + i;
+    el.innerHTML =
+      '<div class="ws-step-num">' + (i + 1) + '</div>' +
+      '<div class="ws-step-content">' +
+        '<div class="ws-step-label">' + s.label + '</div>' +
+        '<div class="ws-step-math">' + s.math + '</div>' +
+      '</div>' +
+      '<div class="ws-check">\u2713</div>';
+    container.appendChild(el);
+  });
+
+  // Restore visibility states based on current phase
+  const phaseOrder = ['init', 'identify', 'isolate', 'substitute', 'solve', 'backsolve', 'verify', 'done'];
+  const pi = phaseOrder.indexOf(phase);
+  // Step 0 visible from isolate+
+  if (pi >= 2) wsReveal(0, pi >= 3 ? 'completed' : 'active');
+  if (pi >= 3) wsReveal(1, pi >= 4 ? 'completed' : 'active');
+  if (pi >= 4) wsReveal(2, pi >= 5 ? 'completed' : 'active');
+  if (pi >= 5) wsReveal(3, pi >= 6 ? 'completed' : 'active');
+  if (pi >= 6) wsReveal(4, pi >= 7 ? 'completed' : 'active');
+}
+
+function wsSteps() {
+  if (!cp) return [];
+  const otherV = cp.otherV;
+  const isoV = cp.isoV;
+  const solOther = cp.solvedOther;
+  const solIso = (isoV === 'y') ? cp.solY : cp.solX;
+
+  return [
+    {
+      label: t('wsIsolate'),
+      math: kx(cp.txIso)
+    },
+    {
+      label: t('wsSubstitute'),
+      math: kx(cp.correctSubStr)
+    },
+    {
+      label: t('wsSimplify'),
+      math: kx(texF(cp.combinedCoeff) + otherV + ' = ' + texF(cp.constRHS)) +
+        ' &nbsp;&rarr;&nbsp; ' +
+        kx(otherV + ' = ' + texF(solOther))
+    },
+    {
+      label: t('wsBacksub'),
+      math: kx(isoV + ' = ' + texF(cp.m1) + '(' + texF(solOther) + ')' +
+        (cp.b1 >= 0 ? ' + ' + cp.b1 : ' - ' + Math.abs(cp.b1)) +
+        ' = ' + texF(solIso))
+    },
+    {
+      label: t('wsSolution'),
+      math: kx('(x, y) = (' + texF(cp.solX) + ',\\,' + texF(cp.solY) + ')') +
+        ' &nbsp;<span style="color:var(--success);font-size:1.2rem">\u2713</span>'
+    }
+  ];
+}
+
+function wsReveal(idx, state) {
+  const el = document.getElementById('ws' + idx);
+  if (!el) return;
+  el.classList.add('visible');
+  el.classList.remove('active', 'completed');
+  if (state === 'active') el.classList.add('active');
+  if (state === 'completed') {
+    el.classList.add('completed');
+    const chk = el.querySelector('.ws-check');
+    if (chk) chk.style.display = 'block';
+  }
+}
+
+function wsComplete(idx) {
+  wsReveal(idx, 'completed');
+}
+
+/* ================================================================
+   10. PROGRESS
+   ================================================================ */
+function probDone(ok) {
+  cp.res = ok ? 'ok' : 'no';
+  if (ok) okCnt++;
+  totCnt++;
+  renderDots();
+
+  if (okCnt >= 2 && !challengeComplete) {
+    setTimeout(showMilestone, 1000);
+  } else {
+    const next = probs.findIndex((p, i) => !p.res && i !== cpIdx);
+    if (next !== -1) {
+      document.getElementById('nextStepBtn').classList.add('visible');
+    }
+  }
+}
+
+function showMilestone() {
+  challengeComplete = true;
+  const mo = document.getElementById('modalOverlay');
+  document.getElementById('modalEmoji').textContent = '\ud83c\udf89';
+  document.getElementById('modalTitle').textContent = t('modalTitle');
+  document.getElementById('modalScore').textContent = okCnt + ' / ' + totCnt;
+  document.getElementById('modalSub').textContent = t('modalSub');
+
+  const btns = document.getElementById('modalBtns');
+  btns.innerHTML = '';
+
+  const remaining = probs.filter(p => !p.res).length;
+
+  if (remaining > 0) {
+    const finBtn = document.createElement('button');
+    finBtn.className = 'modal-btn-primary';
+    finBtn.textContent = t('modalFinish');
+    finBtn.onclick = () => {
+      mo.classList.remove('show');
+      practiceMode = true;
+    };
+    btns.appendChild(finBtn);
+
+    const pracBtn = document.createElement('button');
+    pracBtn.className = 'modal-btn-secondary';
+    pracBtn.textContent = t('modalPractice');
+    pracBtn.onclick = () => {
+      mo.classList.remove('show');
+      practiceMode = true;
+      const nx = probs.findIndex(p => !p.res);
+      if (nx !== -1) loadProb(nx);
+    };
+    btns.appendChild(pracBtn);
+
+    document.getElementById('modalPracticeHint').textContent = t('modalPracticeMore');
+  } else {
+    const doneBtn = document.createElement('button');
+    doneBtn.className = 'modal-btn-primary';
+    doneBtn.textContent = t('modalMoveOn');
+    doneBtn.onclick = () => mo.classList.remove('show');
+    btns.appendChild(doneBtn);
+    document.getElementById('modalPracticeHint').textContent = '';
+  }
+
+  mo.classList.add('show');
+}
+
+/* ================================================================
+   11. NAV
+   ================================================================ */
+function goNext() {
+  let next = probs.findIndex((p, i) => !p.res && i > cpIdx);
+  if (next === -1) next = probs.findIndex(p => !p.res);
+  if (next !== -1) loadProb(next);
+}
+
+/* ================================================================
+   12. LANG REPLAY
+   ================================================================ */
+function replayChat() {
+  clearChat();
+  if (!cp) return;
+
+  const phaseOrder = ['init', 'identify', 'isolate', 'substitute', 'solve', 'backsolve', 'verify', 'done'];
+  const pi = phaseOrder.indexOf(phase);
+
+  // Always show welcome + eq box
+  addT(t('welcome'));
+  addEqBox();
+
+  if (pi < 1) return; // still at init
+
+  // IDENTIFY replay
+  addT(t('identifyQ'));
+  if (answers.identify) {
+    const parts = answers.identify.split('_');
+    const v = parts[0], n = parts[1];
+    const lbl = (lang === 'es' ? (v + ' en Ec ' + n) : (v + ' in Eq ' + n));
+    addS(lbl);
+    if (answers.identify === cp.isoV + '_1') addOk(t('identifyOk'));
+    else addBad(t('identifyBad'));
+  }
+
+  if (pi < 2) return;
+
+  // ISOLATE replay
+  addT(t('isoAlreadyMsg'));
+  addT(t('isoShowExpr') + ' ' + kx(cp.txIso));
+
+  if (pi < 3) return;
+
+  // SUBSTITUTE replay
+  addT(t('subQ'));
+  if (answers.substitute === 'correct') {
+    addS(kx(cp.correctSubStr));
+    addOk(t('subOk'));
+  } else {
+    addS(kx(cp.wrongSubs[0] || cp.correctSubStr));
+    addBad(t('subBad'));
+    addT(kx(cp.correctSubStr));
+  }
+
+  if (pi < 4) return;
+
+  // SOLVE replay
+  const targetV = cp.otherV;
+  const correctSolve = cp.solvedOther;
+  addT(t('solveQ').replace(/the remaining variable/g, kx(targetV)).replace(/la variable restante/g, kx(targetV)));
+  if (answers.solve) {
+    addS(kx(targetV + ' = ' + answers.solve));
+    if (answers.solveCorrect) {
+      addOk(t('solveOk') + ' ' + kx(targetV + ' = ' + texF(correctSolve)));
+    } else {
+      addBad(t('solveBad') + ' ' + kx(targetV + ' = ' + texF(correctSolve)));
+    }
+  }
+
+  if (pi < 5) return;
+
+  // BACKSOLVE replay
+  const findV = cp.isoV;
+  const plugV = cp.otherV;
+  const plugVal = cp.solvedOther;
+  const correctBk = (cp.isoV === 'y') ? cp.solY : cp.solX;
+  addT(t('bkQ').replace(/the other variable/g, kx(findV)).replace(/la otra variable/g, kx(findV))
+    + '<br>' + kx(plugV + ' = ' + texF(plugVal)) + ' &rarr; find ' + kx(findV));
+  if (answers.backsolve) {
+    addS(kx(findV + ' = ' + answers.backsolve));
+    if (answers.bkCorrect) {
+      addOk(t('bkOk') + ' ' + kx(findV + ' = ' + texF(correctBk)));
+    } else {
+      addBad(t('bkBad') + ' ' + kx(findV + ' = ' + texF(correctBk)));
+    }
+  }
+
+  if (pi < 6) return;
+
+  // VERIFY replay
+  addT(t('verQ') + '<br>' + kx('(x, y) = (' + texF(cp.solX) + ',\\,' + texF(cp.solY) + ')'));
+  if (answers.verify) {
+    addS(answers.verify === 'yes' ? t('verYes') : t('verNo'));
+    if (answers.verify === 'yes') addOk(t('verOk'));
+    else addBad(t('verBad'));
+  }
+
+  if (pi < 7) return;
+
+  // DONE replay
+  addT(t('doneMsg'));
+}
+
+/* ================================================================
+   13. HELPERS
+   ================================================================ */
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ================================================================
+   14. INIT CALL
+   ================================================================ */
+window.addEventListener('load', init);
+</script>
+</body>
+</html>

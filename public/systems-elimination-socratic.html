@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Systems of Equations — Elimination Method</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080d1c;--bg-elevated:#0e1528;
+  --card:rgba(14,21,40,0.65);--card-solid:#111a30;--card-border:rgba(255,255,255,0.06);
+  --accent:#e8a832;--accent2:#8b5cf6;
+  --success:#34d399;--error:#f87171;--warning:#fbbf24;
+  --text:#ede9f4;--text-dim:#6b7a9a;
+  --line1-color:#4fc3f7;--line2-color:#ff6ec7;
+}
+::selection{background:rgba(232,168,50,0.25);color:var(--text)}
+html{height:100%}
+body{font-family:'Outfit',sans-serif;color:var(--text);min-height:100%;
+  background:radial-gradient(circle at 1px 1px,rgba(255,255,255,0.018) 1px,transparent 0) 0 0/32px 32px,var(--bg)}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 80% 60% at 5% 10%,rgba(139,92,246,0.07) 0%,transparent 70%),
+    radial-gradient(ellipse 60% 70% at 95% 85%,rgba(79,195,247,0.05) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 40% at 50% 50%,rgba(232,168,50,0.025) 0%,transparent 60%)}
+body::after{content:'';position:fixed;inset:0;opacity:0.016;pointer-events:none;z-index:10000;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.top-bar{display:flex;justify-content:space-between;align-items:center;padding:14px 28px;
+  background:rgba(8,13,28,0.75);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);
+  border-bottom:1px solid rgba(255,255,255,0.05);position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:10px}
+.top-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;white-space:nowrap}
+.top-group{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.pdots{display:flex;gap:8px}
+.pdot{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,0.03);border:1.5px solid rgba(255,255,255,0.07);
+  font-family:'JetBrains Mono',monospace;font-size:0.68rem;font-weight:700;
+  transition:all 0.4s cubic-bezier(0.4,0,0.2,1);cursor:default}
+.pdot.done-ok{background:rgba(52,211,153,0.12);border-color:rgba(52,211,153,0.35);color:var(--success);box-shadow:0 0 12px rgba(52,211,153,0.15)}
+.pdot.done-no{background:rgba(248,113,113,0.1);border-color:rgba(248,113,113,0.3);color:var(--error)}
+.pdot.current{border-color:rgba(232,168,50,0.5);color:var(--accent);animation:currentPulse 2s ease-in-out infinite}
+.pdot.avail{border-color:rgba(139,92,246,0.3);color:var(--accent2);cursor:pointer}
+.pdot.avail:hover{background:rgba(139,92,246,0.1);transform:scale(1.1)}
+@keyframes currentPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 rgba(232,168,50,0)}50%{transform:scale(1.08);box-shadow:0 0 18px rgba(232,168,50,0.2)}}
+.score-box{font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--text-dim)}
+.score-box span{color:var(--success);font-weight:700}
+.lang-toggle{display:flex;background:rgba(255,255,255,0.04);border-radius:11px;border:1px solid rgba(255,255,255,0.07);padding:2px;gap:2px}
+.lang-btn{padding:5px 12px;border:none;background:transparent;color:var(--text-dim);
+  font-family:'Outfit',sans-serif;font-size:0.75rem;font-weight:600;border-radius:9px;cursor:pointer;transition:all 0.25s}
+.lang-btn.active{background:var(--accent);color:var(--bg)}
+.next-btn{padding:9px 20px;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.82rem;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;cursor:pointer;
+  box-shadow:0 4px 20px rgba(139,92,246,0.2);display:none;transition:all 0.3s}
+.next-btn.visible{display:inline-flex}
+.next-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(139,92,246,0.3)}
+.main-container{display:flex;max-width:1440px;margin:0 auto;gap:22px;padding:22px 28px;position:relative;z-index:1}
+.left-panel{flex:1;display:flex;flex-direction:column;gap:20px;min-width:0}
+.right-panel{width:420px;flex-shrink:0;display:flex;flex-direction:column}
+.card{background:var(--card);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid var(--card-border);border-radius:20px;padding:24px;transition:border-color 0.3s ease;position:relative;overflow:hidden}
+.problem-card{animation:cardReveal 0.6s ease 0.1s both}
+.problem-card::after{content:'';position:absolute;left:0;top:14px;bottom:14px;width:3px;background:linear-gradient(180deg,var(--accent),var(--accent2));border-radius:0 3px 3px 0}
+.workspace-card{animation:cardReveal 0.6s ease 0.2s both}
+.chat-panel{animation:cardReveal 0.6s ease 0.3s both;display:flex;flex-direction:column;height:calc(100vh - 100px);min-height:500px}
+.chat-panel::after{content:'';position:absolute;right:0;top:14px;bottom:14px;width:3px;background:linear-gradient(180deg,var(--accent2),var(--accent));border-radius:3px 0 0 3px;z-index:2}
+@keyframes cardReveal{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.section-label{font-family:'Syne',sans-serif;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;color:var(--text-dim);margin-bottom:14px}
+.equation-display{display:flex;flex-direction:column;gap:10px;padding:8px 0}
+.equation-row{display:flex;align-items:center;gap:12px}
+.eq-label{font-family:'Syne',sans-serif;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;min-width:36px}
+.equation-text{font-family:'JetBrains Mono',monospace;font-size:1.1rem}
+.katex{font-size:1.1em !important}
+.equation-text .katex{font-size:1.15em !important}
+.chat-header{padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.05);flex-shrink:0}
+.chat-messages{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:16px 4px;
+  scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.08) transparent}
+.chat-messages::-webkit-scrollbar{width:5px}
+.chat-messages::-webkit-scrollbar-track{background:transparent}
+.chat-messages::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px}
+.chat-msg{padding:14px 18px;border-radius:20px;font-size:0.88rem;line-height:1.65;animation:msgReveal 0.35s ease both}
+.chat-msg.tutor{background:rgba(139,92,246,0.07);border:1px solid rgba(139,92,246,0.12);border-radius:20px 20px 20px 6px;align-self:flex-start;max-width:92%}
+.chat-msg.student{background:rgba(79,195,247,0.06);border:1px solid rgba(79,195,247,0.12);border-radius:20px 20px 6px 20px;align-self:flex-end;max-width:85%;font-weight:500}
+.chat-msg.correct-msg{background:rgba(52,211,153,0.07);border:1px solid rgba(52,211,153,0.15);align-self:flex-start;max-width:92%}
+.chat-msg.incorrect-msg{background:rgba(248,113,113,0.07);border:1px solid rgba(248,113,113,0.15);align-self:flex-start;max-width:92%}
+.chat-msg.eq-box{background:rgba(79,195,247,0.04);border:1px dashed rgba(79,195,247,0.18);font-family:'JetBrains Mono',monospace;align-self:stretch;max-width:100%}
+.eq-box .katex{font-size:1.05em !important}
+.chat-msg .katex{font-size:1em !important}
+@keyframes msgReveal{from{opacity:0;transform:translateY(10px) scale(0.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.mc-group{display:flex;flex-direction:column;gap:7px;margin-top:4px}
+.mc-option{padding:13px 18px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);
+  border-radius:13px;cursor:pointer;font-size:0.85rem;font-family:'Outfit',sans-serif;color:var(--text);
+  transition:all 0.25s cubic-bezier(0.4,0,0.2,1);text-align:left;position:relative;overflow:hidden;width:100%}
+.mc-option:hover:not(:disabled){border-color:rgba(139,92,246,0.35);background:rgba(139,92,246,0.05);transform:translateX(4px)}
+.mc-option:disabled{opacity:0.5;cursor:default}
+.mc-option.selected{border-color:rgba(139,92,246,0.5);background:rgba(139,92,246,0.1)}
+.input-row{display:flex;gap:8px;margin-top:4px}
+.text-input{flex:1;padding:12px 16px;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.08);
+  border-radius:12px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:0.9rem;outline:none;transition:all 0.25s}
+.text-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,168,50,0.1)}
+.text-input:disabled{opacity:0.5}
+.submit-btn{padding:12px 20px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--accent),#d97706);
+  color:var(--bg);font-family:'Outfit',sans-serif;font-weight:700;font-size:0.82rem;cursor:pointer;transition:all 0.25s;white-space:nowrap}
+.submit-btn:hover:not(:disabled){transform:translateY(-1px)}
+.submit-btn:disabled{opacity:0.5;cursor:default;transform:none}
+.hint-row{margin-top:6px}
+.hint-btn{padding:8px 16px;border:none;border-radius:10px;background:rgba(251,191,36,0.06);
+  border:1px solid rgba(251,191,36,0.2);color:var(--warning);font-family:'Outfit',sans-serif;
+  font-size:0.78rem;font-weight:600;cursor:pointer;transition:all 0.25s}
+.hint-btn:hover:not(:disabled){background:rgba(251,191,36,0.12);transform:translateY(-1px)}
+.hint-btn:disabled{opacity:0.4;cursor:default;transform:none}
+.hint-msg{padding:10px 16px;background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.15);border-radius:14px;font-size:0.82rem;color:var(--warning);margin-top:6px;animation:msgReveal 0.3s ease both}
+.ws-step{display:flex;align-items:center;gap:12px;padding:14px 18px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:14px;margin-bottom:8px;transition:all 0.4s}
+.ws-step.active{border-color:rgba(232,168,50,0.3);background:rgba(232,168,50,0.04)}
+.ws-step.completed{border-color:rgba(52,211,153,0.2);background:rgba(52,211,153,0.04)}
+.ws-step-num{font-family:'Syne',sans-serif;font-size:0.65rem;font-weight:700;width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.05);flex-shrink:0}
+.ws-step.active .ws-step-num{background:rgba(232,168,50,0.15);color:var(--accent)}
+.ws-step.completed .ws-step-num{background:rgba(52,211,153,0.15);color:var(--success)}
+.ws-step-content{flex:1;font-size:0.88rem;line-height:1.5}
+.ws-step-content .katex{font-size:1em !important}
+.ws-empty{color:var(--text-dim);font-size:0.85rem;font-style:italic;padding:12px 0}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(10px);z-index:1000;display:none;align-items:center;justify-content:center}
+.modal-overlay.visible{display:flex}
+.modal{background:rgba(14,21,40,0.92);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.08);
+  border-radius:28px;padding:40px 36px;max-width:440px;width:90%;text-align:center;
+  box-shadow:0 0 0 1px rgba(255,255,255,0.04),0 28px 64px rgba(0,0,0,0.45),0 0 100px rgba(139,92,246,0.08);
+  animation:modalPop 0.5s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes modalPop{from{opacity:0;transform:scale(0.88) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal h2{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;margin-bottom:8px}
+.modal p{color:var(--text-dim);font-size:0.9rem;margin-bottom:24px;line-height:1.6}
+.modal-score{font-family:'JetBrains Mono',monospace;font-size:2.2rem;font-weight:700;color:var(--success);margin:12px 0}
+.modal-btns{display:flex;flex-direction:column;gap:10px}
+.modal-btn{padding:14px 24px;border:none;border-radius:14px;font-family:'Outfit',sans-serif;font-weight:700;
+  font-size:0.9rem;cursor:pointer;transition:all 0.3s}
+.modal-btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 4px 20px rgba(139,92,246,0.2)}
+.modal-btn.primary:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(139,92,246,0.3)}
+.modal-btn.secondary{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text)}
+.modal-btn.secondary:hover{background:rgba(255,255,255,0.08);transform:translateY(-1px)}
+@media(max-width:900px){
+  .main-container{flex-direction:column;padding:16px}
+  .right-panel{width:100%}
+  .chat-panel{height:auto;min-height:400px}
+  .chat-messages{max-height:350px}
+  .top-bar{padding:12px 16px}
+}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <span class="top-title" id="topTitle"></span>
+  <div class="top-group">
+    <div class="pdots" id="progressDots"></div>
+    <div class="score-box"><span id="correctCount">0</span> / <span id="totalAttempted">0</span></div>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('es')">ES</button>
+    </div>
+    <button class="next-btn" id="nextStepBtn" onclick="goNext()"></button>
+  </div>
+</div>
+<div class="main-container">
+  <div class="left-panel">
+    <div class="card problem-card">
+      <div class="section-label" id="problemLabel"></div>
+      <div class="equation-display" id="equationDisplay"></div>
+    </div>
+    <div class="card workspace-card">
+      <div class="section-label" id="workspaceLabel"></div>
+      <div id="workspace"></div>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="card chat-panel">
+      <div class="chat-header"><div class="section-label" id="guideLabel"></div></div>
+      <div class="chat-messages" id="chatMessages"></div>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2 id="modalTitle"></h2>
+    <div class="modal-score" id="modalScore"></div>
+    <p id="modalText"></p>
+    <div class="modal-btns" id="modalBtns"></div>
+  </div>
+</div>
+<script>
+// ═══════════════════════════════════════════
+// 1. TRANSLATIONS
+// ═══════════════════════════════════════════
+let lang='en';
+const L={en:{
+topTitle:"🧮 Elimination Method",probLbl:"Problem",wsLbl:"Elimination Workspace",guideLbl:"🧠 Step-by-Step Guide",nextP:"Next Problem ➜",
+welcome:"Welcome! Let's solve a <b>system of equations</b> using the <b>elimination method</b>. The idea: add or subtract the equations to cancel one variable, then solve for the other.",
+mcQ:"Look at the two equations. Which variable would be easiest to eliminate?",
+mcXDirect:"<b>x</b> — the x-coefficients are already opposites",mcYDirect:"<b>y</b> — the y-coefficients are already opposites",
+mcXMult:"<b>x</b> — multiply to match x-coefficients",mcYMult:"<b>y</b> — multiply to match y-coefficients",
+okDirect:"The {v}-coefficients are already opposites ({c1} and {c2}), so we can add the equations directly!",
+okMult:"We can multiply one equation to make the {v}-coefficients cancel.",
+badVar:"Not quite — look again at the coefficients. The {v}-coefficients ({c1} and {c2}) are the ones we can cancel most easily.",
+multQ:"What should we multiply Equation {eqNum} by so the {v}-coefficients cancel?",
+multHint:"Eq1 has {v}-coefficient {c1}, Eq2 has {c2}. We need them to be opposites. What multiplier for Eq{eqNum} makes {c_target} become {c_need}?",
+okMultAns:"Multiplying Equation {eqNum} by {m} gives {v}-coefficients that cancel!",
+badMultAns:"Not quite. We need {c_target} × (?) = {c_need}. The answer is {m}.",
+addQ:"Now add the equations. After {v} cancels, what value do you get for {v2}?",
+addHint:"When you add the equations, {v} cancels. You get: {combined}. Divide both sides to solve for {v2}.",
+okAdd:"{v2} = {val}. Nice work!",
+badAddSign:"Watch the sign — you got the right magnitude but wrong sign. {v2} = {val}.",
+badAdd:"The correct value is {v2} = {val}. {detail}",
+backQ:"Now substitute {v2} = {val2} back into Equation 1 to find {v1}. What is {v1}?",
+backHint:"Plug {v2} = {val2} into {eq1}. Simplify and solve for {v1}.",
+okBack:"{v1} = {val1}. The solution is ({solX}, {solY})!",
+badBack:"Not quite. {detail} So {v1} = {val1}.",
+verifyQ:"Let's verify — substitute ({solX}, {solY}) into Equation 2:<br>{eq2sub}<br>Does it check out?",
+verifyYes:"Yes, both sides are equal",verifyNo:"No, it doesn't work",
+okVerify:"It checks out! {lhs} = {rhs}. You solved the system using elimination!",
+badVerify:"Actually, it <em>does</em> check out! {lhs} = {rhs}. The solution ({solX}, {solY}) is correct!",
+hintBtn:"💡 Nudge",
+modalComplete:"🎉 Nice work!",modalText:"You've shown strong understanding of the elimination method.",
+modalMoveOn:"🚀 Continue",modalPractice:"📝 Keep Practicing",modalFinish:"✅ Complete & Continue",
+modalPracticeMore:"Click any incomplete dot above, or finish:",
+wsEmpty:"Steps will appear here as you work through the problem.",
+wsStep1:"Original system",wsStep2m:"Multiply Eq{n} by {m}",wsStep2d:"Coefficients already opposites ✓",
+wsStep3:"Add equations → eliminate {v}",wsStep4:"Solve: {v2} = {val}",
+wsStep5:"Back-substitute → {v1} = {val}",wsStep6:"Solution: ({x}, {y}) ✓"
+},es:{
+topTitle:"🧮 Método de Eliminación",probLbl:"Problema",wsLbl:"Área de Eliminación",guideLbl:"🧠 Guía Paso a Paso",nextP:"Siguiente ➜",
+welcome:"¡Bienvenido! Resolvamos un <b>sistema de ecuaciones</b> con el <b>método de eliminación</b>. La idea: sumar o restar las ecuaciones para cancelar una variable y resolver la otra.",
+mcQ:"Observa las dos ecuaciones. ¿Qué variable sería más fácil de eliminar?",
+mcXDirect:"<b>x</b> — los coeficientes de x ya son opuestos",mcYDirect:"<b>y</b> — los coeficientes de y ya son opuestos",
+mcXMult:"<b>x</b> — multiplicar para igualar coeficientes de x",mcYMult:"<b>y</b> — multiplicar para igualar coeficientes de y",
+okDirect:"¡Los coeficientes de {v} ya son opuestos ({c1} y {c2}), podemos sumar directamente!",
+okMult:"Podemos multiplicar una ecuación para que los coeficientes de {v} se cancelen.",
+badVar:"No exactamente — mira los coeficientes. Los de {v} ({c1} y {c2}) son los que podemos cancelar más fácil.",
+multQ:"¿Por cuánto multiplicamos la Ecuación {eqNum} para que los coeficientes de {v} se cancelen?",
+multHint:"Ec1 tiene coeficiente de {v}: {c1}, Ec2 tiene {c2}. Necesitamos que sean opuestos. ¿Qué multiplicador para Ec{eqNum} convierte {c_target} en {c_need}?",
+okMultAns:"¡Multiplicar la Ecuación {eqNum} por {m} da coeficientes opuestos de {v}!",
+badMultAns:"No exactamente. Necesitamos {c_target} × (?) = {c_need}. La respuesta es {m}.",
+addQ:"Suma las ecuaciones. Cuando {v} se cancela, ¿qué valor obtienes para {v2}?",
+addHint:"Al sumar, {v} se cancela. Obtienes: {combined}. Divide ambos lados para despejar {v2}.",
+okAdd:"¡{v2} = {val}. ¡Buen trabajo!",
+badAddSign:"Cuidado con el signo — magnitud correcta pero signo incorrecto. {v2} = {val}.",
+badAdd:"El valor correcto es {v2} = {val}. {detail}",
+backQ:"Sustituye {v2} = {val2} en la Ecuación 1 para encontrar {v1}. ¿Cuánto es {v1}?",
+backHint:"Sustituye {v2} = {val2} en {eq1}. Simplifica y resuelve para {v1}.",
+okBack:"¡{v1} = {val1}. La solución es ({solX}, {solY})!",
+badBack:"No exactamente. {detail} Entonces {v1} = {val1}.",
+verifyQ:"Verifiquemos — sustituye ({solX}, {solY}) en la Ecuación 2:<br>{eq2sub}<br>¿Se cumple?",
+verifyYes:"Sí, ambos lados son iguales",verifyNo:"No, no funciona",
+okVerify:"¡Se cumple! {lhs} = {rhs}. ¡Resolviste el sistema con eliminación!",
+badVerify:"En realidad, ¡sí se cumple! {lhs} = {rhs}. La solución ({solX}, {solY}) es correcta.",
+hintBtn:"💡 Pista",
+modalComplete:"🎉 ¡Buen trabajo!",modalText:"Has demostrado buen dominio del método de eliminación.",
+modalMoveOn:"🚀 Continuar",modalPractice:"📝 Seguir Practicando",modalFinish:"✅ Completar y Continuar",
+modalPracticeMore:"Haz clic en un punto incompleto, o termina:",
+wsEmpty:"Los pasos aparecerán aquí mientras trabajas.",
+wsStep1:"Sistema original",wsStep2m:"Multiplicar Ec{n} por {m}",wsStep2d:"Coeficientes ya opuestos ✓",
+wsStep3:"Sumar ecuaciones → eliminar {v}",wsStep4:"Resolver: {v2} = {val}",
+wsStep5:"Sustituir → {v1} = {val}",wsStep6:"Solución: ({x}, {y}) ✓"
+}};
+function t(k){return L[lang][k]||L.en[k]||k}
+
+// ═══════════════════════════════════════════
+// 2. STATE
+// ═══════════════════════════════════════════
+const MAX_PROBS=4;
+let probs=[],cpIdx=0,okCnt=0,totCnt=0,cp=null;
+let phase='init';
+let challengeComplete=false,practiceMode=false;
+// elimination-specific state
+let elimVar='',elimDirect=false,multEqNum=0,multVal=1;
+// which variable remains after elimination
+let solveVar='',solveVal=0,backVar='',backVal=0;
+
+// ═══════════════════════════════════════════
+// 3. LANG TOGGLE
+// ═══════════════════════════════════════════
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim()===l.toUpperCase()));
+  updUI();replayChat();
+}
+function updUI(){
+  document.getElementById('topTitle').textContent=t('topTitle');
+  document.getElementById('problemLabel').innerHTML=t('probLbl')+' <span id="problemNum">'+(cpIdx+1)+'</span>';
+  document.getElementById('workspaceLabel').textContent=t('wsLbl');
+  document.getElementById('guideLabel').textContent=t('guideLbl');
+  document.getElementById('nextStepBtn').textContent=t('nextP');
+  renderEqs();
+}
+
+// ═══════════════════════════════════════════
+// 4. MATH HELPERS
+// ═══════════════════════════════════════════
+function texF(n){
+  if(Number.isInteger(n))return ''+n;
+  for(let d=2;d<=12;d++){
+    if(Math.abs(Math.round(n*d)-n*d)<0.001){
+      const num=Math.round(n*d);
+      if(num<0)return '-\\frac{'+Math.abs(num)+'}{'+d+'}';
+      return '\\frac{'+num+'}{'+d+'}';
+    }
+  }
+  return n.toFixed(2);
+}
+function texC(n){return n===1?'':n===-1?'-':texF(n)}
+function kx(tex){
+  if(typeof katex!=='undefined'){try{return katex.renderToString(tex,{throwOnError:false})}catch(e){}}
+  return tex;
+}
+function parseNum(s){
+  s=s.trim().replace(/\s/g,'');
+  if(s.includes('/')){const p=s.split('/');return parseFloat(p[0])/parseFloat(p[1])}
+  const fm={'½':0.5,'⅓':1/3,'⅔':2/3,'¼':0.25,'¾':0.75};
+  if(s[0]==='-'&&fm[s.slice(1)])return -fm[s.slice(1)];
+  if(fm[s])return fm[s];
+  return parseFloat(s);
+}
+// Format ax+by=c as LaTeX
+function texEq(a,b,c){
+  let parts=[];
+  if(a!==0){
+    if(a===1)parts.push('x');
+    else if(a===-1)parts.push('-x');
+    else parts.push(texF(a)+'x');
+  }
+  if(b!==0){
+    if(parts.length===0){
+      if(b===1)parts.push('y');
+      else if(b===-1)parts.push('-y');
+      else parts.push(texF(b)+'y');
+    } else {
+      if(b>0){
+        parts.push('+');
+        if(b===1)parts.push('y');else parts.push(texF(b)+'y');
+      } else {
+        parts.push('-');
+        if(b===-1)parts.push('y');else parts.push(texF(Math.abs(b))+'y');
+      }
+    }
+  }
+  return parts.join(' ')+' = '+texF(c);
+}
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){let t=b;b=a%b;a=t}return a}
+
+// ═══════════════════════════════════════════
+// 5. PROBLEM GENERATION
+// ═══════════════════════════════════════════
+function genProb(){
+  for(let tries=0;tries<500;tries++){
+    // Pick integer solution
+    const solX=Math.floor(Math.random()*13)-6; // -6..6
+    const solY=Math.floor(Math.random()*13)-6;
+    if(solX===0&&solY===0)continue; // avoid trivial
+
+    // Generate coefficients
+    let a1,b1,a2,b2;
+    // Decide type: ~40% direct elimination, ~60% needs multiplication
+    const direct=Math.random()<0.4;
+    if(direct){
+      // Make one pair of coefficients opposites
+      if(Math.random()<0.5){
+        // x-coefficients are opposites
+        a1=Math.floor(Math.random()*5)+1;if(Math.random()<0.5)a1=-a1;
+        a2=-a1;
+        b1=Math.floor(Math.random()*9)-4;if(b1===0)b1=1;
+        b2=Math.floor(Math.random()*9)-4;if(b2===0)b2=1;
+        if(b1===b2)b2=b1+1||b1-1;
+      } else {
+        // y-coefficients are opposites
+        b1=Math.floor(Math.random()*5)+1;if(Math.random()<0.5)b1=-b1;
+        b2=-b1;
+        a1=Math.floor(Math.random()*9)-4;if(a1===0)a1=1;
+        a2=Math.floor(Math.random()*9)-4;if(a2===0)a2=1;
+        if(a1===a2)a2=a1+1||a1-1;
+      }
+    } else {
+      // Need multiplication — one variable's coefficients share a simple multiplier
+      a1=Math.floor(Math.random()*7)-3;if(a1===0)a1=1;
+      b1=Math.floor(Math.random()*7)-3;if(b1===0)b1=1;
+      // pick which var to eliminate and the multiplier
+      const m=Math.random()<0.5?2:3;
+      if(Math.random()<0.5){
+        // Multiply eq2's x-coeff to oppose eq1's
+        a2=a1*m*(Math.random()<0.5?1:-1);
+        if(a2===a1||a2===-a1){a2=a1*2} // ensure not already opposites
+        b2=Math.floor(Math.random()*7)-3;if(b2===0)b2=1;
+        // Make sure after mult they become opposites: we'll recompute in the flow
+      } else {
+        b2=b1*m*(Math.random()<0.5?1:-1);
+        if(b2===b1||b2===-b1){b2=b1*2}
+        a2=Math.floor(Math.random()*7)-3;if(a2===0)a2=1;
+      }
+    }
+    // Compute constants
+    const c1=a1*solX+b1*solY;
+    const c2=a2*solX+b2*solY;
+    // Validate: unique solution (det != 0), reasonable values
+    const det=a1*b2-a2*b1;
+    if(det===0)continue;
+    if(Math.abs(c1)>50||Math.abs(c2)>50)continue;
+    if(Math.abs(a1)>8||Math.abs(b1)>8||Math.abs(a2)>8||Math.abs(b2)>8)continue;
+
+    // Determine best elimination variable
+    let bestVar,isDirect;
+    if(a1===-a2){bestVar='x';isDirect=true}
+    else if(b1===-b2){bestVar='y';isDirect=true}
+    else {
+      // Find simplest multiplier
+      isDirect=false;
+      // Check x: can we multiply one eq to make x-coeffs opposites?
+      // Check y similarly, pick the one with smaller multiplier
+      let mX=Infinity,mY=Infinity,eqX=0,eqY=0;
+      // For x: multiply eq2 by (-a1/a2) or eq1 by (-a2/a1)
+      if(a2!==0&&Number.isInteger(a1/a2)){mX=Math.abs(a1/a2);eqX=2}
+      if(a1!==0&&Number.isInteger(a2/a1)){const v=Math.abs(a2/a1);if(v<mX){mX=v;eqX=1}}
+      if(b2!==0&&Number.isInteger(b1/b2)){mY=Math.abs(b1/b2);eqY=2}
+      if(b1!==0&&Number.isInteger(b2/b1)){const v=Math.abs(b2/b1);if(v<mY){mY=v;eqY=1}}
+      if(mX===Infinity&&mY===Infinity)continue; // skip unsolvable by simple mult
+      if(mX<=mY){bestVar='x'}else{bestVar='y'}
+    }
+
+    // Pre-compute elimination details
+    let mEqNum=0,mVal=1;
+    if(!isDirect){
+      if(bestVar==='x'){
+        if(a2!==0&&Number.isInteger(a1/a2)){
+          mEqNum=2;mVal=Math.abs(a1/a2);
+          // sign: we need a2*mVal = -a1
+          if(a1>0&&a2>0)mVal=-mVal;
+          else if(a1<0&&a2<0)mVal=-mVal;
+          // verify: a2*mVal should equal -a1
+          if(a2*mVal!==-a1){mVal=-a1/a2}
+        } else {
+          mEqNum=1;mVal=-a2/a1;
+        }
+      } else {
+        if(b2!==0&&Number.isInteger(b1/b2)){
+          mEqNum=2;mVal=-b1/b2;
+        } else {
+          mEqNum=1;mVal=-b2/b1;
+        }
+      }
+      if(!Number.isInteger(mVal))continue;
+      if(Math.abs(mVal)>6||mVal===0||mVal===1)continue;
+    }
+
+    // Compute post-elimination equation
+    let pa,pb,pc;
+    if(isDirect){
+      // Add eq1+eq2 directly
+      pa=a1+a2;pb=b1+b2;pc=c1+c2;
+    } else {
+      if(mEqNum===1){
+        pa=a1*mVal+a2;pb=b1*mVal+b2;pc=c1*mVal+c2;
+      } else {
+        pa=a1+a2*mVal;pb=b1+b2*mVal;pc=c1+c2*mVal;
+      }
+    }
+    // After elimination, one variable's coefficient should be 0
+    let sv,svCoeff,svConst;
+    if(bestVar==='x'){
+      if(pa!==0)continue; // elimination failed
+      if(pb===0)continue;
+      sv='y';svCoeff=pb;svConst=pc;
+    } else {
+      if(pb!==0)continue;
+      if(pa===0)continue;
+      sv='x';svCoeff=pa;svConst=pc;
+    }
+    const svVal=svConst/svCoeff;
+    if(!Number.isInteger(svVal))continue;
+
+    // Back-substitution
+    const bv=bestVar; // the variable we eliminated = back-sub target
+    let bvVal;
+    if(bv==='x'){
+      // From eq1: a1*x + b1*y = c1 → x = (c1 - b1*svVal) / a1
+      if(a1===0)continue;
+      bvVal=(c1-b1*svVal)/a1;
+    } else {
+      if(b1===0)continue;
+      bvVal=(c1-a1*svVal)/b1;
+    }
+    if(!Number.isInteger(bvVal))continue;
+    // Verify solution matches
+    if(sv==='x'&&svVal!==solX)continue;
+    if(sv==='y'&&svVal!==solY)continue;
+    if(bv==='x'&&bvVal!==solX)continue;
+    if(bv==='y'&&bvVal!==solY)continue;
+
+    return {
+      a1,b1,c1,a2,b2,c2,solX,solY,
+      tx1:texEq(a1,b1,c1),tx2:texEq(a2,b2,c2),
+      bestVar,isDirect,mEqNum,mVal,
+      sv,svCoeff,svConst,svVal,
+      bv,bvVal,
+      // multiplied equation coefficients (for display)
+      ma:isDirect?null:(mEqNum===1?a1*mVal:a2*mVal),
+      mb:isDirect?null:(mEqNum===1?b1*mVal:b2*mVal),
+      mc:isDirect?null:(mEqNum===1?c1*mVal:c2*mVal),
+      pa,pb,pc,
+      res:null
+    };
+  }
+  // fallback: guaranteed simple problem
+  return {a1:1,b1:1,c1:5,a2:1,b2:-1,c2:1,solX:3,solY:2,
+    tx1:texEq(1,1,5),tx2:texEq(1,-1,1),
+    bestVar:'y',isDirect:true,mEqNum:0,mVal:1,
+    sv:'x',svCoeff:2,svConst:6,svVal:3,
+    bv:'y',bvVal:2,
+    ma:null,mb:null,mc:null,pa:2,pb:0,pc:6,res:null};
+}
+
+// ═══════════════════════════════════════════
+// 6. INIT
+// ═══════════════════════════════════════════
+function init(){
+  for(let i=0;i<MAX_PROBS;i++)probs.push(genProb());
+  cpIdx=0;loadProb(0);
+}
+function loadProb(idx){
+  if(probs[idx].res)return;
+  cpIdx=idx;cp=probs[idx];
+  phase='init';
+  elimVar='';elimDirect=false;multEqNum=0;multVal=1;
+  solveVar='';solveVal=0;backVar='';backVal=0;
+  document.getElementById('nextStepBtn').classList.remove('visible');
+  updUI();renderDots();clearChat();
+  renderWorkspace();
+  startFlow();
+}
+function renderEqs(){
+  if(!cp)return;
+  const d=document.getElementById('equationDisplay');
+  d.innerHTML=`
+    <div class="equation-row"><span class="eq-label" style="color:var(--line1-color)">Eq 1</span>
+      <span class="equation-text" style="color:var(--line1-color)">${kx(cp.tx1)}</span></div>
+    <div class="equation-row"><span class="eq-label" style="color:var(--line2-color)">Eq 2</span>
+      <span class="equation-text" style="color:var(--line2-color)">${kx(cp.tx2)}</span></div>`;
+}
+function renderDots(){
+  const c=document.getElementById('progressDots');c.innerHTML='';
+  for(let i=0;i<MAX_PROBS;i++){
+    const d=document.createElement('div');d.className='pdot';d.textContent=i+1;
+    if(probs[i].res==='ok')d.classList.add('done-ok');
+    else if(probs[i].res==='no')d.classList.add('done-no');
+    else if(i===cpIdx)d.classList.add('current');
+    else{d.classList.add('avail');d.onclick=(()=>{const ii=i;return()=>loadProb(ii)})()}
+    c.appendChild(d);
+  }
+  document.getElementById('correctCount').textContent=okCnt;
+  document.getElementById('totalAttempted').textContent=totCnt;
+}
+
+// ═══════════════════════════════════════════
+// 7. CHAT SYSTEM
+// ═══════════════════════════════════════════
+function addT(html){const c=document.getElementById('chatMessages');const d=document.createElement('div');d.className='chat-msg tutor';d.innerHTML=html;c.appendChild(d);c.scrollTop=c.scrollHeight}
+function addS(text){const c=document.getElementById('chatMessages');const d=document.createElement('div');d.className='chat-msg student';d.textContent=text;c.appendChild(d);c.scrollTop=c.scrollHeight}
+function addOk(html){const c=document.getElementById('chatMessages');const d=document.createElement('div');d.className='chat-msg correct-msg';d.innerHTML='✅ '+html;c.appendChild(d);c.scrollTop=c.scrollHeight}
+function addBad(html){const c=document.getElementById('chatMessages');const d=document.createElement('div');d.className='chat-msg incorrect-msg';d.innerHTML='❌ '+html;c.appendChild(d);c.scrollTop=c.scrollHeight}
+function addMC(opts,cb){
+  const c=document.getElementById('chatMessages');
+  const g=document.createElement('div');g.className='mc-group';
+  const labels=['a)','b)','c)','d)'];
+  opts.forEach((o,i)=>{
+    const b=document.createElement('button');b.className='mc-option';
+    b.innerHTML=`<span style="color:var(--accent);font-weight:700;margin-right:8px">${labels[i]}</span>${o.text}`;
+    b.onclick=()=>{
+      g.querySelectorAll('.mc-option').forEach(x=>{x.disabled=true});
+      b.classList.add('selected');
+      addS(opts[i].text.replace(/<[^>]*>/g,''));
+      cb(o.val);
+    };
+    g.appendChild(b);
+  });
+  c.appendChild(g);c.scrollTop=c.scrollHeight;
+}
+function addIn(placeholder,cb,hintKey){
+  const c=document.getElementById('chatMessages');
+  const w=document.createElement('div');w.style.cssText='display:flex;flex-direction:column;gap:0;width:100%';
+  const row=document.createElement('div');row.className='input-row';
+  const inp=document.createElement('input');inp.type='text';inp.className='text-input';inp.placeholder=placeholder;
+  const btn=document.createElement('button');btn.className='submit-btn';btn.textContent=t('hintBtn').includes('Pista')?'Enviar':'Submit';
+  const fire=()=>{
+    const v=inp.value.trim();if(!v)return;
+    inp.disabled=true;btn.disabled=true;
+    if(hb)hb.disabled=true;
+    addS(v);cb(v);
+  };
+  btn.onclick=fire;inp.addEventListener('keydown',e=>{if(e.key==='Enter')fire()});
+  row.appendChild(inp);row.appendChild(btn);w.appendChild(row);
+  let hb=null;
+  if(hintKey){
+    const hr=document.createElement('div');hr.className='hint-row';
+    hb=document.createElement('button');hb.className='hint-btn';hb.textContent=t('hintBtn');
+    let shown=false;
+    hb.onclick=()=>{
+      if(shown)return;shown=true;hb.disabled=true;
+      const hm=document.createElement('div');hm.className='hint-msg';hm.innerHTML=hintKey;
+      w.appendChild(hm);c.scrollTop=c.scrollHeight;
+    };
+    hr.appendChild(hb);w.appendChild(hr);
+  }
+  c.appendChild(w);c.scrollTop=c.scrollHeight;
+  setTimeout(()=>inp.focus(),100);
+}
+function addEqBox(){
+  const c=document.getElementById('chatMessages');const d=document.createElement('div');d.className='chat-msg eq-box';
+  d.innerHTML=`<span style="color:var(--line1-color)">Eq 1: ${kx(cp.tx1)}</span><br><span style="color:var(--line2-color)">Eq 2: ${kx(cp.tx2)}</span>`;
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
+}
+function clearChat(){document.getElementById('chatMessages').innerHTML=''}
+
+// ═══════════════════════════════════════════
+// 8. WORKSPACE
+// ═══════════════════════════════════════════
+function renderWorkspace(){
+  const w=document.getElementById('workspace');
+  if(phase==='init'){
+    w.innerHTML=`<div class="ws-empty">${t('wsEmpty')}</div>`;
+    return;
+  }
+  w.innerHTML='';
+  const steps=[];
+  // Step 1: original system (always shown once past init)
+  steps.push({num:1,html:`${t('wsStep1')}<br><span style="color:var(--line1-color)">${kx(cp.tx1)}</span><br><span style="color:var(--line2-color)">${kx(cp.tx2)}</span>`,
+    done:true,active:phase==='mc'});
+
+  // Step 2: multiply or direct
+  if(phase!=='mc'&&phase!=='init'){
+    if(cp.isDirect){
+      steps.push({num:2,html:t('wsStep2d'),done:true,active:false});
+    } else {
+      const mtx=texEq(cp.ma,cp.mb,cp.mc);
+      steps.push({num:2,html:t('wsStep2m').replace('{n}',cp.mEqNum).replace('{m}',cp.mVal)+'<br>'+
+        (cp.mEqNum===1?`<span style="color:var(--line1-color)">${kx(mtx)}</span>`:`<span style="color:var(--line2-color)">${kx(mtx)}</span>`),
+        done:['add','back','verify','done'].includes(phase),active:phase==='mult'});
+    }
+  }
+
+  // Step 3: add equations
+  if(['add','back','verify','done'].includes(phase)){
+    const elimTex=cp.bestVar==='x'?texF(cp.pb)+`y = `+texF(cp.pc):texF(cp.pa)+`x = `+texF(cp.pc);
+    steps.push({num:3,html:t('wsStep3').replace('{v}',cp.bestVar)+'<br>'+kx(elimTex),
+      done:['back','verify','done'].includes(phase),active:phase==='add'});
+  }
+
+  // Step 4: solve
+  if(['back','verify','done'].includes(phase)){
+    steps.push({num:4,html:t('wsStep4').replace('{v2}',cp.sv).replace('{val}',cp.svVal),
+      done:['verify','done'].includes(phase),active:phase==='back'});
+  }
+
+  // Step 5: back-substitute
+  if(['verify','done'].includes(phase)){
+    steps.push({num:5,html:t('wsStep5').replace('{v1}',cp.bv).replace('{val}',cp.bvVal),
+      done:phase==='done',active:phase==='verify'});
+  }
+
+  // Step 6: solution
+  if(phase==='done'){
+    steps.push({num:6,html:t('wsStep6').replace('{x}',cp.solX).replace('{y}',cp.solY),done:true,active:false});
+  }
+
+  steps.forEach(s=>{
+    const d=document.createElement('div');
+    d.className='ws-step'+(s.active?' active':'')+(s.done&&!s.active?' completed':'');
+    d.innerHTML=`<div class="ws-step-num">${s.num}</div><div class="ws-step-content">${s.html}</div>`;
+    w.appendChild(d);
+  });
+}
+
+// ═══════════════════════════════════════════
+// 9. SOCRATIC FLOW
+// ═══════════════════════════════════════════
+function startFlow(){
+  addT(t('welcome'));
+  addEqBox();
+  phase='mc';
+  renderWorkspace();
+  askMC();
+}
+
+function askMC(){
+  addT(t('mcQ'));
+  // Build MC options based on problem type
+  const opts=[];
+  if(cp.isDirect){
+    if(cp.bestVar==='x'){
+      opts.push({text:t('mcXDirect'),val:'x'});
+      opts.push({text:t('mcYMult'),val:'y'});
+    } else {
+      opts.push({text:t('mcYDirect'),val:'y'});
+      opts.push({text:t('mcXMult'),val:'x'});
+    }
+  } else {
+    if(cp.bestVar==='x'){
+      opts.push({text:t('mcXMult'),val:'x'});
+      opts.push({text:t('mcYMult'),val:'y'});
+    } else {
+      opts.push({text:t('mcYMult'),val:'y'});
+      opts.push({text:t('mcXMult'),val:'x'});
+    }
+  }
+  // Shuffle so correct isn't always first
+  if(Math.random()<0.5)opts.reverse();
+  addMC(opts,handleMC);
+}
+
+function handleMC(val){
+  elimVar=val;
+  const isCorrect=val===cp.bestVar;
+  if(isCorrect){
+    const c1=cp.bestVar==='x'?cp.a1:cp.b1;
+    const c2=cp.bestVar==='x'?cp.a2:cp.b2;
+    if(cp.isDirect){
+      addOk(t('okDirect').replace(/{v}/g,cp.bestVar).replace('{c1}',c1).replace('{c2}',c2));
+      phase='add';
+    } else {
+      addOk(t('okMult').replace(/{v}/g,cp.bestVar));
+      phase='mult';
+    }
+  } else {
+    // Wrong variable chosen
+    const c1=cp.bestVar==='x'?cp.a1:cp.b1;
+    const c2=cp.bestVar==='x'?cp.a2:cp.b2;
+    addBad(t('badVar').replace(/{v}/g,cp.bestVar).replace('{c1}',c1).replace('{c2}',c2));
+    elimVar=cp.bestVar;
+    if(cp.isDirect){phase='add'}else{phase='mult'}
+  }
+  renderWorkspace();
+  if(phase==='mult')askMult();
+  else askAdd();
+}
+
+function askMult(){
+  addT(t('multQ').replace('{eqNum}',cp.mEqNum).replace(/{v}/g,cp.bestVar));
+  const cTarget=cp.mEqNum===1?(cp.bestVar==='x'?cp.a1:cp.b1):(cp.bestVar==='x'?cp.a2:cp.b2);
+  const cNeed=cp.mEqNum===1?(cp.bestVar==='x'?-cp.a2:-cp.b2):(cp.bestVar==='x'?-cp.a1:-cp.b1);
+  const hintText=t('multHint').replace(/{v}/g,cp.bestVar)
+    .replace('{c1}',cp.bestVar==='x'?cp.a1:cp.b1)
+    .replace('{c2}',cp.bestVar==='x'?cp.a2:cp.b2)
+    .replace('{eqNum}',cp.mEqNum)
+    .replace('{c_target}',cTarget).replace('{c_need}',cNeed);
+  addIn('e.g. -2',handleMult,hintText);
+}
+
+function handleMult(val){
+  const n=parseNum(val);
+  if(Math.abs(n-cp.mVal)<0.01){
+    addOk(t('okMultAns').replace('{eqNum}',cp.mEqNum).replace('{m}',cp.mVal).replace(/{v}/g,cp.bestVar));
+    phase='add';
+    renderWorkspace();
+    askAdd();
+  } else {
+    const cTarget=cp.mEqNum===1?(cp.bestVar==='x'?cp.a1:cp.b1):(cp.bestVar==='x'?cp.a2:cp.b2);
+    const cNeed=cp.mEqNum===1?(cp.bestVar==='x'?-cp.a2:-cp.b2):(cp.bestVar==='x'?-cp.a1:-cp.b1);
+    addBad(t('badMultAns').replace('{c_target}',cTarget).replace('{c_need}',cNeed).replace('{m}',cp.mVal));
+    phase='add';
+    renderWorkspace();
+    askAdd();
+  }
+}
+
+function askAdd(){
+  addT(t('addQ').replace(/{v}/g,cp.bestVar).replace('{v2}',cp.sv));
+  const combinedTex=cp.sv==='x'?texF(cp.pa)+'x = '+texF(cp.pc):texF(cp.pb)+'y = '+texF(cp.pc);
+  const hintText=t('addHint').replace(/{v}/g,cp.bestVar).replace('{v2}',cp.sv).replace('{combined}',kx(combinedTex));
+  addIn('e.g. 3',handleAdd,hintText);
+}
+
+function handleAdd(val){
+  const n=parseNum(val);
+  if(Math.abs(n-cp.svVal)<0.01){
+    addOk(t('okAdd').replace('{v2}',cp.sv).replace('{val}',cp.svVal));
+    solveVar=cp.sv;solveVal=cp.svVal;
+    phase='back';
+    renderWorkspace();
+    askBack();
+  } else if(Math.abs(n+cp.svVal)<0.01){
+    // Sign error
+    addBad(t('badAddSign').replace('{v2}',cp.sv).replace('{val}',cp.svVal));
+    solveVar=cp.sv;solveVal=cp.svVal;
+    phase='back';renderWorkspace();askBack();
+  } else {
+    const combinedTex=cp.sv==='x'?texF(cp.pa)+'x = '+texF(cp.pc):texF(cp.pb)+'y = '+texF(cp.pc);
+    addBad(t('badAdd').replace('{v2}',cp.sv).replace('{val}',cp.svVal)
+      .replace('{detail}','After adding, you get '+kx(combinedTex)+'.'));
+    solveVar=cp.sv;solveVal=cp.svVal;
+    phase='back';renderWorkspace();askBack();
+  }
+}
+
+function askBack(){
+  const v2=cp.sv,val2=cp.svVal,v1=cp.bv;
+  addT(t('backQ').replace('{v2}',v2).replace('{val2}',val2).replace('{v1}',v1));
+  const eq1Tex=kx(cp.tx1);
+  let subTex;
+  if(v2==='y'){
+    subTex=kx(texF(cp.a1)+'x + '+texF(cp.b1)+'('+texF(val2)+') = '+texF(cp.c1));
+  } else {
+    subTex=kx(texF(cp.a1)+'('+texF(val2)+') + '+texF(cp.b1)+'y = '+texF(cp.c1));
+  }
+  const hintText=t('backHint').replace('{v2}',v2).replace(/{val2}/g,val2).replace('{eq1}',eq1Tex).replace('{v1}',v1).replace('{sub}',subTex);
+  addIn('e.g. -1',handleBack,hintText);
+}
+
+function handleBack(val){
+  const n=parseNum(val);
+  const v1=cp.bv,val1=cp.bvVal;
+  if(Math.abs(n-val1)<0.01){
+    addOk(t('okBack').replace('{v1}',v1).replace('{val1}',val1).replace('{solX}',cp.solX).replace('{solY}',cp.solY));
+    backVar=v1;backVal=val1;
+    phase='verify';renderWorkspace();askVerify();
+  } else {
+    let detail='';
+    if(Math.abs(n+val1)<0.01)detail='Watch the sign! ';
+    addBad(t('badBack').replace('{v1}',v1).replace('{val1}',val1).replace('{detail}',detail));
+    backVar=v1;backVal=val1;
+    phase='verify';renderWorkspace();askVerify();
+  }
+}
+
+function askVerify(){
+  // Substitute solution into eq2
+  const lhs=cp.a2*cp.solX+cp.b2*cp.solY;
+  const eq2sub=kx(texF(cp.a2)+'('+texF(cp.solX)+') + '+texF(cp.b2)+'('+texF(cp.solY)+') = '+texF(cp.c2));
+  addT(t('verifyQ').replace('{solX}',cp.solX).replace('{solY}',cp.solY).replace('{eq2sub}',eq2sub));
+  addMC([
+    {text:t('verifyYes'),val:'yes'},
+    {text:t('verifyNo'),val:'no'}
+  ],handleVerify);
+}
+
+function handleVerify(val){
+  const lhs=cp.a2*cp.solX+cp.b2*cp.solY;
+  const rhs=cp.c2;
+  if(val==='yes'){
+    addOk(t('okVerify').replace('{lhs}',kx(texF(lhs))).replace('{rhs}',kx(texF(rhs)))
+      .replace('{solX}',cp.solX).replace('{solY}',cp.solY));
+    phase='done';renderWorkspace();
+    probDone(true);
+  } else {
+    addBad(t('badVerify').replace('{lhs}',kx(texF(lhs))).replace('{rhs}',kx(texF(rhs)))
+      .replace('{solX}',cp.solX).replace('{solY}',cp.solY));
+    phase='done';renderWorkspace();
+    probDone(false);
+  }
+}
+
+// ═══════════════════════════════════════════
+// 10. PROGRESS & MILESTONE
+// ═══════════════════════════════════════════
+function probDone(ok){
+  cp.res=ok?'ok':'no';
+  if(ok)okCnt++;
+  totCnt++;
+  renderDots();
+  if(okCnt>=2&&!challengeComplete){
+    setTimeout(showMilestone,1000);
+  } else {
+    const next=probs.findIndex((p,i)=>!p.res&&i!==cpIdx);
+    if(next!==-1)document.getElementById('nextStepBtn').classList.add('visible');
+  }
+}
+
+function showMilestone(){
+  const mo=document.getElementById('modalOverlay');
+  document.getElementById('modalTitle').textContent=t('modalComplete');
+  document.getElementById('modalScore').textContent=okCnt+' / '+totCnt;
+  document.getElementById('modalText').textContent=t('modalText');
+  const btns=document.getElementById('modalBtns');btns.innerHTML='';
+  const remaining=probs.filter(p=>!p.res).length;
+  if(challengeComplete){
+    // Already completed before — show finish only
+    const b=document.createElement('button');b.className='modal-btn primary';b.textContent=t('modalFinish');
+    b.onclick=()=>{mo.classList.remove('visible')};
+    btns.appendChild(b);
+  } else {
+    const b1=document.createElement('button');b1.className='modal-btn primary';b1.textContent=t('modalMoveOn');
+    b1.onclick=()=>{challengeComplete=true;mo.classList.remove('visible')};
+    btns.appendChild(b1);
+    if(remaining>0){
+      const b2=document.createElement('button');b2.className='modal-btn secondary';b2.textContent=t('modalPractice');
+      b2.onclick=()=>{
+        practiceMode=true;mo.classList.remove('visible');
+        const next=probs.findIndex(p=>!p.res);
+        if(next!==-1)document.getElementById('nextStepBtn').classList.add('visible');
+      };
+      btns.appendChild(b2);
+    }
+  }
+  mo.classList.add('visible');
+}
+
+// ═══════════════════════════════════════════
+// 11. NAVIGATION
+// ═══════════════════════════════════════════
+function goNext(){
+  const next=probs.findIndex((p,i)=>!p.res&&i!==cpIdx);
+  if(next!==-1)loadProb(next);
+}
+
+// ═══════════════════════════════════════════
+// 12. LANGUAGE REPLAY
+// ═══════════════════════════════════════════
+function replayChat(){
+  clearChat();
+  if(!cp)return;
+  // Replay based on current phase
+  addT(t('welcome'));
+  addEqBox();
+  if(phase==='init'||phase==='mc'){
+    if(phase==='mc')askMC();
+    return;
+  }
+  // Past mc — show that variable was identified
+  const c1v=cp.bestVar==='x'?cp.a1:cp.b1;
+  const c2v=cp.bestVar==='x'?cp.a2:cp.b2;
+  if(cp.isDirect){
+    addOk(t('okDirect').replace(/{v}/g,cp.bestVar).replace('{c1}',c1v).replace('{c2}',c2v));
+  } else {
+    addOk(t('okMult').replace(/{v}/g,cp.bestVar));
+  }
+  if(phase==='mult'){askMult();return}
+  if(!cp.isDirect){
+    addOk(t('okMultAns').replace('{eqNum}',cp.mEqNum).replace('{m}',cp.mVal).replace(/{v}/g,cp.bestVar));
+  }
+  if(phase==='add'){askAdd();return}
+  addOk(t('okAdd').replace('{v2}',cp.sv).replace('{val}',cp.svVal));
+  if(phase==='back'){askBack();return}
+  addOk(t('okBack').replace('{v1}',cp.bv).replace('{val1}',cp.bvVal).replace('{solX}',cp.solX).replace('{solY}',cp.solY));
+  if(phase==='verify'){askVerify();return}
+  if(phase==='done'){
+    const lhs=cp.a2*cp.solX+cp.b2*cp.solY;
+    addOk(t('okVerify').replace('{lhs}',kx(texF(lhs))).replace('{rhs}',kx(texF(cp.c2)))
+      .replace('{solX}',cp.solX).replace('{solY}',cp.solY));
+  }
+}
+
+// ═══════════════════════════════════════════
+// 13. INIT CALL
+// ═══════════════════════════════════════════
+window.addEventListener('load',init);
+</script>
+</body>
+</html>
