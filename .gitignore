@@ -1,0 +1,19 @@
+# macOS system files
+.DS_Store
+.localized
+
+# Claude tool settings
+.claude/
+
+# Node.js dependencies
+node_modules/
+
+# Video/proxy files (too large for GitHub - store on external drive)
+Extreme SSD/
+
+# Systems Activities has its own separate GitHub repo:
+# github.com/elizalvarado-dotcom/Ms.Alvarado
+Systems Activities/
+
+# Apple iCloud placeholder stubs
+*.icloud
