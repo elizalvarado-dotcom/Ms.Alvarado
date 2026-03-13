@@ -1,1 +1,41 @@
-rules_version = "2"; service cloud.firestore { match /databases/{database}/documents { match /{document=**} {allow read, write: if true; } } }
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── drafts/{assignmentId}_{studentId} ─────────────────────────────────
+    match /drafts/{docId} {
+      allow read: if request.auth != null
+                  && resource.data.userEmail == request.auth.token.email;
+
+      allow write: if request.auth != null
+                   && request.resource.data.userEmail == request.auth.token.email;
+    }
+
+    // ── submissions/{assignmentId}_{studentId} ─────────────────────────────
+    match /submissions/{docId} {
+      allow get: if request.auth != null
+                 && resource.data.userEmail == request.auth.token.email;
+
+      allow create: if request.auth != null
+                    && request.resource.data.userEmail == request.auth.token.email;
+
+      allow update, delete: if false;
+    }
+
+    // ── scores/{activity}_{email} ──────────────────────────────────────────
+    // Students write their own scores; any signed-in user (teacher) can read all.
+    match /scores/{docId} {
+      // Any authenticated user can read scores (teacher dashboard)
+      allow read: if request.auth != null;
+
+      // Students can only create/update their own score row
+      allow write: if request.auth != null
+                   && request.resource.data.email == request.auth.token.email;
+    }
+
+    // Block everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

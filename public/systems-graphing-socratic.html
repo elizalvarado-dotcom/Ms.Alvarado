@@ -833,11 +833,11 @@ startEq:"\u{1F4CC} <strong style='color:{c}'>{lbl}: {eq}</strong>",
 askB:"<strong>Step 1 \u2014 y-intercept:</strong> What is b? (the constant in y = mx + <u>b</u>)",
 okB:"\u2705 b = <strong>{b}</strong> \u2192 the line crosses the y-axis at <strong>(0, {b})</strong>. Plot it on the graph!",
 badB:"Not quite. b is the constant at the end of y = mx + b (the number without x).",
-badBsign:"Almost! Watch the sign. b = <strong>{b}</strong>, not {w}.",
+badBsign:"Almost! Watch the sign on b — check whether it should be positive or negative.",
 askM:"<strong>Step 2 \u2014 slope:</strong> What is m? (the coefficient of x in y = <u>m</u>x + b)",
 okM:"\u2705 m = <strong>{m}</strong>!",
 badM:"Not quite. m is the number multiplied by x.",
-badMsign:"Almost! Watch the sign. m = <strong>{m}</strong>, not {w}.",
+badMsign:"Almost! Watch the sign on m — check whether the slope should be positive or negative.",
 rise:"<strong>Step 3 \u2014 Rise/Run:</strong> slope {m} = <strong>rise {r} / run {n}</strong>. From (0, {b}): go <strong>{rd} {ra}</strong> then <strong>{ud} {ua}</strong>. Plot your second point!",
 up:"up",down:"down",right:"right",
 lineOk:"\u2713 That line is correct!",lineBad:"That line isn't right. Check your y-intercept and rise/run. Use Undo or Erase to fix.",
@@ -853,6 +853,7 @@ enterB:"Enter b:",enterM:"Enter m (e.g. -2/3):",
 hintBtn:"\u{1F4A1} Nudge",hintB:"Hint: b is the number at the very end of y = mx + b (no x attached).",
 hintM:"Hint: m is the number right in front of x in y = mx + b.",hintConv:"Hint: isolate y by moving the x-term first, then divide.",
 hintInt:"Hint: look at the exact grid point where both colored lines cross.",
+hintStrat:"Look at both equations — if y is already alone on one side (y = ...), you can graph directly. If not, convert to slope-intercept form first.",
 modalComplete:"\u{1F389} Nice work!",
 modalMoveOn:"\u{1F680} Move on to Substitution Method",modalPractice:"\u{1F4DD} Keep Practicing",
 modalFinish:"\u2705 Complete Challenge & Continue",
@@ -893,11 +894,11 @@ startEq:"\u{1F4CC} <strong style='color:{c}'>{lbl}: {eq}</strong>",
 askB:"<strong>Paso 1 \u2014 intercepto en y:</strong> \u00bfCu\u00e1l es b? (la constante en y = mx + <u>b</u>)",
 okB:"\u2705 b = <strong>{b}</strong> \u2192 cruza el eje y en <strong>(0, {b})</strong>. \u00a1Graf\u00edcalo!",
 badB:"No exactamente. b es la constante al final de y = mx + b.",
-badBsign:"\u00a1Casi! F\u00edjate en el signo. b = <strong>{b}</strong>, no {w}.",
+badBsign:"\u00a1Casi! Fíjate en el signo de b — verifica si debe ser positivo o negativo.",
 askM:"<strong>Paso 2 \u2014 pendiente:</strong> \u00bfCu\u00e1l es m? (coeficiente de x en y = <u>m</u>x + b)",
 okM:"\u2705 m = <strong>{m}</strong>!",
 badM:"No exactamente. m es el n\u00famero que multiplica a x.",
-badMsign:"\u00a1Casi! F\u00edjate en el signo. m = <strong>{m}</strong>, no {w}.",
+badMsign:"\u00a1Casi! Fíjate en el signo de m — verifica si la pendiente debe ser positiva o negativa.",
 rise:"<strong>Paso 3 \u2014 Subida/Corrida:</strong> pendiente {m} = <strong>sube {r} / corre {n}</strong>. Desde (0, {b}): <strong>{rd} {ra}</strong> luego <strong>{ud} {ua}</strong>. \u00a1Grafica el segundo punto!",
 up:"arriba",down:"abajo",right:"a la derecha",
 lineOk:"\u2713 \u00a1L\u00ednea correcta!",lineBad:"Esa l\u00ednea no es correcta. Verifica intercepto y subida/corrida.",
@@ -913,12 +914,18 @@ enterB:"Escribe b:",enterM:"Escribe m (ej. -2/3):",
 hintBtn:"\u{1F4A1} Pista",hintB:"Pista: b es el n\u00famero al final de y = mx + b (sin x).",
 hintM:"Pista: m es el n\u00famero justo antes de x en y = mx + b.",hintConv:"Pista: a\u00edsla y moviendo el t\u00e9rmino x primero, luego divide.",
 hintInt:"Pista: busca el punto exacto donde ambas l\u00edneas de colores se cruzan.",
+hintStrat:"Mira ambas ecuaciones \u2014 si y ya est\u00e1 sola en un lado (y = ...), puedes graficar directo. Si no, convi\u00e9rtela a la forma pendiente-intercepto.",
 modalComplete:"\u{1F389} \u00a1Buen trabajo!",
 modalMoveOn:"\u{1F680} Continuar a Sustituci\u00f3n",modalPractice:"\u{1F4DD} Seguir Practicando",
 modalFinish:"\u2705 Completar Reto y Continuar",
 modalPracticeMore:"Puedes hacer clic en un problema incompleto arriba, o terminar el reto:",
 }};
 function t(k){return L[lang][k]||L.en[k]||k}
+
+// ===== AUTOSAVE =====
+const SAVE_KEY='sys-graphing-v1';
+function saveProgress(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({okCnt,totCnt,challengeComplete,results:probs.map(p=>p.res)}));}catch(e){}}
+function loadSaved(){try{const d=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(!d)return false;if(d.challengeComplete){localStorage.removeItem(SAVE_KEY);return false;}okCnt=d.okCnt||0;totCnt=d.totCnt||0;if(d.results&&d.results.length===MAX_PROBS){d.results.forEach((r,i)=>{if(probs[i])probs[i].res=r;});}return true;}catch(e){return false;}}
 
 // ===== STATE =====
 const MAX_PROBS=4;
@@ -1005,14 +1012,16 @@ function genProb(forceType){
   if(forceType==='std'){f1='std';f2='si'}
   else if(forceType==='si'){f1='si';f2='si'}
   else{f1=Math.random()<.6?'std':'si';f2='si'}
-  return{m1,b1,m2,b2,f1,f2,hasSt:f1==='std',sol:{x:ix,y:iy},
+  // y=b (m=0) and x=c (vertical) are already in simple form — no conversion needed
+  if(f1==='std'&&m1===0) f1='si';
+  return{m1,b1,m2,b2,f1,f2,hasSt:f1==='std'&&m1!==0&&m2!==0,sol:{x:ix,y:iy},
     d1:fmtEq(m1,b1,f1),d2:fmtEq(m2,b2,f2),si1:fmtSI(m1,b1),si2:fmtSI(m2,b2),
     tx1:texEq(m1,b1,f1),tx2:texEq(m2,b2,f2),txSI1:texSI(m1,b1),txSI2:texSI(m2,b2),
     res:null}
 }
 
 // ===== INIT =====
-function init(){for(let i=0;i<MAX_PROBS;i++)probs.push(genProb());cpIdx=0;loadProb(0);setupCanvas()}
+function init(){for(let i=0;i<MAX_PROBS;i++)probs.push(genProb());loadSaved();let si=probs.findIndex(p=>!p.res);if(si===-1){probs.forEach(p=>p.res=null);okCnt=0;totCnt=0;si=0;}cpIdx=si;loadProb(si);setupCanvas()}
 function loadProb(idx){
   if(probs[idx].res)return; // already done
   cpIdx=idx;cp=probs[idx];sStep=0;phase='init';selLn=1;eraseMode=false;
@@ -1048,11 +1057,15 @@ function addBad(h){const c=document.getElementById('chatMessages'),d=document.cr
 function addEqBox(){const c=document.getElementById('chatMessages'),d=document.createElement('div');d.className='chat-msg eq-box';
   d.innerHTML=`<span style="color:var(--line1-color)">${t('eq1')}: ${kx(cp.tx1)}</span><br><span style="color:var(--line2-color)">${t('eq2')}: ${kx(cp.tx2)}</span>`;
   c.appendChild(d);c.scrollTop=c.scrollHeight}
-function addMC(opts,cb){const c=document.getElementById('chatMessages'),w=document.createElement('div');w.className='mc-options';
-  const lbl=['a)','b)','c)','d)'];
+function addMC(opts,cb,hintKey){const c=document.getElementById('chatMessages'),wrap=document.createElement('div');
+  const w=document.createElement('div');w.className='mc-options';
+  const lbl=['a)','b)','c)','d)'];let hb=null;
   opts.forEach((o,i)=>{const b=document.createElement('button');b.className='mc-option';b.textContent=(lbl[i]||'')+' '+o.text;
-    b.onclick=()=>{w.querySelectorAll('.mc-option').forEach(x=>x.disabled=true);b.classList.add('selected');cb(o.val)};w.appendChild(b)});
-  c.appendChild(w);c.scrollTop=c.scrollHeight}
+    b.onclick=()=>{w.querySelectorAll('.mc-option').forEach(x=>x.disabled=true);b.classList.add('selected');if(hb)hb.disabled=true;cb(o.val)};w.appendChild(b)});
+  wrap.appendChild(w);
+  if(hintKey){hb=document.createElement('button');hb.className='hint-btn';hb.textContent=t('hintBtn');
+    hb.onclick=()=>{hb.disabled=true;addT(t(hintKey))};wrap.appendChild(hb)}
+  c.appendChild(wrap);c.scrollTop=c.scrollHeight}
 function addIn(ph,cb,hintKey){
   const c=document.getElementById('chatMessages'),wrap=document.createElement('div');
   const row=document.createElement('div');row.className='input-row';
@@ -1075,7 +1088,7 @@ function startFlow(){
 function showMC(){
   let opts=[{text:t('mcA'),val:'A'},{text:t('mcB'),val:'B'},{text:t('mcC'),val:'C'},{text:t('mcD'),val:'D'}];
   opts.sort((a,b)=>a.text.localeCompare(b.text));
-  addMC(opts,handleMC);
+  addMC(opts,handleMC,'hintStrat');
 }
 function handleMC(v){
   if(cp.hasSt){ // One is standard form — correct = A (convert)
@@ -1097,14 +1110,14 @@ function startConv(){
   addMC([{text:t('convAnsY'),val:'y'},{text:t('convAnsX'),val:'x'},{text:t('convAnsB'),val:'b'},{text:t('convAnsM'),val:'m'}].sort((a,b)=>a.text.localeCompare(b.text)),v=>{
     if(v==='y'){addS('y');addOk(t('okIsolateY'));setTimeout(convS2,400)}
     else{addS(v);addBad(t('badIsolateY'));setTimeout(startConv,300)}
-  });
+  },'hintConv');
 }
 function convS2(){
   addT(t('convStep2').replace('{eq}',kx(cp.tx1)));
   addMC([{text:t('convMoveX'),val:'move'},{text:t('convDivY'),val:'div'},{text:t('convMulY'),val:'mul'}].sort((a,b)=>a.text.localeCompare(b.text)),v=>{
     if(v==='move'){addS(t('convMoveX'));addOk(t('okConvMove'));setTimeout(convS3,400)}
     else{addS(v==='div'?t('convDivY'):t('convMulY'));addBad(t('badConvMove'));setTimeout(convS2,300)}
-  });
+  },'hintConv');
 }
 function convS3(){
   const mid=midForm(cp.m1,cp.b1);
@@ -1112,7 +1125,7 @@ function convS3(){
   addMC([{text:t('convDivY'),val:'div'},{text:t('convMoveX'),val:'move'},{text:t('convMulY'),val:'mul'}].sort((a,b)=>a.text.localeCompare(b.text)),v=>{
     if(v==='div'){addS(t('convDivY'));addOk(t('okConvDiv'));setTimeout(convDone,400)}
     else{addS(v==='move'?t('convMoveX'):t('convMulY'));addBad(t('badConvDiv'));setTimeout(convS3,300)}
-  });
+  },'hintConv');
 }
 function convDone(){
   addOk(t('convDone').replace('{si}',kx(cp.txSI1)));
@@ -1201,7 +1214,8 @@ function askInt(){
   },'hintInt');
 }
 function probDone(ok){
-  cp.res=ok?'ok':'no';if(ok)okCnt++;totCnt++;renderDots();
+  cp.res=ok?'ok':'no';if(ok)okCnt++;totCnt++;renderDots();saveProgress();
+  window.parent.postMessage({ type: 'scoreUpdate', from: 'graphing', score: okCnt, total: MAX_PROBS }, '*');
   // Check if we should show milestone (completed 2+ correctly)
   if(okCnt>=2){setTimeout(showMilestone,1000)}
   else{
@@ -1211,29 +1225,14 @@ function probDone(ok){
   }
 }
 
-// ===== MILESTONE MODAL =====
+// ===== MILESTONE =====
 function showMilestone(){
-  const modal=document.getElementById('milestoneModal');
-  document.getElementById('modalTitle').textContent=t('modalComplete');
-  const remaining=probs.filter(p=>!p.res).length;
-  if(remaining>0){
-    document.getElementById('modalText').textContent=`${okCnt}/${totCnt} correct! ${remaining} problem${remaining>1?'s':''} remaining.`;
-  } else {
-    document.getElementById('modalText').textContent=`${okCnt}/${totCnt} correct! All problems completed.`;
-  }
-  const btns=document.getElementById('modalButtons');btns.innerHTML='';
-  // Always show "Move on" button
-  const b1=document.createElement('button');b1.className='modal-btn primary';b1.textContent=t('modalMoveOn');
-  b1.onclick=()=>{modal.classList.remove('visible');challengeComplete=true;
-    addT(lang==='es'?'\u{1F680} \u00a1Avanzando al M\u00e9todo de Sustituci\u00f3n!':'\u{1F680} Moving on to the Substitution Method!')};
-  btns.appendChild(b1);
-  // Show practice button if there are remaining problems
-  if(remaining>0){
-    const b2=document.createElement('button');b2.className='modal-btn secondary';b2.textContent=t('modalPractice');
-    b2.onclick=()=>{modal.classList.remove('visible');practiceMode=true;showPracticeUI()};
-    btns.appendChild(b2);
-  }
-  modal.classList.add('visible');
+  challengeComplete=true;
+  saveProgress();
+  addT(lang==='es'
+    ?'🎉 ¡Excelente! Completaste el reto de Graficación. Avanzando al Método de Sustitución...'
+    :'🎉 Great work! You completed the Graphing challenge. Moving to Substitution...');
+  setTimeout(()=>{window.parent.postMessage({type:'nextActivity',from:'graphing'},'*');},2000);
 }
 function showPracticeUI(){
   addT(t('modalPracticeMore'));

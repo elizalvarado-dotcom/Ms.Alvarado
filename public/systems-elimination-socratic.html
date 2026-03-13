@@ -199,23 +199,25 @@ okDirect:"The {v}-coefficients are already opposites ({c1} and {c2}), so we can 
 okMult:"We can multiply one equation to make the {v}-coefficients cancel.",
 badVar:"Not quite — look again at the coefficients. The {v}-coefficients ({c1} and {c2}) are the ones we can cancel most easily.",
 multQ:"What should we multiply Equation {eqNum} by so the {v}-coefficients cancel?",
-multHint:"Eq1 has {v}-coefficient {c1}, Eq2 has {c2}. We need them to be opposites. What multiplier for Eq{eqNum} makes {c_target} become {c_need}?",
+multHint:"Eq1 has {v}-coefficient {c1}, Eq2 has {c2}. What number multiplied by {c_target} gives the opposite of the other {v}-coefficient?",
 okMultAns:"Multiplying Equation {eqNum} by {m} gives {v}-coefficients that cancel!",
-badMultAns:"Not quite. We need {c_target} × (?) = {c_need}. The answer is {m}.",
+badMultAns:"Not quite — let's see the result and keep going.",
 addQ:"Now add the equations. After {v} cancels, what value do you get for {v2}?",
 addHint:"When you add the equations, {v} cancels. You get: {combined}. Divide both sides to solve for {v2}.",
 okAdd:"{v2} = {val}. Nice work!",
-badAddSign:"Watch the sign — you got the right magnitude but wrong sign. {v2} = {val}.",
-badAdd:"The correct value is {v2} = {val}. {detail}",
+badAddSign:"Watch the sign — you got the right magnitude but the sign needs checking. Is the result positive or negative?",
+badAdd:"Not quite. Check your addition carefully — add the coefficients of each variable separately.",
 backQ:"Now substitute {v2} = {val2} back into Equation 1 to find {v1}. What is {v1}?",
 backHint:"Plug {v2} = {val2} into {eq1}. Simplify and solve for {v1}.",
 okBack:"{v1} = {val1}. The solution is ({solX}, {solY})!",
-badBack:"Not quite. {detail} So {v1} = {val1}.",
+badBack:"Not quite. Plug the value back in carefully and simplify step by step.",
 verifyQ:"Let's verify — substitute ({solX}, {solY}) into Equation 2:<br>{eq2sub}<br>Does it check out?",
 verifyYes:"Yes, both sides are equal",verifyNo:"No, it doesn't work",
 okVerify:"It checks out! {lhs} = {rhs}. You solved the system using elimination!",
 badVerify:"Actually, it <em>does</em> check out! {lhs} = {rhs}. The solution ({solX}, {solY}) is correct!",
 hintBtn:"💡 Nudge",
+mcHint:"Look at the coefficients — if one variable's coefficients are already opposites (like +3 and −3), add directly. Otherwise, pick the variable that's easiest to cancel.",
+verifyHint:"Substitute both x and y values into Equation 2 and compare both sides — are they equal?",
 modalComplete:"🎉 Nice work!",modalText:"You've shown strong understanding of the elimination method.",
 modalMoveOn:"🚀 Continue",modalPractice:"📝 Keep Practicing",modalFinish:"✅ Complete & Continue",
 modalPracticeMore:"Click any incomplete dot above, or finish:",
@@ -233,23 +235,25 @@ okDirect:"¡Los coeficientes de {v} ya son opuestos ({c1} y {c2}), podemos sumar
 okMult:"Podemos multiplicar una ecuación para que los coeficientes de {v} se cancelen.",
 badVar:"No exactamente — mira los coeficientes. Los de {v} ({c1} y {c2}) son los que podemos cancelar más fácil.",
 multQ:"¿Por cuánto multiplicamos la Ecuación {eqNum} para que los coeficientes de {v} se cancelen?",
-multHint:"Ec1 tiene coeficiente de {v}: {c1}, Ec2 tiene {c2}. Necesitamos que sean opuestos. ¿Qué multiplicador para Ec{eqNum} convierte {c_target} en {c_need}?",
+multHint:"Ec1 tiene coeficiente de {v}: {c1}, Ec2 tiene {c2}. ¿Qué número multiplicado por {c_target} da el opuesto del otro coeficiente de {v}?",
 okMultAns:"¡Multiplicar la Ecuación {eqNum} por {m} da coeficientes opuestos de {v}!",
-badMultAns:"No exactamente. Necesitamos {c_target} × (?) = {c_need}. La respuesta es {m}.",
+badMultAns:"No exactamente — veamos el resultado y continuemos.",
 addQ:"Suma las ecuaciones. Cuando {v} se cancela, ¿qué valor obtienes para {v2}?",
 addHint:"Al sumar, {v} se cancela. Obtienes: {combined}. Divide ambos lados para despejar {v2}.",
 okAdd:"¡{v2} = {val}. ¡Buen trabajo!",
-badAddSign:"Cuidado con el signo — magnitud correcta pero signo incorrecto. {v2} = {val}.",
-badAdd:"El valor correcto es {v2} = {val}. {detail}",
+badAddSign:"Cuidado con el signo — tienes la magnitud correcta pero el signo necesita verificarse. ¿Es positivo o negativo?",
+badAdd:"No exactamente. Revisa tu suma con cuidado — suma los coeficientes de cada variable por separado.",
 backQ:"Sustituye {v2} = {val2} en la Ecuación 1 para encontrar {v1}. ¿Cuánto es {v1}?",
 backHint:"Sustituye {v2} = {val2} en {eq1}. Simplifica y resuelve para {v1}.",
 okBack:"¡{v1} = {val1}. La solución es ({solX}, {solY})!",
-badBack:"No exactamente. {detail} Entonces {v1} = {val1}.",
+badBack:"No exactamente. Sustituye el valor con cuidado y simplifica paso a paso.",
 verifyQ:"Verifiquemos — sustituye ({solX}, {solY}) en la Ecuación 2:<br>{eq2sub}<br>¿Se cumple?",
 verifyYes:"Sí, ambos lados son iguales",verifyNo:"No, no funciona",
 okVerify:"¡Se cumple! {lhs} = {rhs}. ¡Resolviste el sistema con eliminación!",
 badVerify:"En realidad, ¡sí se cumple! {lhs} = {rhs}. La solución ({solX}, {solY}) es correcta.",
 hintBtn:"💡 Pista",
+mcHint:"Mira los coeficientes — si los de una variable ya son opuestos (como +3 y −3), suma directo. Si no, elige la variable más fácil de cancelar.",
+verifyHint:"Sustituye los valores de x e y en la Ecuación 2 y compara ambos lados — ¿son iguales?",
 modalComplete:"🎉 ¡Buen trabajo!",modalText:"Has demostrado buen dominio del método de eliminación.",
 modalMoveOn:"🚀 Continuar",modalPractice:"📝 Seguir Practicando",modalFinish:"✅ Completar y Continuar",
 modalPracticeMore:"Haz clic en un punto incompleto, o termina:",
@@ -259,6 +263,9 @@ wsStep3:"Sumar ecuaciones → eliminar {v}",wsStep4:"Resolver: {v2} = {val}",
 wsStep5:"Sustituir → {v1} = {val}",wsStep6:"Solución: ({x}, {y}) ✓"
 }};
 function t(k){return L[lang][k]||L.en[k]||k}
+const SAVE_KEY='sys-elimination-v1';
+function saveProgress(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({okCnt,totCnt,challengeComplete,results:probs.map(p=>p.res)}));}catch(e){}}
+function loadSaved(){try{const d=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(!d)return false;if(d.challengeComplete){localStorage.removeItem(SAVE_KEY);return false;}okCnt=d.okCnt||0;totCnt=d.totCnt||0;if(d.results&&d.results.length===MAX_PROBS){d.results.forEach((r,i)=>{if(probs[i])probs[i].res=r;});}return true;}catch(e){return false;}}
 
 // ═══════════════════════════════════════════
 // 2. STATE
@@ -517,7 +524,9 @@ function genProb(){
 // ═══════════════════════════════════════════
 function init(){
   for(let i=0;i<MAX_PROBS;i++)probs.push(genProb());
-  cpIdx=0;loadProb(0);
+  loadSaved();let si=probs.findIndex(p=>!p.res);
+  if(si===-1){probs.forEach(p=>p.res=null);okCnt=0;totCnt=0;si=0;}
+  cpIdx=si;loadProb(si);
 }
 function loadProb(idx){
   if(probs[idx].res)return;
@@ -560,22 +569,28 @@ function addT(html){const c=document.getElementById('chatMessages');const d=docu
 function addS(text){const c=document.getElementById('chatMessages');const d=document.createElement('div');d.className='chat-msg student';d.textContent=text;c.appendChild(d);c.scrollTop=c.scrollHeight}
 function addOk(html){const c=document.getElementById('chatMessages');const d=document.createElement('div');d.className='chat-msg correct-msg';d.innerHTML='✅ '+html;c.appendChild(d);c.scrollTop=c.scrollHeight}
 function addBad(html){const c=document.getElementById('chatMessages');const d=document.createElement('div');d.className='chat-msg incorrect-msg';d.innerHTML='❌ '+html;c.appendChild(d);c.scrollTop=c.scrollHeight}
-function addMC(opts,cb){
+function addMC(opts,cb,hintKey){
   const c=document.getElementById('chatMessages');
+  const wrap=document.createElement('div');
   const g=document.createElement('div');g.className='mc-group';
   const labels=['a)','b)','c)','d)'];
+  let hb=null;
   opts.forEach((o,i)=>{
     const b=document.createElement('button');b.className='mc-option';
     b.innerHTML=`<span style="color:var(--accent);font-weight:700;margin-right:8px">${labels[i]}</span>${o.text}`;
     b.onclick=()=>{
       g.querySelectorAll('.mc-option').forEach(x=>{x.disabled=true});
       b.classList.add('selected');
+      if(hb)hb.disabled=true;
       addS(opts[i].text.replace(/<[^>]*>/g,''));
       cb(o.val);
     };
     g.appendChild(b);
   });
-  c.appendChild(g);c.scrollTop=c.scrollHeight;
+  wrap.appendChild(g);
+  if(hintKey){hb=document.createElement('button');hb.className='hint-btn';hb.textContent=t('hintBtn');
+    hb.onclick=()=>{hb.disabled=true;addT(t(hintKey))};wrap.appendChild(hb)}
+  c.appendChild(wrap);c.scrollTop=c.scrollHeight;
 }
 function addIn(placeholder,cb,hintKey){
   const c=document.getElementById('chatMessages');
@@ -633,10 +648,12 @@ function renderWorkspace(){
     if(cp.isDirect){
       steps.push({num:2,html:t('wsStep2d'),done:true,active:false});
     } else {
+      const isDone=['add','back','verify','done'].includes(phase);
       const mtx=texEq(cp.ma,cp.mb,cp.mc);
-      steps.push({num:2,html:t('wsStep2m').replace('{n}',cp.mEqNum).replace('{m}',cp.mVal)+'<br>'+
-        (cp.mEqNum===1?`<span style="color:var(--line1-color)">${kx(mtx)}</span>`:`<span style="color:var(--line2-color)">${kx(mtx)}</span>`),
-        done:['add','back','verify','done'].includes(phase),active:phase==='mult'});
+      const step2Html=isDone
+        ? t('wsStep2m').replace('{n}',cp.mEqNum).replace('{m}',cp.mVal)+'<br>'+(cp.mEqNum===1?`<span style="color:var(--line1-color)">${kx(mtx)}</span>`:`<span style="color:var(--line2-color)">${kx(mtx)}</span>`)
+        : t('wsStep2m').replace('{n}',cp.mEqNum).replace('{m}','?');
+      steps.push({num:2,html:step2Html,done:isDone,active:phase==='mult'});
     }
   }
 
@@ -706,7 +723,7 @@ function askMC(){
   }
   // Shuffle so correct isn't always first
   if(Math.random()<0.5)opts.reverse();
-  addMC(opts,handleMC);
+  addMC(opts,handleMC,'mcHint');
 }
 
 function handleMC(val){
@@ -781,13 +798,12 @@ function handleAdd(val){
     askBack();
   } else if(Math.abs(n+cp.svVal)<0.01){
     // Sign error
-    addBad(t('badAddSign').replace('{v2}',cp.sv).replace('{val}',cp.svVal));
+    addBad(t('badAddSign'));
     solveVar=cp.sv;solveVal=cp.svVal;
     phase='back';renderWorkspace();askBack();
   } else {
     const combinedTex=cp.sv==='x'?texF(cp.pa)+'x = '+texF(cp.pc):texF(cp.pb)+'y = '+texF(cp.pc);
-    addBad(t('badAdd').replace('{v2}',cp.sv).replace('{val}',cp.svVal)
-      .replace('{detail}','After adding, you get '+kx(combinedTex)+'.'));
+    addBad(t('badAdd'));
     solveVar=cp.sv;solveVal=cp.svVal;
     phase='back';renderWorkspace();askBack();
   }
@@ -817,7 +833,7 @@ function handleBack(val){
   } else {
     let detail='';
     if(Math.abs(n+val1)<0.01)detail='Watch the sign! ';
-    addBad(t('badBack').replace('{v1}',v1).replace('{val1}',val1).replace('{detail}',detail));
+    addBad(t('badBack'));
     backVar=v1;backVal=val1;
     phase='verify';renderWorkspace();askVerify();
   }
@@ -831,7 +847,7 @@ function askVerify(){
   addMC([
     {text:t('verifyYes'),val:'yes'},
     {text:t('verifyNo'),val:'no'}
-  ],handleVerify);
+  ],handleVerify,'verifyHint');
 }
 
 function handleVerify(val){
@@ -857,7 +873,8 @@ function probDone(ok){
   cp.res=ok?'ok':'no';
   if(ok)okCnt++;
   totCnt++;
-  renderDots();
+  renderDots();saveProgress();
+  window.parent.postMessage({ type: 'scoreUpdate', from: 'elimination', score: okCnt, total: MAX_PROBS }, '*');
   if(okCnt>=2&&!challengeComplete){
     setTimeout(showMilestone,1000);
   } else {
@@ -867,32 +884,12 @@ function probDone(ok){
 }
 
 function showMilestone(){
-  const mo=document.getElementById('modalOverlay');
-  document.getElementById('modalTitle').textContent=t('modalComplete');
-  document.getElementById('modalScore').textContent=okCnt+' / '+totCnt;
-  document.getElementById('modalText').textContent=t('modalText');
-  const btns=document.getElementById('modalBtns');btns.innerHTML='';
-  const remaining=probs.filter(p=>!p.res).length;
-  if(challengeComplete){
-    // Already completed before — show finish only
-    const b=document.createElement('button');b.className='modal-btn primary';b.textContent=t('modalFinish');
-    b.onclick=()=>{mo.classList.remove('visible')};
-    btns.appendChild(b);
-  } else {
-    const b1=document.createElement('button');b1.className='modal-btn primary';b1.textContent=t('modalMoveOn');
-    b1.onclick=()=>{challengeComplete=true;mo.classList.remove('visible')};
-    btns.appendChild(b1);
-    if(remaining>0){
-      const b2=document.createElement('button');b2.className='modal-btn secondary';b2.textContent=t('modalPractice');
-      b2.onclick=()=>{
-        practiceMode=true;mo.classList.remove('visible');
-        const next=probs.findIndex(p=>!p.res);
-        if(next!==-1)document.getElementById('nextStepBtn').classList.add('visible');
-      };
-      btns.appendChild(b2);
-    }
-  }
-  mo.classList.add('visible');
+  challengeComplete=true;
+  saveProgress();
+  addT(lang==='es'
+    ?'🎉 ¡Increíble! Completaste todos los retos de Sistemas de Ecuaciones. Volviendo al menú...'
+    :'🎉 Incredible! You completed all Systems of Equations challenges. Returning to the menu...');
+  setTimeout(()=>{window.parent.postMessage({type:'nextActivity',from:'elimination'},'*');},2000);
 }
 
 // ═══════════════════════════════════════════

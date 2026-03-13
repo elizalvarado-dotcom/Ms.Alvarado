@@ -834,6 +834,10 @@ const L = {
     bkBad: "Not quite. Substitute carefully into the isolated expression and simplify.",
     bkHint: "Substitute the value into the isolated equation and compute.",
 
+    identifyHint: "Look for the equation where y or x stands alone on one side — that one is already isolated for you!",
+    subHint: "Take the expression equal to the isolated variable and plug it in place of that variable in the other equation.",
+    verHint: "Plug both x and y values into the original equations — do both left and right sides match?",
+
     verQ: "Let\u2019s verify \u2014 does this solution satisfy <strong>both</strong> original equations?",
     verYes: "Yes, it satisfies both",
     verNo: "No, it doesn\u2019t work",
@@ -887,6 +891,10 @@ const L = {
     bkBad: "No exactamente. Sustituye con cuidado en la expresi\u00f3n despejada y simplifica.",
     bkHint: "Sustituye el valor en la ecuaci\u00f3n despejada y calcula.",
 
+    identifyHint: "Busca la ecuaci\u00f3n donde y o x ya est\u00e1 sola en un lado \u2014 \u00a1esa ya est\u00e1 despejada!",
+    subHint: "Toma la expresi\u00f3n igual a la variable despejada e interc\u00e1mbiala en la otra ecuaci\u00f3n.",
+    verHint: "Sustituye los valores de x e y en las ecuaciones originales \u2014 \u00bfcoinciden ambos lados?",
+
     verQ: "Verifiquemos \u2014 \u00bfesta soluci\u00f3n satisface <strong>ambas</strong> ecuaciones originales?",
     verYes: "S\u00ed, satisface ambas",
     verNo: "No, no funciona",
@@ -912,6 +920,9 @@ const L = {
 };
 
 function t(k) { return L[lang][k] || L.en[k] || k; }
+const SAVE_KEY = 'sys-substitution-v1';
+function saveProgress() { try { localStorage.setItem(SAVE_KEY, JSON.stringify({ okCnt, totCnt, challengeComplete, results: probs.map(p => p.res) })); } catch(e) {} }
+function loadSaved() { try { const d = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); if (!d) return false; if (d.challengeComplete) { localStorage.removeItem(SAVE_KEY); return false; } okCnt = d.okCnt || 0; totCnt = d.totCnt || 0; if (d.results && d.results.length === MAX_PROBS) { d.results.forEach((r, i) => { if (probs[i]) probs[i].res = r; }); } return true; } catch(e) { return false; } }
 
 /* ================================================================
    2. STATE
@@ -1253,8 +1264,11 @@ function genProb() {
    ================================================================ */
 function init() {
   for (let i = 0; i < MAX_PROBS; i++) probs.push(genProb());
-  cpIdx = 0;
-  loadProb(0);
+  loadSaved();
+  let si = probs.findIndex(p => !p.res);
+  if (si === -1) { probs.forEach(p => p.res = null); okCnt = 0; totCnt = 0; si = 0; }
+  cpIdx = si;
+  loadProb(si);
 }
 
 function loadProb(idx) {
@@ -1339,11 +1353,13 @@ function addBad(html) {
   c.scrollTop = c.scrollHeight;
 }
 
-function addMC(opts, callback) {
+function addMC(opts, callback, hintKey) {
   const c = document.getElementById('chatMessages');
+  const wrap = document.createElement('div');
   const g = document.createElement('div');
   g.className = 'mc-group';
   const labels = ['a)', 'b)', 'c)', 'd)', 'e)', 'f)'];
+  let hb = null;
   opts.forEach((opt, i) => {
     const btn = document.createElement('button');
     btn.className = 'mc-option';
@@ -1351,11 +1367,20 @@ function addMC(opts, callback) {
     btn.onclick = () => {
       g.querySelectorAll('.mc-option').forEach(b => b.disabled = true);
       btn.classList.add('selected');
+      if (hb) hb.disabled = true;
       callback(opt.val, opt.text);
     };
     g.appendChild(btn);
   });
-  c.appendChild(g);
+  wrap.appendChild(g);
+  if (hintKey) {
+    hb = document.createElement('button');
+    hb.className = 'hint-btn';
+    hb.textContent = t('hintBtn');
+    hb.onclick = () => { hb.disabled = true; addT(t(hintKey)); };
+    wrap.appendChild(hb);
+  }
+  c.appendChild(wrap);
   c.scrollTop = c.scrollHeight;
 }
 
@@ -1452,7 +1477,7 @@ function doIdentify() {
       addBad(t('identifyBad'));
     }
     setTimeout(() => doIsolate(), 500);
-  });
+  }, 'identifyHint');
 }
 
 /* --- ISOLATE --- */
@@ -1488,7 +1513,7 @@ function doSubstitute() {
     }
     wsReveal(1, 'active');
     setTimeout(() => doSolve(), 500);
-  });
+  }, 'subHint');
 }
 
 /* --- SOLVE --- */
@@ -1521,10 +1546,10 @@ function doSolve() {
       addOk(t('solveOk') + ' ' + kx(targetVar + ' = ' + texF(correctVal)));
       answers.solveCorrect = true;
     } else if (!isNaN(parsed) && Math.abs(parsed + correctVal) < 0.01) {
-      addBad(t('signErr') + ' ' + t('solveBad') + ' ' + kx(targetVar + ' = ' + texF(correctVal)));
+      addBad(t('signErr') + ' ' + t('solveBad'));
       answers.solveCorrect = false;
     } else {
-      addBad(t('solveBad') + ' ' + kx(targetVar + ' = ' + texF(correctVal)));
+      addBad(t('solveBad'));
       answers.solveCorrect = false;
     }
     wsComplete(2);
@@ -1562,10 +1587,10 @@ function doBacksolve() {
       addOk(t('bkOk') + ' ' + kx(findVar + ' = ' + texF(correctVal)));
       answers.bkCorrect = true;
     } else if (!isNaN(parsed) && Math.abs(parsed + correctVal) < 0.01) {
-      addBad(t('signErr') + ' ' + t('bkBad') + ' ' + kx(findVar + ' = ' + texF(correctVal)));
+      addBad(t('signErr') + ' ' + t('bkBad'));
       answers.bkCorrect = false;
     } else {
-      addBad(t('bkBad') + ' ' + kx(findVar + ' = ' + texF(correctVal)));
+      addBad(t('bkBad'));
       answers.bkCorrect = false;
     }
     wsComplete(3);
@@ -1596,7 +1621,7 @@ function doVerify() {
     }
     wsComplete(4);
     setTimeout(() => doDone(), 600);
-  });
+  }, 'verHint');
 }
 
 /* --- DONE --- */
@@ -1702,6 +1727,8 @@ function probDone(ok) {
   if (ok) okCnt++;
   totCnt++;
   renderDots();
+  saveProgress();
+  window.parent.postMessage({ type: 'scoreUpdate', from: 'substitution', score: okCnt, total: MAX_PROBS }, '*');
 
   if (okCnt >= 2 && !challengeComplete) {
     setTimeout(showMilestone, 1000);
@@ -1715,49 +1742,11 @@ function probDone(ok) {
 
 function showMilestone() {
   challengeComplete = true;
-  const mo = document.getElementById('modalOverlay');
-  document.getElementById('modalEmoji').textContent = '\ud83c\udf89';
-  document.getElementById('modalTitle').textContent = t('modalTitle');
-  document.getElementById('modalScore').textContent = okCnt + ' / ' + totCnt;
-  document.getElementById('modalSub').textContent = t('modalSub');
-
-  const btns = document.getElementById('modalBtns');
-  btns.innerHTML = '';
-
-  const remaining = probs.filter(p => !p.res).length;
-
-  if (remaining > 0) {
-    const finBtn = document.createElement('button');
-    finBtn.className = 'modal-btn-primary';
-    finBtn.textContent = t('modalFinish');
-    finBtn.onclick = () => {
-      mo.classList.remove('show');
-      practiceMode = true;
-    };
-    btns.appendChild(finBtn);
-
-    const pracBtn = document.createElement('button');
-    pracBtn.className = 'modal-btn-secondary';
-    pracBtn.textContent = t('modalPractice');
-    pracBtn.onclick = () => {
-      mo.classList.remove('show');
-      practiceMode = true;
-      const nx = probs.findIndex(p => !p.res);
-      if (nx !== -1) loadProb(nx);
-    };
-    btns.appendChild(pracBtn);
-
-    document.getElementById('modalPracticeHint').textContent = t('modalPracticeMore');
-  } else {
-    const doneBtn = document.createElement('button');
-    doneBtn.className = 'modal-btn-primary';
-    doneBtn.textContent = t('modalMoveOn');
-    doneBtn.onclick = () => mo.classList.remove('show');
-    btns.appendChild(doneBtn);
-    document.getElementById('modalPracticeHint').textContent = '';
-  }
-
-  mo.classList.add('show');
+  saveProgress();
+  addT(lang === 'es'
+    ? '🎉 ¡Excelente! Completaste el reto de Sustitución. Avanzando al Método de Eliminación...'
+    : '🎉 Great work! You completed the Substitution challenge. Moving to Elimination...');
+  setTimeout(() => { window.parent.postMessage({ type: 'nextActivity', from: 'substitution' }, '*'); }, 2000);
 }
 
 /* ================================================================
@@ -1826,7 +1815,7 @@ function replayChat() {
     if (answers.solveCorrect) {
       addOk(t('solveOk') + ' ' + kx(targetV + ' = ' + texF(correctSolve)));
     } else {
-      addBad(t('solveBad') + ' ' + kx(targetV + ' = ' + texF(correctSolve)));
+      addBad(t('solveBad'));
     }
   }
 
@@ -1844,7 +1833,7 @@ function replayChat() {
     if (answers.bkCorrect) {
       addOk(t('bkOk') + ' ' + kx(findV + ' = ' + texF(correctBk)));
     } else {
-      addBad(t('bkBad') + ' ' + kx(findV + ' = ' + texF(correctBk)));
+      addBad(t('bkBad'));
     }
   }
 
