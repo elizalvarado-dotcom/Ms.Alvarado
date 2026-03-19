@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Problem Set 2: Writing Exponential Functions</title>
+  <style>
+    :root {
+      --teal: #2a9d8f;
+      --teal-light: #e8f7f5;
+      --teal-dark: #1f7a6e;
+      --orange: #e76f51;
+      --yellow: #f4a261;
+      --green-correct: #2d6a4f;
+      --green-correct-bg: #d8f3dc;
+      --red-wrong: #9b2226;
+      --red-wrong-bg: #ffe8e8;
+      --gray-light: #f8f9fa;
+      --gray-border: #dee2e6;
+      --text-dark: #212529;
+      --text-muted: #6c757d;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #f0f4f8;
+      color: var(--text-dark);
+      min-height: 100vh;
+    }
+
+    /* ─── Header ─── */
+    header {
+      background: var(--teal);
+      color: white;
+      padding: 1.5rem 2rem;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    header .label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.85;
+      margin-bottom: 0.35rem;
+    }
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    header p {
+      margin-top: 0.5rem;
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    /* ─── Progress Bar ─── */
+    .progress-container {
+      background: white;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .progress-label { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); white-space: nowrap; }
+    .progress-bar-outer {
+      flex: 1;
+      height: 10px;
+      background: var(--gray-border);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .progress-bar-inner {
+      height: 100%;
+      background: var(--teal);
+      border-radius: 5px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+    .progress-count { font-weight: 700; color: var(--teal); font-size: 0.95rem; white-space: nowrap; }
+
+    /* ─── Info Banner ─── */
+    .info-banner {
+      background: var(--teal-light);
+      border-left: 4px solid var(--teal);
+      margin: 1.5rem 2rem;
+      padding: 1rem 1.25rem;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.95rem;
+    }
+    .info-banner strong { color: var(--teal-dark); }
+    .info-banner .formula {
+      font-family: 'Courier New', monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--teal-dark);
+      display: block;
+      margin-top: 0.4rem;
+    }
+
+    /* ─── Problems Grid ─── */
+    .problems-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.25rem;
+      padding: 0 2rem 2rem;
+    }
+
+    /* ─── Problem Card ─── */
+    .problem-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+    .problem-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+    .problem-card.correct { border: 2px solid var(--green-correct); }
+    .problem-card.incorrect { border: 2px solid var(--red-wrong); }
+
+    .card-header {
+      background: var(--teal);
+      color: white;
+      padding: 0.65rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .card-number {
+      width: 28px; height: 28px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.9rem; flex-shrink: 0;
+    }
+    .card-title { font-weight: 600; font-size: 0.95rem; }
+
+    .card-body { padding: 1rem; }
+
+    .problem-text { font-size: 0.95rem; line-height: 1.55; color: var(--text-dark); margin-bottom: 0.85rem; }
+    .problem-text .city { font-weight: 700; }
+    .problem-text .highlight { color: var(--teal-dark); font-weight: 600; }
+
+    .type-badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 0.85rem;
+      letter-spacing: 0.5px;
+    }
+    .type-growth { background: #d8f3dc; color: #2d6a4f; }
+    .type-decay  { background: #ffe8e8; color: #9b2226; }
+
+    /* ─── Input Section ─── */
+    .function-form { display: flex; flex-direction: column; gap: 0.6rem; }
+    .function-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+    .function-row {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .function-prefix {
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text-dark);
+    }
+    .function-input {
+      border: 2px solid var(--gray-border);
+      border-radius: 6px;
+      padding: 0.4rem 0.6rem;
+      font-size: 1rem;
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      width: 110px;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .function-input:focus { border-color: var(--teal); }
+    .function-input.correct-input { border-color: var(--green-correct); background: var(--green-correct-bg); }
+    .function-input.wrong-input   { border-color: var(--red-wrong);     background: var(--red-wrong-bg); }
+    .function-suffix {
+      font-family: 'Courier New', monospace;
+      font-size: 1rem;
+      color: var(--text-dark);
+    }
+
+    .btn-check {
+      margin-top: 0.5rem;
+      padding: 0.55rem 1.25rem;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      align-self: flex-start;
+    }
+    .btn-check:hover  { background: var(--teal-dark); }
+    .btn-check:active { transform: scale(0.97); }
+    .btn-check:disabled { background: #adb5bd; cursor: default; }
+
+    /* ─── Feedback ─── */
+    .feedback {
+      margin-top: 0.75rem;
+      padding: 0.65rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      display: none;
+    }
+    .feedback.show { display: block; }
+    .feedback.correct-fb { background: var(--green-correct-bg); color: var(--green-correct); }
+    .feedback.wrong-fb   { background: var(--red-wrong-bg);     color: var(--red-wrong); }
+
+    .hint-block {
+      background: var(--teal-light);
+      border-left: 3px solid var(--teal);
+      padding: 0.6rem 0.8rem;
+      border-radius: 0 6px 6px 0;
+      font-size: 0.88rem;
+      color: var(--teal-dark);
+      margin-top: 0.75rem;
+      display: none;
+    }
+    .hint-block.show { display: block; }
+    .hint-block strong { display: block; margin-bottom: 0.25rem; }
+
+    /* ─── Show Answer ─── */
+    .btn-hint {
+      background: none;
+      border: none;
+      color: var(--teal);
+      font-size: 0.83rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0;
+      margin-top: 0.3rem;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .btn-hint:hover { color: var(--teal-dark); }
+
+    /* ─── Completion Banner ─── */
+    #completion-banner {
+      display: none;
+      margin: 0 2rem 2rem;
+      background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+      color: white;
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      text-align: center;
+      box-shadow: 0 4px 16px rgba(42,157,143,0.3);
+    }
+    #completion-banner h2 { font-size: 1.5rem; margin-bottom: 0.4rem; }
+    #completion-banner p  { font-size: 1rem; opacity: 0.9; }
+    #completion-banner .big-check { font-size: 3rem; margin-bottom: 0.5rem; }
+
+    .btn-reset {
+      margin-top: 1rem;
+      padding: 0.6rem 1.5rem;
+      background: white;
+      color: var(--teal-dark);
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+    .btn-reset:hover { background: #f0f4f8; }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.3rem; }
+      .problems-grid { grid-template-columns: 1fr; padding: 0 1rem 2rem; }
+      .info-banner { margin: 1rem; }
+      .progress-container { padding: 0.75rem 1rem; }
+      #completion-banner { margin: 0 1rem 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="label">Exponential Functions</div>
+  <h1>Problem Set 2: Writing Exponential Functions</h1>
+  <p>Write a function that represents each population as a function of time.</p>
+</header>
+
+<div class="progress-container">
+  <span class="progress-label">Progress</span>
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar"></div>
+  </div>
+  <span class="progress-count" id="progress-count">0 / 6</span>
+</div>
+
+<div class="info-banner">
+  <strong>Remember the Exponential Function Formula:</strong>
+  <span class="formula">P(t) = a · b<sup style="font-size:0.75em">t</sup></span>
+  <span style="display:block; margin-top:0.4rem; font-size:0.9rem;">
+    Where <strong>a</strong> = initial value &nbsp;·&nbsp;
+    <strong>b</strong> = growth factor &nbsp;(use <strong>1 + rate</strong> for growth, <strong>1 − rate</strong> for decay)
+  </span>
+</div>
+
+<div class="problems-grid" id="problems-grid"></div>
+
+<div id="completion-banner">
+  <div class="big-check">🎉</div>
+  <h2>Great Work!</h2>
+  <p>You correctly wrote all 6 exponential functions. Keep it up!</p>
+  <button class="btn-reset" onclick="resetAll()">Try Again</button>
+</div>
+
+<script>
+  const problems = [
+    {
+      num: 1,
+      city: "Bridge City",
+      population: 15000,
+      rate: 1.5,
+      type: "decay",
+      hint: `The starting population, 15,000, is the a-value. Because the population is decreasing, the b-value is (1 − rate of decrease), or (1 − 0.015).`,
+      a: 15000,
+      b: 0.985,
+    },
+    {
+      num: 2,
+      city: "Joyville",
+      population: 20750,
+      rate: 2.7,
+      type: "growth",
+      hint: `The starting population, 20,750, is the a-value. Because the population is increasing, the b-value is (1 + rate of increase), or (1 + 0.027).`,
+      a: 20750,
+      b: 1.027,
+    },
+    {
+      num: 3,
+      city: "Hannonville",
+      population: 6075,
+      rate: 0.5,
+      type: "decay",
+      hint: `The starting population, 6,075, is the a-value. Because the population is decreasing, the b-value is (1 − 0.005).`,
+      a: 6075,
+      b: 0.995,
+    },
+    {
+      num: 4,
+      city: "Mapletown",
+      population: 95000,
+      rate: 1.375,
+      type: "decay",
+      hint: `The starting population, 95,000, is the a-value. Because the population is decreasing, the b-value is (1 − 0.01375).`,
+      a: 95000,
+      b: 0.98625,
+    },
+    {
+      num: 5,
+      city: "Waterville",
+      population: 985,
+      rate: 0.65,
+      type: "growth",
+      hint: `The starting population, 985, is the a-value. Because the population is increasing, the b-value is (1 + 0.0065).`,
+      a: 985,
+      b: 1.0065,
+    },
+    {
+      num: 6,
+      city: "Krystal City",
+      population: 40500,
+      rate: 3.8,
+      type: "growth",
+      hint: `The starting population, 40,500, is the a-value. Because the population is increasing, the b-value is (1 + 0.038).`,
+      a: 40500,
+      b: 1.038,
+    },
+  ];
+
+  let correctCount = 0;
+  const solved = new Array(problems.length).fill(false);
+
+  function formatNum(n) {
+    return n.toLocaleString('en-US');
+  }
+
+  function buildCards() {
+    const grid = document.getElementById('problems-grid');
+    grid.innerHTML = '';
+    problems.forEach((p, i) => {
+      const rateStr = p.rate + '%';
+      const directionWord = p.type === 'growth' ? 'increasing' : 'decreasing';
+
+      const card = document.createElement('div');
+      card.className = 'problem-card';
+      card.id = `card-${i}`;
+      card.innerHTML = `
+        <div class="card-header">
+          <div class="card-number">${p.num}</div>
+          <div class="card-title">${p.city}</div>
+        </div>
+        <div class="card-body">
+          <p class="problem-text">
+            <span class="city">${p.city}</span> has a population of
+            <span class="highlight">${formatNum(p.population)}</span> people.
+            Its population is <strong>${directionWord}</strong> at a rate of
+            <span class="highlight">${rateStr}</span> each year.
+          </p>
+          <span class="type-badge ${p.type === 'growth' ? 'type-growth' : 'type-decay'}">
+            ${p.type === 'growth' ? '▲ Growth' : '▼ Decay'}
+          </span>
+
+          <div class="function-form">
+            <div class="function-label">Enter P(t) = a · b<sup>t</sup></div>
+            <div class="function-row">
+              <span class="function-prefix">P(t) =</span>
+              <input class="function-input" type="number" id="a-${i}" placeholder="a" min="0" step="any" />
+              <span class="function-prefix">·</span>
+              <input class="function-input" type="number" id="b-${i}" placeholder="b" min="0" step="any" />
+              <span class="function-suffix"><sup style="font-size:0.75em; font-weight:700;">t</sup></span>
+            </div>
+            <button class="btn-check" onclick="checkAnswer(${i})">Check Answer</button>
+            <button class="btn-hint" onclick="toggleHint(${i})">Show hint</button>
+          </div>
+
+          <div class="hint-block" id="hint-${i}">
+            <strong>Hint:</strong>
+            ${p.hint}
+            <br/><br/>
+            <strong>Answer:</strong>
+            P(t) = ${formatNum(p.a)} · ${p.b}<sup style="font-size:0.8em">t</sup>
+          </div>
+
+          <div class="feedback" id="fb-${i}"></div>
+        </div>
+      `;
+      grid.appendChild(card);
+
+      // Allow Enter key to check
+      ['a', 'b'].forEach(field => {
+        document.getElementById(`${field}-${i}`).addEventListener('keydown', e => {
+          if (e.key === 'Enter') checkAnswer(i);
+        });
+      });
+    });
+  }
+
+  function parseVal(str) {
+    // allow commas: "15,000" → 15000
+    return parseFloat(String(str).replace(/,/g, ''));
+  }
+
+  function isClose(val, target, tol = 0.001) {
+    return Math.abs(val - target) / (Math.abs(target) || 1) < tol;
+  }
+
+  function checkAnswer(i) {
+    if (solved[i]) return;
+    const p = problems[i];
+    const aInput = document.getElementById(`a-${i}`);
+    const bInput = document.getElementById(`b-${i}`);
+    const fb     = document.getElementById(`fb-${i}`);
+    const card   = document.getElementById(`card-${i}`);
+
+    const aVal = parseVal(aInput.value);
+    const bVal = parseVal(bInput.value);
+
+    const aOk = isClose(aVal, p.a);
+    const bOk = isClose(bVal, p.b);
+
+    // Style inputs
+    aInput.className = 'function-input ' + (aOk ? 'correct-input' : 'wrong-input');
+    bInput.className = 'function-input ' + (bOk ? 'correct-input' : 'wrong-input');
+
+    if (aOk && bOk) {
+      // Correct!
+      fb.className = 'feedback show correct-fb';
+      fb.innerHTML = `✅ <strong>Correct!</strong> P(t) = ${formatNum(p.a)} · ${p.b}<sup style="font-size:0.8em">t</sup> — great job!`;
+      card.classList.add('correct');
+      solved[i] = true;
+      correctCount++;
+      updateProgress();
+
+      // Disable inputs and button
+      aInput.disabled = true;
+      bInput.disabled = true;
+      document.querySelector(`#card-${i} .btn-check`).disabled = true;
+    } else {
+      fb.className = 'feedback show wrong-fb';
+      let msg = '❌ Not quite. ';
+      if (!aOk && !bOk) msg += 'Both values need adjusting. ';
+      else if (!aOk) msg += 'Check your <strong>a-value</strong> (starting population). ';
+      else           msg += 'Check your <strong>b-value</strong> (growth/decay factor). ';
+      msg += 'Try again or use the hint below.';
+      fb.innerHTML = msg;
+      card.classList.remove('incorrect');
+      void card.offsetWidth; // reflow for animation
+      card.classList.add('incorrect');
+    }
+  }
+
+  function toggleHint(i) {
+    const hint = document.getElementById(`hint-${i}`);
+    const btn  = document.querySelectorAll('.btn-hint')[i];
+    if (hint.classList.contains('show')) {
+      hint.classList.remove('show');
+      btn.textContent = 'Show hint';
+    } else {
+      hint.classList.add('show');
+      btn.textContent = 'Hide hint';
+    }
+  }
+
+  function updateProgress() {
+    const pct = (correctCount / problems.length) * 100;
+    document.getElementById('progress-bar').style.width = pct + '%';
+    document.getElementById('progress-count').textContent = `${correctCount} / ${problems.length}`;
+
+    if (correctCount === problems.length) {
+      setTimeout(() => {
+        document.getElementById('completion-banner').style.display = 'block';
+        document.getElementById('completion-banner').scrollIntoView({ behavior: 'smooth' });
+      }, 500);
+    }
+  }
+
+  function resetAll() {
+    correctCount = 0;
+    solved.fill(false);
+    document.getElementById('completion-banner').style.display = 'none';
+    updateProgress();
+    buildCards();
+  }
+
+  // Init
+  buildCards();
+</script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solving Systems Activities</title>
+  <style>
+    :root {
+      --teal: #2a9d8f;
+      --teal-dark: #1f7a6e;
+      --teal-light: #e8f7f5;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+    }
+    header {
+      background: var(--teal);
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+    header h1 { font-size: 2rem; }
+    header p  { margin-top: 0.5rem; opacity: 0.9; }
+    main { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--teal-dark);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid var(--teal);
+      padding-bottom: 0.4rem;
+    }
+    .activity-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .activity-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      padding: 1.25rem;
+      text-decoration: none;
+      color: inherit;
+      transition: box-shadow 0.2s, transform 0.15s;
+      display: block;
+    }
+    .activity-card:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.14);
+      transform: translateY(-2px);
+    }
+    .activity-card .tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: var(--teal-light);
+      color: var(--teal-dark);
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      margin-bottom: 0.6rem;
+    }
+    .activity-card h3 { font-size: 1rem; margin-bottom: 0.4rem; }
+    .activity-card p  { font-size: 0.88rem; color: #666; line-height: 1.45; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Math Activities</h1>
+    <p>Interactive practice for algebra and beyond</p>
+  </header>
+  <main>
+    <div class="section-title">Exponential Functions</div>
+    <div class="activity-grid">
+      <a class="activity-card" href="/exponential-growth-decay/">
+        <div class="tag">Problem Set 2</div>
+        <h3>Writing Exponential Functions</h3>
+        <p>Practice writing exponential growth and decay functions using real-world population data.</p>
+      </a>
+    </div>
+  </main>
+</body>
+</html>
