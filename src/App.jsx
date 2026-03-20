@@ -571,7 +571,7 @@ function ModulesPage({ user, onOpen, lang, setLang }) {
 }
 
 /* ── Module Detail Page (assignments within a module) ─────────────────────── */
-function ModuleDetailPage({ mod, onOpen, lang, user, dueDates }) {
+function ModuleDetailPage({ mod, onOpen, lang, user, dueDates, hiddenAssignments }) {
   const baseUnits = UNITS.filter(u => mod.unitIds.includes(u.id))
   const math = isMathIcon(mod.icon)
   const teacher = isTeacher(user?.email)
@@ -661,9 +661,12 @@ function ModuleDetailPage({ mod, onOpen, lang, user, dueDates }) {
                 <span style={S.unitTitle}>{L(unit.title, lang)}</span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '16px' }}>
-                {getOrderedAssignments(unit).map((a, idx) => {
+                {getOrderedAssignments(unit)
+                  .filter(a => teacher || !hiddenAssignments?.[a.id])
+                  .map((a, idx) => {
                   const isDragging   = drag?.unitId === unit.id && drag?.idx === idx
                   const isDropTarget = dragOver?.unitId === unit.id && dragOver?.idx === idx
+                  const isHidden     = !!hiddenAssignments?.[a.id]
                   return (
                     <div
                       key={a.id}
@@ -675,14 +678,21 @@ function ModuleDetailPage({ mod, onOpen, lang, user, dueDates }) {
                       onDragEnd={() => { setDrag(null); setDragOver(null) }}
                       style={{
                         flex: '0 0 280px', width: '280px',
-                        opacity: isDragging ? 0.45 : 1,
+                        opacity: isDragging ? 0.45 : isHidden ? 0.5 : 1,
                         outline: isDropTarget ? '2px dashed #a78bfa' : 'none',
                         outlineOffset: '4px',
                         borderRadius: '20px',
                         cursor: customizeMode ? (isDragging ? 'grabbing' : 'grab') : 'auto',
                         transition: 'opacity .2s',
+                        position: 'relative',
                       }}
                     >
+                      {/* Teacher-only hidden badge */}
+                      {teacher && isHidden && (
+                        <div style={{ position:'absolute', top:'8px', left:'8px', zIndex:2, background:'rgba(248,113,113,0.18)', border:'1px solid rgba(248,113,113,0.4)', borderRadius:'20px', padding:'2px 10px', fontSize:'.7rem', fontWeight:700, color:'#f87171', fontFamily:"'JetBrains Mono',monospace", pointerEvents:'none' }}>
+                          🙈 Hidden
+                        </div>
+                      )}
                       {customizeMode && (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px', paddingLeft: '4px' }}>
                           <span style={{ color: '#a78bfa', fontSize: '.75rem', fontFamily: "'Inter',sans-serif", userSelect: 'none' }}>
@@ -1267,13 +1277,15 @@ const TAB_ASSIGNMENT = {
   'm3t2sp':      'exp-growth-decay-word-problems',
 }
 
-function DueDateEditor({ tabId, dueDates, saveDueDate }) {
+function DueDateEditor({ tabId, dueDates, saveDueDate, hiddenAssignments, toggleHidden }) {
   const assignmentId = TAB_ASSIGNMENT[tabId]
   if (!assignmentId) return null
   const current = dueDates?.[assignmentId] || ''
+  const isHidden = !!hiddenAssignments?.[assignmentId]
   const [editing, setEditing] = useState(false)
   const [draft,   setDraft]   = useState(current)
   const [saving,  setSaving]  = useState(false)
+  const [toggling,setToggling]= useState(false)
 
   // Keep draft in sync when dueDates loads from Firestore
   useEffect(() => { setDraft(dueDates?.[assignmentId] || '') }, [dueDates, assignmentId])
@@ -1293,47 +1305,63 @@ function DueDateEditor({ tabId, dueDates, saveDueDate }) {
 
   const handleClear = async () => {
     setSaving(true)
-    const updated = { ...dueDates }
-    delete updated[assignmentId]
     await saveDueDate(assignmentId, '')
     setSaving(false)
     setEditing(false)
   }
 
+  const handleToggle = async () => {
+    setToggling(true)
+    await toggleHidden(assignmentId)
+    setToggling(false)
+  }
+
   return (
-    <div style={{ display:'flex', alignItems:'center', gap:'10px', flexWrap:'wrap', marginTop:'10px', padding:'10px 14px', background:'rgba(167,139,250,0.06)', border:'1px solid rgba(167,139,250,0.18)', borderRadius:'12px' }}>
-      <span style={{ fontSize:'.75rem', fontFamily:"'JetBrains Mono',monospace", fontWeight:700, color:'#a78bfa', letterSpacing:'1px', textTransform:'uppercase' }}>📅 Due Date</span>
-      {!editing ? (
-        <>
-          <span style={{ fontSize:'.85rem', fontFamily:"'Inter',sans-serif", color: current ? '#ede9f4' : '#6b7a9a', fontWeight: current ? 600 : 400 }}>
-            {current ? fmtDate(current) : 'Not set'}
-          </span>
-          <button onClick={() => setEditing(true)} style={{ padding:'3px 10px', borderRadius:'8px', border:'1px solid rgba(167,139,250,0.35)', background:'rgba(167,139,250,0.12)', color:'#a78bfa', fontSize:'.75rem', fontWeight:700, cursor:'pointer', fontFamily:"'Inter',sans-serif" }}>
-            ✏️ {current ? 'Edit' : 'Set date'}
-          </button>
-        </>
-      ) : (
-        <>
-          <input type="date" value={draft} onChange={e => setDraft(e.target.value)}
-            style={{ padding:'5px 10px', borderRadius:'8px', border:'1px solid rgba(167,139,250,0.4)', background:'rgba(14,21,40,0.9)', color:'#ede9f4', fontFamily:"'Inter',sans-serif", fontSize:'.85rem', cursor:'pointer' }} />
-          <button onClick={handleSave} disabled={saving} style={{ padding:'4px 12px', borderRadius:'8px', border:'1px solid rgba(52,211,153,0.45)', background:'rgba(52,211,153,0.12)', color:'#34d399', fontSize:'.78rem', fontWeight:700, cursor:'pointer', fontFamily:"'Inter',sans-serif" }}>
-            {saving ? '…' : '💾 Post'}
-          </button>
-          {current && (
-            <button onClick={handleClear} disabled={saving} style={{ padding:'4px 10px', borderRadius:'8px', border:'1px solid rgba(248,113,113,0.35)', background:'rgba(248,113,113,0.08)', color:'#f87171', fontSize:'.78rem', fontWeight:700, cursor:'pointer', fontFamily:"'Inter',sans-serif" }}>
-              🗑 Clear
+    <div style={{ display:'flex', flexDirection:'column', gap:'8px', marginTop:'10px' }}>
+      {/* Visibility row */}
+      <div style={{ display:'flex', alignItems:'center', gap:'10px', flexWrap:'wrap', padding:'8px 14px', background: isHidden ? 'rgba(248,113,113,0.07)' : 'rgba(52,211,153,0.06)', border:`1px solid ${isHidden ? 'rgba(248,113,113,0.22)' : 'rgba(52,211,153,0.18)'}`, borderRadius:'10px' }}>
+        <span style={{ fontSize:'.75rem', fontFamily:"'JetBrains Mono',monospace", fontWeight:700, color: isHidden ? '#f87171' : '#34d399', letterSpacing:'1px', textTransform:'uppercase' }}>
+          {isHidden ? '🙈 Hidden from students' : '👁 Visible to students'}
+        </span>
+        <button onClick={handleToggle} disabled={toggling} style={{ marginLeft:'auto', padding:'4px 14px', borderRadius:'8px', border:`1px solid ${isHidden ? 'rgba(52,211,153,0.4)' : 'rgba(248,113,113,0.35)'}`, background: isHidden ? 'rgba(52,211,153,0.10)' : 'rgba(248,113,113,0.08)', color: isHidden ? '#34d399' : '#f87171', fontSize:'.78rem', fontWeight:700, cursor:'pointer', fontFamily:"'Inter',sans-serif" }}>
+          {toggling ? '…' : isHidden ? '👁 Unhide' : '🙈 Hide'}
+        </button>
+      </div>
+      {/* Due date row */}
+      <div style={{ display:'flex', alignItems:'center', gap:'10px', flexWrap:'wrap', padding:'8px 14px', background:'rgba(167,139,250,0.06)', border:'1px solid rgba(167,139,250,0.18)', borderRadius:'10px' }}>
+        <span style={{ fontSize:'.75rem', fontFamily:"'JetBrains Mono',monospace", fontWeight:700, color:'#a78bfa', letterSpacing:'1px', textTransform:'uppercase' }}>📅 Due Date</span>
+        {!editing ? (
+          <>
+            <span style={{ fontSize:'.85rem', fontFamily:"'Inter',sans-serif", color: current ? '#ede9f4' : '#6b7a9a', fontWeight: current ? 600 : 400 }}>
+              {current ? fmtDate(current) : 'Not set'}
+            </span>
+            <button onClick={() => setEditing(true)} style={{ padding:'3px 10px', borderRadius:'8px', border:'1px solid rgba(167,139,250,0.35)', background:'rgba(167,139,250,0.12)', color:'#a78bfa', fontSize:'.75rem', fontWeight:700, cursor:'pointer', fontFamily:"'Inter',sans-serif" }}>
+              ✏️ {current ? 'Edit' : 'Set date'}
             </button>
-          )}
-          <button onClick={() => { setEditing(false); setDraft(current) }} style={{ padding:'4px 10px', borderRadius:'8px', border:'1px solid rgba(255,255,255,0.1)', background:'transparent', color:'#6b7a9a', fontSize:'.78rem', cursor:'pointer', fontFamily:"'Inter',sans-serif" }}>
-            Cancel
-          </button>
-        </>
-      )}
+          </>
+        ) : (
+          <>
+            <input type="date" value={draft} onChange={e => setDraft(e.target.value)}
+              style={{ padding:'5px 10px', borderRadius:'8px', border:'1px solid rgba(167,139,250,0.4)', background:'rgba(14,21,40,0.9)', color:'#ede9f4', fontFamily:"'Inter',sans-serif", fontSize:'.85rem', cursor:'pointer' }} />
+            <button onClick={handleSave} disabled={saving} style={{ padding:'4px 12px', borderRadius:'8px', border:'1px solid rgba(52,211,153,0.45)', background:'rgba(52,211,153,0.12)', color:'#34d399', fontSize:'.78rem', fontWeight:700, cursor:'pointer', fontFamily:"'Inter',sans-serif" }}>
+              {saving ? '…' : '💾 Post'}
+            </button>
+            {current && (
+              <button onClick={handleClear} disabled={saving} style={{ padding:'4px 10px', borderRadius:'8px', border:'1px solid rgba(248,113,113,0.35)', background:'rgba(248,113,113,0.08)', color:'#f87171', fontSize:'.78rem', fontWeight:700, cursor:'pointer', fontFamily:"'Inter',sans-serif" }}>
+                🗑 Clear
+              </button>
+            )}
+            <button onClick={() => { setEditing(false); setDraft(current) }} style={{ padding:'4px 10px', borderRadius:'8px', border:'1px solid rgba(255,255,255,0.1)', background:'transparent', color:'#6b7a9a', fontSize:'.78rem', cursor:'pointer', fontFamily:"'Inter',sans-serif" }}>
+              Cancel
+            </button>
+          </>
+        )}
+      </div>
     </div>
   )
 }
 
-function TeacherDashboard({ dueDates, saveDueDate }) {
+function TeacherDashboard({ dueDates, saveDueDate, hiddenAssignments, toggleHidden }) {
   const [rows,        setRows]        = useState(null)
   const [ineqRows,    setIneqRows]    = useState(null)
   const [hwRows,      setHwRows]      = useState(null)
@@ -1584,7 +1612,7 @@ function TeacherDashboard({ dueDates, saveDueDate }) {
             <div style={S.dashSectionHead}>
               <span style={S.dashSectionTitle}>📈 Systems of Equations · Socratic Activity Scores</span>
               <span style={S.dashSectionSub}>{filterByPeriod(rows||[]).length} student{filterByPeriod(rows||[]).length !== 1 ? 's' : ''} · appears per method completed · green=75%+ · yellow=50%+ · red=below 50%</span>
-              <DueDateEditor tabId="systems" dueDates={dueDates} saveDueDate={saveDueDate} />
+              <DueDateEditor tabId="systems" dueDates={dueDates} saveDueDate={saveDueDate} hiddenAssignments={hiddenAssignments} toggleHidden={toggleHidden} />
             </div>
             {!rows?.length
               ? <EmptyState msg="No scores yet. Students appear here after completing each method." />
@@ -1636,7 +1664,7 @@ function TeacherDashboard({ dueDates, saveDueDate }) {
             <div style={S.dashSectionHead}>
               <span style={S.dashSectionTitle}>≥ Systems of Inequalities · Activity Scores</span>
               <span style={S.dashSectionSub}>{filterByPeriod(ineqRows||[]).length} student{filterByPeriod(ineqRows||[]).length !== 1 ? 's' : ''} · one entry per student · appears after completing the activity</span>
-              <DueDateEditor tabId="inequalities" dueDates={dueDates} saveDueDate={saveDueDate} />
+              <DueDateEditor tabId="inequalities" dueDates={dueDates} saveDueDate={saveDueDate} hiddenAssignments={hiddenAssignments} toggleHidden={toggleHidden} />
             </div>
             {!ineqRows?.length
               ? <EmptyState msg="No scores yet. Students appear here after completing the inequalities activity." />
@@ -1694,7 +1722,7 @@ function TeacherDashboard({ dueDates, saveDueDate }) {
             <div style={S.dashSectionHead}>
               <span style={S.dashSectionTitle}>x² M3T1L1 · Introduction to Exponential Functions</span>
               <span style={S.dashSectionSub}>{filterByPeriod(hwRows||[]).length} student{filterByPeriod(hwRows||[]).length !== 1 ? 's' : ''} completed · name filled in &amp; submitted required to appear</span>
-              <DueDateEditor tabId="exponential" dueDates={dueDates} saveDueDate={saveDueDate} />
+              <DueDateEditor tabId="exponential" dueDates={dueDates} saveDueDate={saveDueDate} hiddenAssignments={hiddenAssignments} toggleHidden={toggleHidden} />
             </div>
             {!hwRows?.length
               ? <EmptyState msg="No completed submissions yet. Students appear here once they fill in their name and submit." />
@@ -1749,7 +1777,7 @@ function TeacherDashboard({ dueDates, saveDueDate }) {
             <div style={S.dashSectionHead}>
               <span style={S.dashSectionTitle}>x² M3T1L2 · Writing Exponential Functions</span>
               <span style={S.dashSectionSub}>{filterByPeriod(wefRows||[]).length} student{filterByPeriod(wefRows||[]).length !== 1 ? 's' : ''} completed · name filled in &amp; submitted required to appear</span>
-              <DueDateEditor tabId="writing-exp" dueDates={dueDates} saveDueDate={saveDueDate} />
+              <DueDateEditor tabId="writing-exp" dueDates={dueDates} saveDueDate={saveDueDate} hiddenAssignments={hiddenAssignments} toggleHidden={toggleHidden} />
             </div>
             {!wefRows?.length
               ? <EmptyState msg="No completed submissions yet. Students appear here once they fill in their name and submit." />
@@ -1801,7 +1829,7 @@ function TeacherDashboard({ dueDates, saveDueDate }) {
             <div style={S.dashSectionHead}>
               <span style={S.dashSectionTitle}>x² M3T2 · Exponential Growth & Decay Word Problems</span>
               <span style={S.dashSectionSub}>{filterByPeriod(m3t2spRows||[]).length} student{filterByPeriod(m3t2spRows||[]).length !== 1 ? 's' : ''} completed · name filled in &amp; submitted required to appear</span>
-              <DueDateEditor tabId="m3t2sp" dueDates={dueDates} saveDueDate={saveDueDate} />
+              <DueDateEditor tabId="m3t2sp" dueDates={dueDates} saveDueDate={saveDueDate} hiddenAssignments={hiddenAssignments} toggleHidden={toggleHidden} />
             </div>
             {!m3t2spRows?.length
               ? <EmptyState msg="No completed submissions yet. Students appear here once they fill in their name and submit." />
@@ -1938,6 +1966,7 @@ export default function App() {
   const [lang,             setLang]             = useState('en')
   const [period,           setPeriod]           = useState('')
   const [dueDates,         setDueDates]         = useState({})
+  const [hiddenAssignments,setHiddenAssignments] = useState({})
 
   useEffect(() => {
     return onAuthStateChanged(auth, u => {
@@ -1946,10 +1975,13 @@ export default function App() {
     })
   }, [])
 
-  // Load due dates from Firestore on mount (public read for all signed-in users)
+  // Load due dates + hidden flags from Firestore on mount
   useEffect(() => {
     getDoc(doc(db, 'settings', 'dueDates'))
       .then(snap => { if (snap.exists()) setDueDates(snap.data()) })
+      .catch(() => {})
+    getDoc(doc(db, 'settings', 'hiddenAssignments'))
+      .then(snap => { if (snap.exists()) setHiddenAssignments(snap.data()) })
       .catch(() => {})
   }, [])
 
@@ -1959,6 +1991,14 @@ export default function App() {
     try {
       await setDoc(doc(db, 'settings', 'dueDates'), updated)
     } catch (e) { console.error('[DueDate]', e) }
+  }
+
+  const toggleHidden = async (assignmentId) => {
+    const updated = { ...hiddenAssignments, [assignmentId]: !hiddenAssignments[assignmentId] }
+    setHiddenAssignments(updated)
+    try {
+      await setDoc(doc(db, 'settings', 'hiddenAssignments'), updated)
+    } catch (e) { console.error('[Hidden]', e) }
   }
 
   // Load student period from Firestore on login
@@ -2081,10 +2121,10 @@ export default function App() {
       {/* ── Screens ── */}
       <main style={S.main}>
         {screen === 'assignments'  && <ModulesPage      user={user} onOpen={openModule} lang={lang} setLang={setLang} />}
-        {screen === 'moduleDetail' && <ModuleDetailPage mod={activeModule} onOpen={openAssignment} lang={lang} user={user} dueDates={dueDates} />}
+        {screen === 'moduleDetail' && <ModuleDetailPage mod={activeModule} onOpen={openAssignment} lang={lang} user={user} dueDates={dueDates} hiddenAssignments={hiddenAssignments} />}
         {screen === 'methods'      && <MethodsPicker    assignment={activeAssignment} onOpen={openMethod} lang={lang} />}
         {screen === 'activity'     && <ActivityFrame    file={activeFile} />}
-        {screen === 'dashboard'    && isTeacher(user.email) && <TeacherDashboard dueDates={dueDates} saveDueDate={saveDueDate} />}
+        {screen === 'dashboard'    && isTeacher(user.email) && <TeacherDashboard dueDates={dueDates} saveDueDate={saveDueDate} hiddenAssignments={hiddenAssignments} toggleHidden={toggleHidden} />}
       </main>
 
       {/* Feedback button — hidden inside activity iframe */}
