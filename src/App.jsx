@@ -1605,6 +1605,7 @@ function TeacherDashboard() {
                       <th style={{ ...S.th, textAlign:'left', paddingLeft:'16px' }}>Student</th>
                       <th style={{ ...S.th, color:'#a78bfa' }}>Period</th>
                       <th style={{ ...S.th, color:'#D4681A' }}>Grade</th>
+                      <th style={{ ...S.th, color:'#34d399' }}>% Score</th>
                       <th style={{ ...S.th, color:'#e8a832' }}>XP</th>
                       <th style={{ ...S.th, color:'#4fc3f7' }}>A1 Vocab</th>
                       <th style={{ ...S.th, color:'#34d399' }}>A2 Fill-In</th>
@@ -1624,6 +1625,7 @@ function TeacherDashboard() {
                             <td style={S.tdName}><div style={{ fontWeight:600, color:'#ede9f4', fontSize:'.9rem' }}>{r.student}</div></td>
                             <td style={{ ...S.td, color: per?'#a78bfa':'#6b7a9a', fontFamily:"'JetBrains Mono',monospace", fontWeight:per?700:400 }}>{per ? `P${per}` : '—'}</td>
                             <td style={{ ...S.td, color:rub.color, fontWeight:700, fontSize:'.9rem' }}>{rub.label}</td>
+                            <td style={{ ...S.td, color:rub.color, fontWeight:700, fontFamily:"'JetBrains Mono',monospace" }}>{pct}%</td>
                             <td style={{ ...S.td, color:'#e8a832', fontWeight:600 }}>{r.xp?.total!=null?`${r.xp.total}/${r.maxXP||170}`:'—'}</td>
                             <td style={{ ...S.td, color:r.completed?.a1?'#34d399':'#6b7a9a' }}>{r.completed?.a1?'✅':'⬜'}</td>
                             <td style={{ ...S.td, color:r.completed?.a2?'#34d399':'#6b7a9a' }}>{r.completed?.a2?'✅':'⬜'}</td>

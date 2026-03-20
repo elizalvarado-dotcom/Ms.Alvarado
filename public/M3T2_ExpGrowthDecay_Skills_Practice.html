@@ -55,7 +55,7 @@ body:not(.es) .lang-es{display:none!important}
   background:linear-gradient(135deg,#f43f5e 0%,#a78bfa 52%,#e8a832 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;position:relative}
 #hero .sub{margin-top:6px;color:var(--txt2);font-size:.85rem;font-style:italic;position:relative}
-.name-row{margin:18px auto 0;max-width:420px;display:flex;gap:8px;align-items:center;position:relative}
+.name-row{margin:18px auto 0;max-width:640px;display:flex;gap:8px;align-items:center;position:relative;flex-wrap:wrap}
 .name-row label{color:var(--gld);font-family:var(--sans);font-weight:700;font-size:.86rem;white-space:nowrap}
 .name-row input{flex:1;padding:9px 14px;border-radius:10px;border:1.5px solid rgba(255,255,255,.15);
   background:rgba(255,255,255,.07);color:var(--txt);font-family:var(--body);font-size:.93rem;outline:none;transition:border-color .2s}
@@ -273,6 +273,17 @@ function sendToFirebase(data,isSubmit){
   <div class="name-row">
     <label>👤 <span class="lang-en">Name:</span><span class="lang-es">Nombre:</span></label>
     <input type="text" id="student-name" autocomplete="name" placeholder="Enter your full name / Escribe tu nombre completo">
+    <label style="white-space:nowrap">📚 <span class="lang-en">Period:</span><span class="lang-es">Período:</span></label>
+    <select id="student-period" onchange="autoSave()" style="padding:9px 10px;border-radius:10px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:#fff;font-size:.88rem;cursor:pointer;min-width:110px">
+      <option value="">— Select —</option>
+      <option value="1">Period 1</option>
+      <option value="2">Period 2</option>
+      <option value="3">Period 3</option>
+      <option value="4">Period 4</option>
+      <option value="5">Period 5</option>
+      <option value="6">Period 6</option>
+      <option value="7">Period 7</option>
+    </select>
   </div>
   <div>
     <div class="lang-toggle" style="margin-top:14px">
@@ -860,7 +871,8 @@ function autoSave() {
   shuffledQ.forEach((q,i) => {
     progress[q.id] = { gdDone:attempts[i].gdDone, aDone:attempts[i].aDone, bDone:attempts[i].bDone, eqDone:attempts[i].eqDone, earned:attempts[i].earned, penalty:attempts[i].penalty };
   });
-  sendToFirebase({ student:name, module:'M3T2_SkillsPractice', xp:displayXP, progress }, false);
+  const period = document.getElementById('student-period').value || '';
+  sendToFirebase({ student:name, period, module:'M3T2_SkillsPractice', xp:displayXP, progress }, false);
 }
 
 /* ═══════════════════════════════════════════════════
@@ -873,7 +885,8 @@ function submitAll() {
   shuffledQ.forEach((q,i) => {
     progress[q.id] = { gdDone:attempts[i].gdDone, aDone:attempts[i].aDone, bDone:attempts[i].bDone, eqDone:attempts[i].eqDone, earned:attempts[i].earned, penalty:attempts[i].penalty };
   });
-  sendToFirebase({ student:name, module:'M3T2_SkillsPractice', xp:displayXP, progress }, true);
+  const period = document.getElementById('student-period').value || '';
+  sendToFirebase({ student:name, period, module:'M3T2_SkillsPractice', xp:displayXP, progress }, true);
   showCertificate(name);
 }
 

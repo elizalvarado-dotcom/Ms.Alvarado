@@ -28,7 +28,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#eaf0f9;color:#1a1a2e;pa
 #hero{background:linear-gradient(135deg,var(--dk) 0%,var(--md) 100%);color:#fff;padding:34px 18px 28px;text-align:center}
 #hero h1{font-size:clamp(1.2rem,4vw,2rem);font-weight:900}#hero h1 span{color:var(--gld)}
 #hero .sub{margin-top:4px;opacity:.82;font-size:.88rem;font-style:italic}
-.name-row{margin:18px auto 0;max-width:400px;display:flex;gap:8px;align-items:center}
+.name-row{margin:18px auto 0;max-width:620px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .name-row label{color:var(--gld);font-weight:700;font-size:.9rem;white-space:nowrap}
 .name-row input{flex:1;padding:8px 12px;border-radius:8px;border:2px solid rgba(255,255,255,.3);
   background:rgba(255,255,255,.15);color:#fff;font:inherit;font-size:.95rem;outline:none}
@@ -269,6 +269,17 @@ function sendToFirebase(data,isSubmit){
   <div class="name-row">
     <label for="sname">👤 Name / Nombre:</label>
     <input id="sname" type="text" placeholder="Enter your name / Escribe tu nombre" oninput="autosave()">
+    <label for="speriod" style="white-space:nowrap">📚 Period:</label>
+    <select id="speriod" onchange="autosave()" style="padding:8px 10px;border-radius:8px;border:2px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);color:#fff;font-size:.88rem;cursor:pointer;min-width:110px">
+      <option value="">— Select —</option>
+      <option value="1">Period 1</option>
+      <option value="2">Period 2</option>
+      <option value="3">Period 3</option>
+      <option value="4">Period 4</option>
+      <option value="5">Period 5</option>
+      <option value="6">Period 6</option>
+      <option value="7">Period 7</option>
+    </select>
   </div>
 </div>
 
@@ -546,6 +557,7 @@ function autosave(){
     v:'1.1',course:'Algebra 1',module:'M3T1L1',
     assignment:'Exponential Functions Homework Practice',
     student:document.getElementById('sname').value||'',
+    period:document.getElementById('speriod').value||'',
     timestamp:new Date().toISOString(),
     xp:{total:xp,activity1:a1XP,activity2:a2XP,activity3:a3XP},
     grade:grd.g,maxXP:MAX_XP,
@@ -989,7 +1001,7 @@ function submitWork(){
   try{
     const raw=localStorage.getItem('teacher_m3t1l1_'+name);
     if(raw){const d=JSON.parse(raw);d.submitted=true;d.submitTimestamp=new Date().toISOString();localStorage.setItem('teacher_m3t1l1_'+name,JSON.stringify(d));localStorage.setItem('teacher_m3t1l1_latest',JSON.stringify(d));sendToFirebase(d,true);}
-    else{sendToFirebase({v:'1.1',course:'Algebra 1',module:'M3T1L1',assignment:'Exponential Functions Homework Practice',student:name,timestamp:new Date().toISOString(),xp:{total:xp,activity1:a1XP,activity2:a2XP,activity3:a3XP},grade:grd.g,maxXP:MAX_XP,wrongAttempts,completed:{a1:matchCount===VOCAB.length,a2:fb[1]&&fb[2]&&fb[3],a3:Object.values(zoneState).filter(Boolean).length===3&&dr.dom&&dr.rng},seq:chosenSeq},true);}
+    else{sendToFirebase({v:'1.1',course:'Algebra 1',module:'M3T1L1',assignment:'Exponential Functions Homework Practice',student:name,period:document.getElementById('speriod').value||'',timestamp:new Date().toISOString(),xp:{total:xp,activity1:a1XP,activity2:a2XP,activity3:a3XP},grade:grd.g,maxXP:MAX_XP,wrongAttempts,completed:{a1:matchCount===VOCAB.length,a2:fb[1]&&fb[2]&&fb[3],a3:Object.values(zoneState).filter(Boolean).length===3&&dr.dom&&dr.rng},seq:chosenSeq},true);}
   }catch(e){}
   // Build certificate
   document.getElementById('cname').textContent=name;
