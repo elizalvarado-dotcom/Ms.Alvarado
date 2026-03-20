@@ -3,7 +3,7 @@ import {
   getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged,
 } from 'firebase/auth'
 import {
-  getFirestore, doc, setDoc, addDoc, collection, getDocs, serverTimestamp,
+  getFirestore, doc, setDoc, addDoc, collection, getDocs, getDoc, serverTimestamp,
 } from 'firebase/firestore'
 import { initializeApp } from 'firebase/app'
 import './App.css'
@@ -368,9 +368,23 @@ function LoginScreen({ lang, setLang }) {
 }
 
 /* ── Assignment Card ──────────────────────────────────────────────────────── */
-function AssignmentCard({ assignment: a, onOpen, lang }) {
+function AssignmentCard({ assignment: a, onOpen, lang, dueDate }) {
   const [hov, setHov] = useState(false)
   const math = isMathIcon(a.icon)
+
+  const dueBadge = (() => {
+    if (!dueDate) return null
+    const [y,m,d] = dueDate.split('-')
+    const due = new Date(+y, +m-1, +d)
+    const now = new Date(); now.setHours(0,0,0,0)
+    const diff = Math.ceil((due - now) / 86400000) // days until due
+    const label = due.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})
+    const color  = diff < 0 ? '#f87171' : diff <= 3 ? '#e8a832' : '#34d399'
+    const bg     = diff < 0 ? 'rgba(248,113,113,0.12)' : diff <= 3 ? 'rgba(232,168,50,0.12)' : 'rgba(52,211,153,0.12)'
+    const border = diff < 0 ? 'rgba(248,113,113,0.35)' : diff <= 3 ? 'rgba(232,168,50,0.35)' : 'rgba(52,211,153,0.35)'
+    const prefix = diff < 0 ? '⚠️ Past due · ' : diff === 0 ? '⏰ Due today · ' : diff <= 3 ? '⏳ Due soon · ' : '📅 Due '
+    return { label: prefix + label, color, bg, border }
+  })()
 
   return (
     <button
@@ -412,6 +426,13 @@ function AssignmentCard({ assignment: a, onOpen, lang }) {
           <div style={{ ...S.aDesc, color: a.dark ? 'rgba(237,233,244,0.55)' : '#6b7a9a' }}>{L(a.desc, lang)}</div>
         </div>
       </div>
+
+      {/* Due date badge */}
+      {dueBadge && (
+        <div style={{ marginTop:'10px', display:'inline-flex', alignItems:'center', gap:'6px', padding:'3px 10px', borderRadius:'20px', background:dueBadge.bg, border:`1px solid ${dueBadge.border}`, fontSize:'.72rem', fontWeight:700, color:dueBadge.color, fontFamily:"'JetBrains Mono',monospace", letterSpacing:'.3px' }}>
+          {dueBadge.label}
+        </div>
+      )}
 
       {/* Footer */}
       <div style={{ ...S.aFooter, borderTopColor: a.dark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.06)' }}>
@@ -550,7 +571,7 @@ function ModulesPage({ user, onOpen, lang, setLang }) {
 }
 
 /* ── Module Detail Page (assignments within a module) ─────────────────────── */
-function ModuleDetailPage({ mod, onOpen, lang, user }) {
+function ModuleDetailPage({ mod, onOpen, lang, user, dueDates }) {
   const baseUnits = UNITS.filter(u => mod.unitIds.includes(u.id))
   const math = isMathIcon(mod.icon)
   const teacher = isTeacher(user?.email)
@@ -669,7 +690,7 @@ function ModuleDetailPage({ mod, onOpen, lang, user }) {
                           </span>
                         </div>
                       )}
-                      <AssignmentCard assignment={a} onOpen={customizeMode ? () => {} : onOpen} lang={lang} />
+                      <AssignmentCard assignment={a} onOpen={customizeMode ? () => {} : onOpen} lang={lang} dueDate={dueDates?.[a.id]} />
                     </div>
                   )
                 })}
@@ -1237,7 +1258,82 @@ function StudentDetailModal({ row, tab, onClose }) {
 }
 
 /* ── Teacher Dashboard ────────────────────────────────────────────────────── */
-function TeacherDashboard() {
+// Map dashboard tab → assignment ID (used as key in dueDates)
+const TAB_ASSIGNMENT = {
+  'systems':     'systems-equations',
+  'inequalities':'systems-inequalities',
+  'exponential': 'exponential',
+  'writing-exp': 'writing-exponential',
+  'm3t2sp':      'exp-growth-decay-word-problems',
+}
+
+function DueDateEditor({ tabId, dueDates, saveDueDate }) {
+  const assignmentId = TAB_ASSIGNMENT[tabId]
+  if (!assignmentId) return null
+  const current = dueDates?.[assignmentId] || ''
+  const [editing, setEditing] = useState(false)
+  const [draft,   setDraft]   = useState(current)
+  const [saving,  setSaving]  = useState(false)
+
+  // Keep draft in sync when dueDates loads from Firestore
+  useEffect(() => { setDraft(dueDates?.[assignmentId] || '') }, [dueDates, assignmentId])
+
+  const fmtDate = (d) => {
+    if (!d) return null
+    const [y,m,day] = d.split('-')
+    return new Date(+y, +m-1, +day).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'})
+  }
+
+  const handleSave = async () => {
+    setSaving(true)
+    await saveDueDate(assignmentId, draft)
+    setSaving(false)
+    setEditing(false)
+  }
+
+  const handleClear = async () => {
+    setSaving(true)
+    const updated = { ...dueDates }
+    delete updated[assignmentId]
+    await saveDueDate(assignmentId, '')
+    setSaving(false)
+    setEditing(false)
+  }
+
+  return (
+    <div style={{ display:'flex', alignItems:'center', gap:'10px', flexWrap:'wrap', marginTop:'10px', padding:'10px 14px', background:'rgba(167,139,250,0.06)', border:'1px solid rgba(167,139,250,0.18)', borderRadius:'12px' }}>
+      <span style={{ fontSize:'.75rem', fontFamily:"'JetBrains Mono',monospace", fontWeight:700, color:'#a78bfa', letterSpacing:'1px', textTransform:'uppercase' }}>📅 Due Date</span>
+      {!editing ? (
+        <>
+          <span style={{ fontSize:'.85rem', fontFamily:"'Inter',sans-serif", color: current ? '#ede9f4' : '#6b7a9a', fontWeight: current ? 600 : 400 }}>
+            {current ? fmtDate(current) : 'Not set'}
+          </span>
+          <button onClick={() => setEditing(true)} style={{ padding:'3px 10px', borderRadius:'8px', border:'1px solid rgba(167,139,250,0.35)', background:'rgba(167,139,250,0.12)', color:'#a78bfa', fontSize:'.75rem', fontWeight:700, cursor:'pointer', fontFamily:"'Inter',sans-serif" }}>
+            ✏️ {current ? 'Edit' : 'Set date'}
+          </button>
+        </>
+      ) : (
+        <>
+          <input type="date" value={draft} onChange={e => setDraft(e.target.value)}
+            style={{ padding:'5px 10px', borderRadius:'8px', border:'1px solid rgba(167,139,250,0.4)', background:'rgba(14,21,40,0.9)', color:'#ede9f4', fontFamily:"'Inter',sans-serif", fontSize:'.85rem', cursor:'pointer' }} />
+          <button onClick={handleSave} disabled={saving} style={{ padding:'4px 12px', borderRadius:'8px', border:'1px solid rgba(52,211,153,0.45)', background:'rgba(52,211,153,0.12)', color:'#34d399', fontSize:'.78rem', fontWeight:700, cursor:'pointer', fontFamily:"'Inter',sans-serif" }}>
+            {saving ? '…' : '💾 Post'}
+          </button>
+          {current && (
+            <button onClick={handleClear} disabled={saving} style={{ padding:'4px 10px', borderRadius:'8px', border:'1px solid rgba(248,113,113,0.35)', background:'rgba(248,113,113,0.08)', color:'#f87171', fontSize:'.78rem', fontWeight:700, cursor:'pointer', fontFamily:"'Inter',sans-serif" }}>
+              🗑 Clear
+            </button>
+          )}
+          <button onClick={() => { setEditing(false); setDraft(current) }} style={{ padding:'4px 10px', borderRadius:'8px', border:'1px solid rgba(255,255,255,0.1)', background:'transparent', color:'#6b7a9a', fontSize:'.78rem', cursor:'pointer', fontFamily:"'Inter',sans-serif" }}>
+            Cancel
+          </button>
+        </>
+      )}
+    </div>
+  )
+}
+
+function TeacherDashboard({ dueDates, saveDueDate }) {
   const [rows,        setRows]        = useState(null)
   const [ineqRows,    setIneqRows]    = useState(null)
   const [hwRows,      setHwRows]      = useState(null)
@@ -1488,6 +1584,7 @@ function TeacherDashboard() {
             <div style={S.dashSectionHead}>
               <span style={S.dashSectionTitle}>📈 Systems of Equations · Socratic Activity Scores</span>
               <span style={S.dashSectionSub}>{filterByPeriod(rows||[]).length} student{filterByPeriod(rows||[]).length !== 1 ? 's' : ''} · appears per method completed · green=75%+ · yellow=50%+ · red=below 50%</span>
+              <DueDateEditor tabId="systems" dueDates={dueDates} saveDueDate={saveDueDate} />
             </div>
             {!rows?.length
               ? <EmptyState msg="No scores yet. Students appear here after completing each method." />
@@ -1539,6 +1636,7 @@ function TeacherDashboard() {
             <div style={S.dashSectionHead}>
               <span style={S.dashSectionTitle}>≥ Systems of Inequalities · Activity Scores</span>
               <span style={S.dashSectionSub}>{filterByPeriod(ineqRows||[]).length} student{filterByPeriod(ineqRows||[]).length !== 1 ? 's' : ''} · one entry per student · appears after completing the activity</span>
+              <DueDateEditor tabId="inequalities" dueDates={dueDates} saveDueDate={saveDueDate} />
             </div>
             {!ineqRows?.length
               ? <EmptyState msg="No scores yet. Students appear here after completing the inequalities activity." />
@@ -1596,6 +1694,7 @@ function TeacherDashboard() {
             <div style={S.dashSectionHead}>
               <span style={S.dashSectionTitle}>x² M3T1L1 · Introduction to Exponential Functions</span>
               <span style={S.dashSectionSub}>{filterByPeriod(hwRows||[]).length} student{filterByPeriod(hwRows||[]).length !== 1 ? 's' : ''} completed · name filled in &amp; submitted required to appear</span>
+              <DueDateEditor tabId="exponential" dueDates={dueDates} saveDueDate={saveDueDate} />
             </div>
             {!hwRows?.length
               ? <EmptyState msg="No completed submissions yet. Students appear here once they fill in their name and submit." />
@@ -1650,6 +1749,7 @@ function TeacherDashboard() {
             <div style={S.dashSectionHead}>
               <span style={S.dashSectionTitle}>x² M3T1L2 · Writing Exponential Functions</span>
               <span style={S.dashSectionSub}>{filterByPeriod(wefRows||[]).length} student{filterByPeriod(wefRows||[]).length !== 1 ? 's' : ''} completed · name filled in &amp; submitted required to appear</span>
+              <DueDateEditor tabId="writing-exp" dueDates={dueDates} saveDueDate={saveDueDate} />
             </div>
             {!wefRows?.length
               ? <EmptyState msg="No completed submissions yet. Students appear here once they fill in their name and submit." />
@@ -1701,6 +1801,7 @@ function TeacherDashboard() {
             <div style={S.dashSectionHead}>
               <span style={S.dashSectionTitle}>x² M3T2 · Exponential Growth & Decay Word Problems</span>
               <span style={S.dashSectionSub}>{filterByPeriod(m3t2spRows||[]).length} student{filterByPeriod(m3t2spRows||[]).length !== 1 ? 's' : ''} completed · name filled in &amp; submitted required to appear</span>
+              <DueDateEditor tabId="m3t2sp" dueDates={dueDates} saveDueDate={saveDueDate} />
             </div>
             {!m3t2spRows?.length
               ? <EmptyState msg="No completed submissions yet. Students appear here once they fill in their name and submit." />
@@ -1836,6 +1937,7 @@ export default function App() {
   const [activeLabel,      setActiveLabel]      = useState('Assignments')
   const [lang,             setLang]             = useState('en')
   const [period,           setPeriod]           = useState('')
+  const [dueDates,         setDueDates]         = useState({})
 
   useEffect(() => {
     return onAuthStateChanged(auth, u => {
@@ -1843,6 +1945,21 @@ export default function App() {
       if (!u) { setScreen('assignments'); setActiveModule(null); setActiveAssignment(null); setActiveFile(null); setPeriod('') }
     })
   }, [])
+
+  // Load due dates from Firestore on mount (public read for all signed-in users)
+  useEffect(() => {
+    getDoc(doc(db, 'settings', 'dueDates'))
+      .then(snap => { if (snap.exists()) setDueDates(snap.data()) })
+      .catch(() => {})
+  }, [])
+
+  const saveDueDate = async (assignmentId, dateStr) => {
+    const updated = { ...dueDates, [assignmentId]: dateStr }
+    setDueDates(updated)
+    try {
+      await setDoc(doc(db, 'settings', 'dueDates'), updated)
+    } catch (e) { console.error('[DueDate]', e) }
+  }
 
   // Load student period from Firestore on login
   useEffect(() => {
@@ -1964,10 +2081,10 @@ export default function App() {
       {/* ── Screens ── */}
       <main style={S.main}>
         {screen === 'assignments'  && <ModulesPage      user={user} onOpen={openModule} lang={lang} setLang={setLang} />}
-        {screen === 'moduleDetail' && <ModuleDetailPage mod={activeModule} onOpen={openAssignment} lang={lang} user={user} />}
+        {screen === 'moduleDetail' && <ModuleDetailPage mod={activeModule} onOpen={openAssignment} lang={lang} user={user} dueDates={dueDates} />}
         {screen === 'methods'      && <MethodsPicker    assignment={activeAssignment} onOpen={openMethod} lang={lang} />}
         {screen === 'activity'     && <ActivityFrame    file={activeFile} />}
-        {screen === 'dashboard'    && isTeacher(user.email) && <TeacherDashboard />}
+        {screen === 'dashboard'    && isTeacher(user.email) && <TeacherDashboard dueDates={dueDates} saveDueDate={saveDueDate} />}
       </main>
 
       {/* Feedback button — hidden inside activity iframe */}

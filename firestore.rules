@@ -55,6 +55,14 @@ service cloud.firestore {
       allow write: if request.auth != null && request.auth.uid == uid;
     }
 
+    // ── settings/{docId} ──────────────────────────────────────────────────
+    // Any signed-in user can read settings; only the teacher can write.
+    match /settings/{docId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null
+                   && request.auth.token.email == 'elizalvarado@paps.net';
+    }
+
     // Block everything else
     match /{document=**} {
       allow read, write: if false;
