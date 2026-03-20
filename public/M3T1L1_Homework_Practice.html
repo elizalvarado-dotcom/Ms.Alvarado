@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exponential Functions Homework Practice</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--dk:#1C3A5F;--md:#2E6DA4;--lt:#D6E8F7;--acc:#D4681A;--lo:#FDF0E2;--lo2:#F5CFA0;
+  --lg:#F4F4F4;--mg:#CCCCCC;--grn:#1A5C1A;--ltg:#E6F5E6;--pur:#5C2D91;--ltp:#EDE7F6;
+  --gld:#F4C430;--red:#c0392b;--r:12px;--sh:0 4px 20px rgba(28,58,95,.14)}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#eaf0f9;color:#1a1a2e;padding-bottom:80px}
+/* XP Bar */
+#xp-bar{position:sticky;top:0;z-index:999;background:var(--dk);color:#fff;
+  padding:8px 18px;display:flex;align-items:center;gap:10px;box-shadow:0 3px 14px rgba(0,0,0,.28)}
+.xp-logo{font-weight:900;font-size:.9rem;white-space:nowrap}.xp-logo span{color:var(--gld)}
+#xp-track{flex:1;background:rgba(255,255,255,.2);border-radius:99px;height:12px;overflow:hidden;min-width:60px}
+#xp-fill{height:100%;width:0%;background:linear-gradient(90deg,#43e97b,#38f9d7);border-radius:99px;transition:width .5s}
+#xp-nums{font-size:.76rem;white-space:nowrap}
+#lv-badge{background:var(--gld);color:var(--dk);font-weight:800;font-size:.72rem;padding:3px 9px;border-radius:99px;white-space:nowrap}
+#xp-tot{font-weight:700;font-size:.85rem;white-space:nowrap}
+/* Toast */
+#toast{position:fixed;bottom:24px;right:24px;z-index:9999;color:#fff;font-weight:700;font-size:1rem;
+  padding:10px 20px;border-radius:99px;opacity:0;transform:translateY(14px);
+  transition:opacity .3s,transform .3s;pointer-events:none;background:var(--grn)}
+#toast.on{opacity:1;transform:translateY(0)}#toast.bad{background:var(--red)}
+/* Hero */
+#hero{background:linear-gradient(135deg,var(--dk) 0%,var(--md) 100%);color:#fff;padding:34px 18px 28px;text-align:center}
+#hero h1{font-size:clamp(1.2rem,4vw,2rem);font-weight:900}#hero h1 span{color:var(--gld)}
+#hero .sub{margin-top:4px;opacity:.82;font-size:.88rem;font-style:italic}
+.name-row{margin:18px auto 0;max-width:400px;display:flex;gap:8px;align-items:center}
+.name-row label{color:var(--gld);font-weight:700;font-size:.9rem;white-space:nowrap}
+.name-row input{flex:1;padding:8px 12px;border-radius:8px;border:2px solid rgba(255,255,255,.3);
+  background:rgba(255,255,255,.15);color:#fff;font:inherit;font-size:.95rem;outline:none}
+.name-row input::placeholder{color:rgba(255,255,255,.55)}
+.name-row input:focus{border-color:var(--gld)}
+/* Cards */
+.wrap{max-width:860px;margin:0 auto;padding:0 13px}
+.card{background:#fff;border-radius:16px;box-shadow:var(--sh);margin:24px auto;overflow:hidden}
+.ch{display:flex;align-items:center;gap:10px;padding:12px 18px;color:#fff;font-weight:800;font-size:.98rem}
+.ch .tag{background:rgba(255,255,255,.22);font-size:.66rem;font-weight:700;padding:2px 8px;border-radius:99px;letter-spacing:.06em}
+.ch .xpc{margin-left:auto;background:var(--gld);color:var(--dk);font-size:.72rem;font-weight:800;padding:2px 10px;border-radius:99px}
+.cb{padding:18px 18px 24px}
+/* Language toggle */
+.ltog{display:inline-flex;border-radius:99px;overflow:hidden;border:2px solid var(--md);margin-bottom:14px;font-size:.8rem}
+.ltog button{padding:5px 14px;border:none;cursor:pointer;font-weight:700;background:#fff;color:var(--md);transition:background .2s,color .2s}
+.ltog button.active{background:var(--md);color:#fff}
+/* Word bank */
+.wb{background:var(--lt);border:2px dashed var(--md);border-radius:10px;padding:11px 13px;margin-bottom:16px}
+.wbl{font-size:.75rem;font-weight:800;color:var(--dk);letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px}
+.wbc{display:flex;flex-wrap:wrap;gap:7px}
+.chip{background:#fff;border:2px solid var(--md);border-radius:99px;padding:5px 13px;font-size:.85rem;
+  font-weight:700;color:var(--dk);cursor:pointer;transition:all .16s;user-select:none;white-space:nowrap}
+.chip:hover{background:var(--lt);border-color:var(--dk)}
+.chip.used{background:var(--mg);border-color:var(--mg);color:#fff;cursor:not-allowed;opacity:.55;pointer-events:none}
+.chip.selc{background:var(--acc);border-color:var(--acc);color:#fff;transform:scale(1.06)}
+/* FitB */
+.fb{background:var(--lg);border-radius:10px;padding:14px 16px;margin-bottom:13px;position:relative}
+.fb p{font-size:.91rem;line-height:2.1}
+.fb .esl{font-style:italic;color:#444;font-size:.84rem;margin-top:3px;line-height:2.1;display:none}
+.bl{display:inline-block;border:0;border-bottom:2.5px solid var(--md);background:transparent;
+  font:inherit;font-size:.91rem;font-weight:700;color:var(--dk);min-width:9ch;text-align:center;
+  padding:0 3px;outline:none;transition:border-color .2s;cursor:pointer}
+.bl:focus,.bl.ab{border-color:var(--acc);background:rgba(212,104,26,.07)}
+.bl.ok{border-color:var(--grn);color:var(--grn);background:rgba(26,92,26,.05);cursor:default;pointer-events:none}
+.bl.err{border-color:var(--red);color:var(--red)}
+.r-typed{min-width:6ch;width:6ch}
+.hbtn{position:absolute;top:9px;right:11px;background:none;border:none;cursor:pointer;font-size:1.2rem;opacity:.5;transition:opacity .2s,transform .15s}
+.hbtn:hover{opacity:1;transform:scale(1.2)}
+.hbox{margin-top:7px;padding:8px 13px;background:#fff8e1;border-left:3px solid var(--gld);
+  border-radius:0 8px 8px 0;font-size:.82rem;display:none}
+.hbox.on{display:block}
+.hbox .esl{display:block!important;margin-top:3px}
+.chk{display:inline-flex;align-items:center;gap:6px;background:var(--md);color:#fff;
+  border:none;border-radius:8px;padding:8px 18px;font-size:.86rem;font-weight:700;
+  cursor:pointer;margin-top:8px;transition:background .18s,transform .12s}
+.chk:hover{background:var(--dk);transform:translateY(-1px)}
+.rst{background:var(--lg);color:#555;border:2px solid var(--mg);margin-left:6px;display:none}
+.rst:hover{background:var(--md);color:#fff;border-color:var(--md)}
+.res{margin-top:8px;font-weight:700;font-size:.88rem;min-height:18px}
+/* Vocab match */
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+@media(max-width:540px){.mg{grid-template-columns:1fr}}
+.cl{font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--md);margin-bottom:6px}
+.mi{border:2px solid var(--mg);border-radius:10px;padding:8px 12px;cursor:pointer;font-size:.85rem;
+  line-height:1.4;transition:all .18s;user-select:none;min-height:48px;display:flex;align-items:center}
+.mi:hover{border-color:var(--md);background:var(--lt)}
+.mi.sel{border-color:var(--acc);background:#fff3e8;transform:scale(1.02)}
+.mi.done{border-color:var(--grn);background:var(--ltg);cursor:default;pointer-events:none}
+.mi.fl{border-color:var(--red);background:#fdecea}
+.mi .trm{font-weight:700;color:var(--dk)}.mi .es{font-size:.76rem;color:#555;font-style:italic;margin-top:2px}
+.pdots{display:flex;gap:7px;padding:9px 18px 0;flex-wrap:wrap}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--mg);transition:background .3s}
+.dot.done{background:var(--grn)}
+#mfb{text-align:center;margin-top:10px;font-weight:700;font-size:.92rem;min-height:22px}
+/* Hint popup for vocab */
+#hint-popup{display:none;background:#fff8e1;border:2px solid var(--gld);border-radius:10px;
+  padding:12px 16px;margin-top:12px;font-size:.85rem;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+/* Graph */
+.go{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start}
+.gw{position:relative;flex:0 0 auto;width:100%;max-width:520px}
+#gc{width:100%;height:auto;display:block;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.1)}
+.dz{position:absolute;border:2.5px dashed var(--md);border-radius:8px;background:rgba(214,232,247,.55);
+  display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:var(--md);
+  cursor:pointer;transition:all .18s;text-align:center;line-height:1.2;padding:2px 4px}
+.dz:hover{border-color:var(--acc);background:rgba(253,240,226,.8);color:var(--acc)}
+.dz.filled{border-style:solid;background:rgba(46,109,164,.12);color:var(--dk)}
+.dz.ok{border-color:var(--grn)!important;background:rgba(26,92,26,.1)!important;color:var(--grn)!important}
+.dz.err{border-color:var(--red)!important;background:rgba(192,57,43,.08)!important;color:var(--red)!important}
+.dz.pulse{animation:pls .35s ease}
+@keyframes pls{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+.gr{flex:1;min-width:180px}
+.gwbl{font-size:.75rem;font-weight:800;color:var(--dk);letter-spacing:.06em;text-transform:uppercase;margin-bottom:9px}
+.gwb{display:flex;flex-direction:column;gap:7px}
+.gc2{border:2px solid var(--md);border-radius:8px;padding:8px 13px;font-size:.83rem;font-weight:700;
+  color:var(--dk);background:#fff;cursor:pointer;transition:all .18s;text-align:center}
+.gc2:hover{background:var(--lt);border-color:var(--dk)}
+.gc2.gsel{background:var(--acc);border-color:var(--acc);color:#fff;transform:scale(1.03)}
+.gc2.gused{background:var(--lg);border-color:var(--mg);color:#999;cursor:not-allowed;pointer-events:none}
+/* Domain/Range dropdowns */
+.dr-section{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:500px){.dr-section{grid-template-columns:1fr}}
+.dr-card{background:var(--lg);border-radius:10px;padding:13px 15px;border-left:4px solid var(--pur)}
+.dr-card label{font-size:.85rem;font-weight:700;color:var(--dk);display:block;margin-bottom:7px}
+.dr-card .esl{font-size:.78rem;font-style:italic;color:#555;margin-bottom:8px}
+.dr-card select{width:100%;padding:7px 10px;border-radius:7px;border:2px solid var(--md);font:inherit;
+  font-size:.86rem;font-weight:600;color:var(--dk);background:#fff;outline:none;cursor:pointer}
+.dr-card select:focus{border-color:var(--acc)}
+.dr-card select.ok{border-color:var(--grn);background:var(--ltg)}
+.dr-card select.err{border-color:var(--red);background:#fdecea}
+.dr-def{display:none;margin-top:8px;padding:8px 12px;background:#fff8e1;border-left:3px solid var(--gld);
+  border-radius:0 8px 8px 0;font-size:.81rem;animation:fadeIn .3s}
+.dr-def.on{display:block}
+/* Submit + cert */
+#submit-section{text-align:center;margin:30px auto;max-width:860px;padding:0 13px}
+.submit-btn{background:var(--grn);color:#fff;border:none;border-radius:12px;
+  padding:16px 40px;font-size:1.1rem;font-weight:800;cursor:pointer;
+  box-shadow:0 4px 16px rgba(26,92,26,.3);transition:all .2s}
+.submit-btn:hover{background:#145214;transform:translateY(-2px)}
+/* Certificate overlay */
+#cert-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9990;
+  align-items:center;justify-content:center;padding:20px}
+#cert-overlay.on{display:flex}
+#cert-box{background:#fff;border-radius:16px;max-width:700px;width:100%;max-height:90vh;overflow-y:auto;
+  position:relative}
+.cert-inner{padding:30px;text-align:center}
+.cert-header-bar{background:var(--dk);color:#fff;border-radius:12px 12px 0 0;
+  margin:-30px -30px 20px;padding:18px 24px;text-align:center}
+.cert-header-bar h2{font-size:1.3rem;font-weight:900}
+.cert-header-bar .sub{font-style:italic;opacity:.8;font-size:.85rem;margin-top:3px}
+.cert-border{border:4px double var(--gld);border-radius:12px;padding:20px;margin-bottom:20px}
+.cert-name{font-size:2rem;font-weight:900;color:var(--dk);margin:10px 0}
+.cert-grade{font-size:4.5rem;font-weight:900;margin:8px 0}
+.cert-grade-lbl{font-size:1rem;font-weight:700;margin-bottom:16px}
+.cert-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.88rem;text-align:left}
+.cert-table th{background:var(--lt);color:var(--dk);padding:8px 12px;font-weight:800}
+.cert-table td{padding:8px 12px;border-bottom:1px solid var(--mg)}
+.cert-table tr:last-child td{font-weight:800;border-top:2px solid var(--md);background:var(--lt)}
+.cert-date{font-size:.8rem;color:#777;margin-top:12px}
+.cert-btns{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+/* Completion banner */
+#comp{display:none;background:linear-gradient(135deg,var(--grn),#27ae60);color:#fff;
+  text-align:center;padding:36px 18px;border-radius:16px;margin:24px auto;max-width:860px;box-shadow:var(--sh)}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:9998}
+/* Seq display */
+.seqd{font-size:1.15rem;font-weight:800;color:var(--dk);background:var(--lt);
+  border-radius:8px;padding:9px 14px;margin-bottom:12px;border-left:4px solid var(--md)}
+.arr{color:var(--acc);font-weight:900;margin:0 3px}
+/* Print / Save as PDF */
+.pdf-btn{background:var(--md);color:#fff;border:none;border-radius:12px;
+  padding:14px 32px;font-size:1rem;font-weight:800;cursor:pointer;margin-left:12px;
+  box-shadow:0 4px 16px rgba(46,109,164,.3);transition:all .2s}
+.pdf-btn:hover{background:var(--dk);transform:translateY(-2px)}
+#pdf-tip{display:none;background:#fff8e1;border:2px solid var(--gld);border-radius:10px;
+  padding:12px 16px;margin-top:14px;font-size:.85rem;text-align:left;max-width:500px;margin-left:auto;margin-right:auto}
+#pdf-tip.on{display:block}
+#gc-print{display:none;width:100%;max-width:520px;border-radius:10px}
+@media print{
+  /* Hide interactive chrome */
+  #xp-bar,#toast,#confetti,#submit-section,#comp,
+  .cert-btns .close-btn,.hbtn,.ltog,.rst,.chk,
+  #pdf-tip,.pdf-btn,.gwb,.graph-check-row,.gr{display:none!important}
+  /* Show whole page, not just cert */
+  #cert-overlay{display:none!important}
+  body{background:#fff!important;padding:0!important;font-size:13px}
+  .wrap{max-width:100%!important;padding:0 18px!important}
+  .card{box-shadow:none!important;border:1.5px solid #ccc!important;margin:14px 0!important;break-inside:avoid}
+  .ch{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  /* Drop zones — show answer text clearly */
+  .dz{border:1.5px solid #888!important;background:#f0f4ff!important;color:#000!important;font-size:.75rem!important}
+  .dz.ok{background:#e6f5e6!important;border-color:#1A5C1A!important;color:#1A5C1A!important}
+  .dz.err{background:#fdecea!important;border-color:#c0392b!important;color:#c0392b!important}
+  /* Blanks */
+  .bl{border-bottom:1.5px solid #000!important;color:#000!important;font-weight:700!important}
+  .bl.ok{color:#1A5C1A!important;border-color:#1A5C1A!important}
+  /* Word bank — show remaining words */
+  .wb{border:1.5px solid #aaa!important;background:#f8f8f8!important}
+  .chip.used{display:none!important}
+  /* Canvas → image */
+  #gc{display:none!important}
+  #gc-print{display:block!important}
+  /* Results */
+  .res{font-size:.82rem}
+  /* Print header */
+  #print-header{display:block!important}
+  /* Page breaks */
+  .card:nth-child(2){break-before:page}
+  /* Domain/Range */
+  .dr-section{break-inside:avoid}
+  select{border:1.5px solid #888!important;background:#fff!important}
+  select.ok{background:#e6f5e6!important;color:#1A5C1A!important}
+}
+</style>
+<!-- Firebase SDK (compat — works in plain HTML without bundler) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+/* ══ FIREBASE INIT ═══════════════════════════════════════════════════════════ */
+const firebaseConfig={
+  apiKey:"AIzaSyAbnknXhx9VYY9L8UFW6uMpNYLM6SRsMVg",
+  authDomain:"solving-systems-activities.firebaseapp.com",
+  projectId:"solving-systems-activities",
+  storageBucket:"solving-systems-activities.firebasestorage.app",
+  messagingSenderId:"81374640982",
+  appId:"1:81374640982:web:ad4796df648ddf464774f7"
+};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore();
+
+/* ── Write/merge one record per student ──────────────────────────────────── */
+// Collection: "homework"  →  Document: "M3T1L1_<studentName>"
+function sendToFirebase(data,isSubmit){
+  if(!data.student)return; // no name yet — skip
+  const docId='M3T1L1_'+data.student.replace(/\s+/g,'_');
+  const payload={...data};
+  if(isSubmit){payload.submitted=true;payload.submitTimestamp=new Date().toISOString();}
+  db.collection('homework').doc(docId).set(payload,{merge:true})
+    .catch(err=>console.warn('Firebase write failed:',err));
+}
+</script>
+</head>
+<body>
+
+<!-- Print-only header (hidden on screen, visible in PDF/print) -->
+<div id="print-header" style="display:none">
+  <div style="text-align:center;padding:12px 0 6px;border-bottom:3px solid #1C3A5F;margin-bottom:10px">
+    <div style="font-size:1.4rem;font-weight:900;color:#1C3A5F">Exponential Functions Homework Practice</div>
+    <div style="font-size:.9rem;color:#444;margin-top:2px">Algebra 1 · Module 3 · Topic 1 · Lesson 1 · Funciones Exponenciales</div>
+    <div style="font-size:.85rem;margin-top:4px">Name / Nombre: <span id="print-name" style="border-bottom:1.5px solid #333;display:inline-block;min-width:180px"></span>
+    &nbsp;&nbsp; Date / Fecha: <span style="border-bottom:1.5px solid #333;display:inline-block;min-width:100px"></span></div>
+  </div>
+</div>
+
+<div id="xp-bar">
+  <div class="xp-logo">M3T1L1 <span>★</span></div>
+  <div id="xp-track"><div id="xp-fill"></div></div>
+  <div id="xp-nums"><span id="xpc">0</span>/<span id="xpn">50</span> XP</div>
+  <div id="lv-badge">⭐ Lv1</div>
+  <div id="xp-tot">0 XP</div>
+</div>
+<div id="toast"></div>
+<canvas id="confetti"></canvas>
+
+<!-- Hero -->
+<div id="hero">
+  <h1>Exponential Functions <span>Homework Practice</span></h1>
+  <div class="sub">Práctica de Tarea · Funciones Exponenciales · M3 · T1 · L1</div>
+  <div class="name-row">
+    <label for="sname">👤 Name / Nombre:</label>
+    <input id="sname" type="text" placeholder="Enter your name / Escribe tu nombre" oninput="autosave()">
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- ══ ACTIVITY 1 · Vocab Match ══════════════════════════════════════════════ -->
+<div class="card">
+  <div class="ch" style="background:var(--grn)">
+    <span>📚</span><span>Activity 1 · Vocabulary Match / Emparejar Vocabulario</span>
+    <span class="tag">VOCAB</span><span class="xpc">±XP</span>
+  </div>
+  <div class="pdots" id="mdots"></div>
+  <div class="cb">
+    <p style="font-size:.84rem;color:#555;margin-bottom:12px">
+      Click a <strong>term</strong>, then its <strong>definition</strong>. ✅ +10 XP for correct · ❌ −3 XP for wrong<br>
+      <em>Haz clic en un <strong>término</strong>, luego en su <strong>definición</strong>. ✅ +10 XP correcto · ❌ −3 XP incorrecto</em>
+    </p>
+    <div class="mg">
+      <div><div class="cl">Terms / Términos</div><div id="tcol"></div></div>
+      <div><div class="cl">Definitions / Definiciones</div><div id="dcol"></div></div>
+    </div>
+    <div id="hint-popup"></div>
+    <div id="mfb"></div>
+  </div>
+</div>
+
+<!-- ══ ACTIVITY 2 · Fill in the Blank ═══════════════════════════════════════ -->
+<div class="card">
+  <div class="ch" style="background:var(--dk)">
+    <span>✏️</span><span>Activity 2 · Fill in the Blank / Llena los Espacios</span>
+    <span class="tag">CONCEPTS</span><span class="xpc">+40 XP</span>
+  </div>
+  <div class="cb">
+    <div class="ltog" id="f-ltog">
+      <button class="active" id="fen" onclick="setFL('en')">🇺🇸 English</button>
+      <button id="fes" onclick="setFL('es')">🇲🇽 Español</button>
+    </div>
+
+    <div class="wb"><div class="wbl">📦 Word Bank / Banco de Palabras — click word, then click blank · haz clic en la palabra, luego en el espacio</div><div class="wbc" id="wbc"></div></div>
+
+    <!-- Q1 -->
+    <div class="fb" id="fb1">
+      <button class="hbtn" onclick="th('fh1')">💡</button>
+      <p id="f1en">A <input class="bl" id="b1a" placeholder="?" readonly onclick="ob(this)"> is a list of values where <input class="bl" id="b1b" placeholder="?" readonly onclick="ob(this)"> terms are multiplied by a constant called the <input class="bl" id="b1c" placeholder="?" style="width:12ch" readonly onclick="ob(this)">.</p>
+      <p class="esl" id="f1es">Una <input class="bl" id="b1d" placeholder="?" style="width:19ch" readonly onclick="ob(this)"> es una lista donde los términos <input class="bl" id="b1e" placeholder="?" readonly onclick="ob(this)"> se multiplican por una constante llamada la <input class="bl" id="b1f" placeholder="?" style="width:12ch" readonly onclick="ob(this)">.</p>
+      <div class="hbox" id="fh1">💡 A geometric sequence uses <em>multiplication</em>, not addition. The multiplier stays the same each time.<br><span class="esl">Una secuencia geométrica usa <em>multiplicación</em>, no suma. El multiplicador es siempre el mismo.</span></div>
+      <br><button class="chk" onclick="cFb(1)">Check / Verificar ✓</button>
+      <button class="chk rst" id="rst1" onclick="rstQ(1)">↺ Reset</button>
+      <div class="res" id="fr1"></div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="fb" id="fb2">
+      <button class="hbtn" onclick="th('fh2')">💡</button>
+      <div class="seqd" id="seqd"></div>
+      <p id="f2en">The common ratio is <em>r</em> = <input class="bl" id="b2a" placeholder="?" readonly onclick="ob(this)" style="width:5ch"> because each term is <input class="bl" id="b2b" placeholder="?" style="width:10ch" readonly onclick="ob(this)"> by <em>r</em>.</p>
+      <p class="esl" id="f2es">La razón común es <em>r</em> = <input class="bl" id="b2c" placeholder="?" readonly onclick="ob(this)" style="width:5ch"> porque cada término se <input class="bl" id="b2d" placeholder="?" style="width:10ch" readonly onclick="ob(this)"> por <em>r</em>.</p>
+      <div class="hbox" id="fh2">💡 Divide any term by the one before it: <strong id="hseq"></strong><br><span class="esl">Divide cualquier término entre el anterior.</span></div>
+      <br><button class="chk" onclick="cFb(2)">Check / Verificar ✓</button>
+      <button class="chk rst" id="rst2" onclick="rstQ(2)">↺ Reset</button>
+      <div class="res" id="fr2"></div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="fb" id="fb3">
+      <button class="hbtn" onclick="th('fh3')">💡</button>
+      <p id="f3en">When <em>r</em> &gt; 1, the sequence shows exponential <input class="bl" id="b3a" placeholder="?" style="width:9ch" readonly onclick="ob(this)">. When 0 &lt; <em>r</em> &lt; 1, it shows exponential <input class="bl" id="b3b" placeholder="?" style="width:8ch" readonly onclick="ob(this)">.</p>
+      <p class="esl" id="f3es">Cuando <em>r</em> &gt; 1, muestra <input class="bl" id="b3c" placeholder="?" style="width:14ch" readonly onclick="ob(this)"> exponencial. Cuando 0 &lt; <em>r</em> &lt; 1, muestra <input class="bl" id="b3d" placeholder="?" style="width:14ch" readonly onclick="ob(this)"> exponencial.</p>
+      <div class="hbox" id="fh3">💡 If <em>r</em> &gt; 1 the values get <em>bigger</em> (growth / crecimiento). If 0 &lt; <em>r</em> &lt; 1 they get <em>smaller</em> (decay / decaimiento).</div>
+      <br><button class="chk" onclick="cFb(3)">Check / Verificar ✓</button>
+      <button class="chk rst" id="rst3" onclick="rstQ(3)">↺ Reset</button>
+      <div class="res" id="fr3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ACTIVITY 3 · Label the Graph ══════════════════════════════════════════ -->
+<div class="card">
+  <div class="ch" style="background:var(--pur)">
+    <span>📈</span><span>Activity 3 · Label the Graph / Etiqueta la Gráfica</span>
+    <span class="tag">VISUAL</span><span class="xpc">+50 XP</span>
+  </div>
+  <div class="cb">
+    <div class="ltog" id="g-ltog">
+      <button class="active" id="gen" onclick="setGL('en')">🇺🇸 English</button>
+      <button id="ges" onclick="setGL('es')">🇲🇽 Español</button>
+    </div>
+    <p style="font-size:.84rem;color:#555;margin-bottom:13px">
+      <strong>Select a label, then click a dashed box. Domain &amp; Range use dropdown menus below.</strong><br>
+      <em>Selecciona una etiqueta, luego haz clic en un recuadro. Dominio y Rango usan menús desplegables abajo.</em>
+    </p>
+    <div class="go">
+      <div class="gw" id="gw"><canvas id="gc" width="520" height="320"></canvas><img id="gc-print" style="display:none;width:100%;max-width:520px;border-radius:10px;" alt="Exponential Function Graph"></div>
+      <div class="gr">
+        <div class="gwbl">📦 Labels / Etiquetas</div>
+        <div class="gwb" id="gwb"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:13px">
+          <button class="chk" onclick="chkGraph()">Check / Verificar ✓</button>
+          <button class="chk" style="background:var(--lg);color:#555;border:2px solid var(--mg)" onclick="rstGraph()">↺ Reset</button>
+        </div>
+        <div class="res" id="gr-res" style="margin-top:9px"></div>
+      </div>
+    </div>
+
+    <!-- Domain & Range dropdowns -->
+    <div class="dr-section">
+      <!-- Domain -->
+      <div class="dr-card">
+        <label id="dom-lbl">📌 Domain of f(x) = 2ˣ</label>
+        <div class="esl" id="dom-esl">Dominio de f(x) = 2ˣ</div>
+        <select id="dom-sel" onchange="chkDR('dom')">
+          <option value="">— Choose / Elige —</option>
+          <option value="all">All real numbers / Todos los números reales</option>
+          <option value="xgt0">x &gt; 0</option>
+          <option value="ygt0">y &gt; 0</option>
+          <option value="xge1">x ≥ 1</option>
+        </select>
+        <div class="dr-def" id="dom-def">
+          <strong>💡 Domain / Dominio:</strong> The set of all possible <em>x</em>-values (inputs) for which the function is defined. For f(x) = 2ˣ, you can plug in <em>any</em> real number for x!<br>
+          <em>El conjunto de todos los valores posibles de <em>x</em> (entradas) para los que la función está definida. Para f(x) = 2ˣ, ¡puedes sustituir <em>cualquier</em> número real por x!</em>
+        </div>
+        <div class="res" id="dom-res" style="margin-top:7px"></div>
+      </div>
+      <!-- Range -->
+      <div class="dr-card">
+        <label id="rng-lbl">📌 Range of f(x) = 2ˣ</label>
+        <div class="esl" id="rng-esl">Rango de f(x) = 2ˣ</div>
+        <select id="rng-sel" onchange="chkDR('rng')">
+          <option value="">— Choose / Elige —</option>
+          <option value="ygt0">y &gt; 0 (all positive values / todos los valores positivos)</option>
+          <option value="all">All real numbers / Todos los números reales</option>
+          <option value="yge0">y ≥ 0</option>
+          <option value="xgt0">x &gt; 0</option>
+        </select>
+        <div class="dr-def" id="rng-def">
+          <strong>💡 Range / Rango:</strong> The set of all possible <em>y</em>-values (outputs) the function can produce. For f(x) = 2ˣ, the curve never touches y = 0 (the asymptote), so y is always <em>greater than</em> 0!<br>
+          <em>El conjunto de todos los valores posibles de <em>y</em> (salidas) que la función puede producir. Para f(x) = 2ˣ, la curva nunca toca y = 0 (la asíntota), ¡así que y es siempre <em>mayor que</em> 0!</em>
+        </div>
+        <div class="res" id="rng-res" style="margin-top:7px"></div>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div style="margin-top:14px;font-size:.8rem;display:flex;flex-wrap:wrap;gap:11px;color:#555">
+      <span><svg width="22" height="6"><line x1="0" y1="3" x2="22" y2="3" stroke="#2E6DA4" stroke-width="2.5"/></svg> f(x) = 2ˣ</span>
+      <span><svg width="22" height="6"><line x1="0" y1="3" x2="22" y2="3" stroke="#D4681A" stroke-width="1.5" stroke-dasharray="5,3"/></svg> Asymptote y=0</span>
+      <span>🟠 y-intercept (0,1)</span>
+    </div>
+  </div>
+</div>
+
+</div><!-- .wrap -->
+
+<!-- Submit -->
+<div id="submit-section">
+  <p style="font-size:.88rem;color:#555;margin-bottom:12px"><em>Complete all activities before submitting. / Completa todas las actividades antes de enviar.</em></p>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;align-items:center">
+    <button class="submit-btn" onclick="submitWork()">📤 Submit Homework / Entregar Tarea</button>
+    <button class="pdf-btn" onclick="savePDF()">💾 Save as PDF / Guardar como PDF</button>
+  </div>
+  <div id="pdf-tip">💡 In the print dialog, choose <strong>"Save as PDF"</strong> as the destination.<br>
+  <span style="font-style:italic;color:#666">En el diálogo de impresión, elige <strong>"Guardar como PDF"</strong> como destino.</span></div>
+</div>
+
+<!-- Completion banner -->
+<div id="comp" class="wrap">
+  <div style="font-size:2.5rem">🎉🌟🎊</div>
+  <h2 style="font-size:1.8rem;margin:8px 0">¡Excelente! Outstanding Work!</h2>
+  <div style="font-size:2.8rem;font-weight:900;color:var(--gld)" id="cxp">0 XP</div>
+  <div style="font-size:1rem;font-weight:800;margin-top:4px" id="clv"></div>
+</div>
+
+<!-- Certificate overlay -->
+<div id="cert-overlay">
+  <div id="cert-box">
+    <div class="cert-inner">
+      <div class="cert-header-bar">
+        <h2>📜 Certificate of Completion / Certificado de Finalización</h2>
+        <div class="sub">Algebra 1 · M3T1L1 · Exponential Functions / Funciones Exponenciales</div>
+      </div>
+      <div class="cert-border">
+        <div style="font-size:.85rem;color:#555">This certifies that / Esto certifica que</div>
+        <div class="cert-name" id="cname">Student</div>
+        <div style="font-size:.9rem;color:#555;margin-bottom:10px">has completed / ha completado</div>
+        <div style="font-weight:700;color:var(--dk);font-size:1rem;margin-bottom:16px">Exponential Functions Homework Practice</div>
+        <div class="cert-grade" id="cgrade">—</div>
+        <div class="cert-grade-lbl" id="cglbl"></div>
+        <table class="cert-table">
+          <thead><tr><th>Activity / Actividad</th><th>XP</th><th>Status / Estado</th></tr></thead>
+          <tbody>
+            <tr><td>📚 Vocabulary Match</td><td id="ct1"></td><td id="cs1"></td></tr>
+            <tr><td>✏️ Fill in the Blank</td><td id="ct2"></td><td id="cs2"></td></tr>
+            <tr><td>📈 Label the Graph</td><td id="ct3"></td><td id="cs3"></td></tr>
+            <tr><td><strong>TOTAL</strong></td><td id="cttot"></td><td id="cstot"></td></tr>
+          </tbody>
+        </table>
+        <div style="font-size:.85rem;color:#555;margin:10px 0">Wrong attempts in Activity 1 / Intentos incorrectos en Actividad 1: <strong id="cwrong">0</strong></div>
+        <div class="cert-date" id="cdate"></div>
+      </div>
+      <div class="cert-btns">
+        <button class="chk" style="background:var(--grn)" onclick="window.print()">🖨️ Print / Imprimir</button>
+        <button class="chk close-btn" style="background:var(--lg);color:#555;border:2px solid var(--mg)" onclick="document.getElementById('cert-overlay').classList.remove('on')">✕ Close / Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══ CONFIG ══════════════════════════════════════════════════════════════════ */
+const MAX_XP=170; // 80+40+50
+let xp=0, wrongAttempts=0;
+let a1XP=0,a2XP=0,a3XP=0; // track per activity
+let matchCount=0;
+let selTerm=null,selDef=null;
+let activeBlank=null;
+let selGChip=null;
+let fLang='en',gLang='en';
+const fb={1:false,2:false,3:false};
+const dr={dom:false,rng:false};
+const zoneState={};
+const LEVELS=[
+  {min:0,  max:49, badge:'⭐ Lv1',title:'Sequence Starter / Aprendiz'},
+  {min:50, max:129,badge:'🌟 Lv2',title:'Ratio Ranger / Explorador de Razones'},
+  {min:130,max:199,badge:'💫 Lv3',title:'Exponent Explorer / Explorador'},
+  {min:200,max:9999,badge:'🏆 Lv4',title:'Function Master / Maestro'},
+];
+
+/* ══ XP ══════════════════════════════════════════════════════════════════════ */
+function addXP(n,msg='',bad=false){
+  xp=Math.max(0,xp+n);
+  updateBar();
+  const label=n>=0?`+${n} XP ✓ ${msg}`:`${n} XP ${msg}`;
+  toast(label,bad);
+  autosave();
+  tryComp();
+}
+function updateBar(){
+  const lv=getLv();
+  const s=lv.min,e=lv.max===9999?xp+1:lv.max+1;
+  const p=Math.min(100,((xp-s)/(e-s))*100);
+  document.getElementById('xp-fill').style.width=p+'%';
+  document.getElementById('xpc').textContent=xp-s;
+  document.getElementById('xpn').textContent=lv.max===9999?'∞':lv.max-s+1;
+  document.getElementById('lv-badge').textContent=lv.badge;
+  document.getElementById('xp-tot').textContent=xp+' XP';
+}
+function getLv(){for(let i=LEVELS.length-1;i>=0;i--)if(xp>=LEVELS[i].min)return LEVELS[i];return LEVELS[0]}
+function toast(msg,bad=false){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='on'+(bad?' bad':'');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.className='',2400);
+}
+function setRes(id,ok,msg){
+  const el=document.getElementById(id);if(!el)return;
+  el.innerHTML=ok?`<span style="color:var(--grn)">✅ ${msg}</span>`:`<span style="color:var(--red)">❌ ${msg}</span>`;
+}
+function norm(s){return String(s).trim().toLowerCase().replace(/\s+/g,' ')}
+function eq(a,...vs){return vs.some(v=>norm(a)===norm(v))}
+function th(id){document.getElementById(id).classList.toggle('on')}
+
+/* ══ GRADE ═══════════════════════════════════════════════════════════════════ */
+function calcGrade(){
+  const pct=(xp/MAX_XP)*100;
+  if(pct>=100)return{g:100,col:'#34d399',lbl:'Refining · ¡Sobresaliente! Outstanding! 🌟'};
+  if(pct>=85) return{g:85, col:'#60a5fa',lbl:'Developing · ¡Muy Bien! Very Good! 👍'};
+  if(pct>=65) return{g:65, col:'#e8a832',lbl:'Approaching · Passing / Suficiente 📘'};
+  if(pct>=55) return{g:55, col:'#fb923c',lbl:'Emerging · Needs Improvement / Necesita Mejorar 📝'};
+  return{g:0,col:'#f87171',lbl:'Missing · Please see your teacher / Por favor habla con tu maestro/a 🙏'};
+}
+
+/* ══ AUTOSAVE ════════════════════════════════════════════════════════════════ */
+function autosave(){
+  const grd=calcGrade();
+  const data={
+    v:'1.1',course:'Algebra 1',module:'M3T1L1',
+    assignment:'Exponential Functions Homework Practice',
+    student:document.getElementById('sname').value||'',
+    timestamp:new Date().toISOString(),
+    xp:{total:xp,activity1:a1XP,activity2:a2XP,activity3:a3XP},
+    grade:grd.g,maxXP:MAX_XP,
+    wrongAttempts,
+    completed:{a1:matchCount===VOCAB.length,a2:fb[1]&&fb[2]&&fb[3],a3:Object.values(zoneState).filter(Boolean).length===3&&dr.dom&&dr.rng},
+    seq:chosenSeq,
+    submitted:false
+  };
+  try{
+    const key='teacher_m3t1l1_'+data.student;
+    localStorage.setItem(key,JSON.stringify(data));
+    localStorage.setItem('teacher_m3t1l1_latest',JSON.stringify(data));
+  }catch(e){}
+  // Send live progress to Firebase (autosave — not yet submitted)
+  sendToFirebase(data,false);
+}
+
+/* ══ ACTIVITY 1 · VOCAB MATCH ════════════════════════════════════════════════ */
+const VOCAB=[
+  {t:'Geometric Sequence',te:'Secuencia Geométrica',
+   d:'A list where each term is found by multiplying the previous term by a constant.',
+   de:'Lista donde cada término se obtiene multiplicando el anterior por una constante.',
+   hint:'Think: each term = previous × same number. Example: 2, 6, 18 → ×3 each time.',
+   hintEs:'Piensa: cada término = anterior × mismo número. Ejemplo: 2, 6, 18 → ×3 cada vez.'},
+  {t:'Common Ratio (r)',te:'Razón Común (r)',
+   d:'The constant multiplier between consecutive terms in a geometric sequence.',
+   de:'El multiplicador constante entre términos consecutivos en una secuencia geométrica.',
+   hint:'Find r by dividing: next term ÷ previous term = r.',
+   hintEs:'Encuentra r dividiendo: siguiente término ÷ anterior = r.'},
+  {t:'Exponential Function',te:'Función Exponencial',
+   d:'A function of the form f(x) = a · bˣ, where b > 0 and b ≠ 1.',
+   de:'Una función de la forma f(x) = a · bˣ, donde b > 0 y b ≠ 1.',
+   hint:'Look for x as an EXPONENT (the power). f(x) = 2ˣ is exponential!',
+   hintEs:'Busca x como EXPONENTE (la potencia). ¡f(x) = 2ˣ es exponencial!'},
+  {t:'Base (b)',te:'Base (b)',
+   d:'The factor raised to the power x in f(x) = a · bˣ — it controls growth or decay.',
+   de:'El factor elevado a la potencia x en f(x) = a · bˣ — controla crecimiento o decaimiento.',
+   hint:'In 3 · 5ˣ, the base is 5 — it\'s the number with the exponent x.',
+   hintEs:'En 3 · 5ˣ, la base es 5 — es el número que tiene el exponente x.'},
+  {t:'Asymptote',te:'Asíntota',
+   d:'A line the graph gets very close to but never touches (y = 0 for exponential functions).',
+   de:'Una recta que la gráfica se acerca mucho pero nunca toca (y = 0 para funciones exponenciales).',
+   hint:'Asymptote = invisible wall. The curve approaches forever but NEVER crosses it.',
+   hintEs:'Asíntota = pared invisible. La curva se acerca para siempre pero NUNCA la cruza.'},
+  {t:'Exponential Growth',te:'Crecimiento Exponencial',
+   d:'When b > 1; output values increase rapidly as x increases — the graph rises.',
+   de:'Cuando b > 1; los valores de salida aumentan rápidamente — la gráfica sube.',
+   hint:'Growth = bigger and bigger. If b > 1, multiply a big number each time → it explodes up!',
+   hintEs:'Crecimiento = más y más grande. Si b > 1, se multiplica por un número grande → ¡sube rápido!'},
+  {t:'Exponential Decay',te:'Decaimiento Exponencial',
+   d:'When 0 < b < 1; output values decrease toward zero as x increases — the graph falls.',
+   de:'Cuando 0 < b < 1; los valores de salida disminuyen hacia cero — la gráfica baja.',
+   hint:'Decay = shrinking. If b = 1/2, you keep halving → getting closer to 0.',
+   hintEs:'Decaimiento = encogimiento. Si b = 1/2, sigues dividiendo entre 2 → se acerca a 0.'},
+  {t:'Initial Value (a)',te:'Valor Inicial (a)',
+   d:'The value of f(0); the y-intercept — where the graph crosses the y-axis.',
+   de:'El valor de f(0); el intercepto-y — donde la gráfica cruza el eje y.',
+   hint:'Initial = start. When x = 0: f(0) = a · b⁰ = a · 1 = a. It\'s the starting point!',
+   hintEs:'Inicial = inicio. Cuando x = 0: f(0) = a · b⁰ = a · 1 = a. ¡Es el punto de inicio!'},
+];
+
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+
+function buildMatch(){
+  const tc=document.getElementById('tcol'),dc=document.getElementById('dcol'),dots=document.getElementById('mdots');
+  const ti=shuffle(VOCAB.map((_,i)=>i)), di=shuffle(VOCAB.map((_,i)=>i));
+  ti.forEach(i=>{
+    const el=mkMI(i,'term');
+    el.innerHTML=`<div><div class="trm">${VOCAB[i].t}</div><div class="es">${VOCAB[i].te}</div></div>`;
+    el.addEventListener('click',()=>onM(el));tc.appendChild(el);
+  });
+  di.forEach(i=>{
+    const el=mkMI(i,'def');
+    el.innerHTML=`<div><small>${VOCAB[i].d}</small><div class="es">${VOCAB[i].de}</div></div>`;
+    el.addEventListener('click',()=>onM(el));dc.appendChild(el);
+  });
+  for(let i=0;i<VOCAB.length;i++){const d=document.createElement('div');d.className='dot';d.id='pd'+i;dots.appendChild(d)}
+}
+function mkMI(id,type){const el=document.createElement('div');el.className='mi';el.dataset.id=id;el.dataset.type=type;return el}
+
+function onM(el){
+  if(el.classList.contains('done'))return;
+  const type=el.dataset.type;
+  if(type==='term'){if(selTerm)selTerm.classList.remove('sel');selTerm=el;el.classList.add('sel')}
+  else{if(selDef)selDef.classList.remove('sel');selDef=el;el.classList.add('sel')}
+  if(selTerm&&selDef){
+    if(selTerm.dataset.id===selDef.dataset.id){
+      // CORRECT
+      selTerm.classList.remove('sel');selDef.classList.remove('sel');
+      selTerm.classList.add('done');selDef.classList.add('done');
+      document.getElementById('pd'+selTerm.dataset.id).classList.add('done');
+      matchCount++;a1XP+=10;addXP(10,'');
+      selTerm=null;selDef=null;
+      document.getElementById('hint-popup').style.display='none';
+      if(matchCount===VOCAB.length)document.getElementById('mfb').innerHTML='<span style="color:var(--grn)">🎉 All matched! / ¡Todo emparejado!</span>';
+    } else {
+      // WRONG — -3 XP + hint
+      wrongAttempts++;a1XP=Math.max(0,a1XP-3);addXP(-3,'❌',true);
+      const termIdx=parseInt(selTerm.dataset.id);
+      showVocabHint(termIdx);
+      [selTerm,selDef].forEach(e=>{e.classList.add('fl');setTimeout(()=>{e.classList.remove('fl','sel')},600)});
+      selTerm=null;selDef=null;
+    }
+  }
+}
+
+function showVocabHint(idx){
+  const v=VOCAB[idx];
+  const hp=document.getElementById('hint-popup');
+  hp.style.display='block';
+  hp.innerHTML=`<strong>💡 Hint for "${v.t}" / Pista para "${v.te}":</strong><br>${v.hint}<br><em>${v.hintEs}</em>`;
+}
+
+/* ══ ACTIVITY 2 · FILL IN THE BLANK ═════════════════════════════════════════ */
+const SEQ_POOL=[
+  {terms:[3,6,12,24,48],r:2},{terms:[2,10,50,250],r:5},{terms:[4,12,36,108],r:3},
+  {terms:[1,4,16,64],r:4},{terms:[2,6,18,54],r:3},{terms:[5,15,45,135],r:3},
+  {terms:[1,5,25,125],r:5},{terms:[3,9,27,81],r:3},{terms:[2,8,32,128],r:4},
+  {terms:[7,14,28,56],r:2},{terms:[1,6,36,216],r:6},{terms:[4,20,100,500],r:5},
+];
+const chosenSeq=SEQ_POOL[Math.floor(Math.random()*SEQ_POOL.length)];
+
+// Word banks — exactly 7 words each, matching exactly 7 blanks
+// Q1: b1a=geom seq, b1b=consecutive, b1c=common ratio
+// Q2: b2a=r(str), b2b=multiplied
+// Q3: b3a=exp growth, b3b=exp decay
+const WB={
+  en:['geometric sequence','consecutive','common ratio',String(chosenSeq.r),'multiplied','exponential growth','exponential decay'],
+  es:['secuencia geométrica','consecutivos','razón común',String(chosenSeq.r),'multiplicado','crecimiento exponencial','decaimiento exponencial'],
+};
+// Which blank each EN word maps to
+const WB_MAP={
+  en:{'geometric sequence':['b1a'],'consecutive':['b1b'],'common ratio':['b1c'],[String(chosenSeq.r)]:['b2a'],'multiplied':['b2b'],'exponential growth':['b3a'],'exponential decay':['b3b']},
+  es:{'secuencia geométrica':['b1d'],'consecutivos':['b1e'],'razón común':['b1f'],[String(chosenSeq.r)]:['b2c'],'multiplicado':['b2d'],'crecimiento exponencial':['b3c'],'decaimiento exponencial':['b3d']},
+};
+// Accepted answers (both EN & ES) per blank id
+const ANS={
+  b1a:['geometric sequence'],b1b:['consecutive'],b1c:['common ratio'],
+  b1d:['secuencia geométrica','secuencia geometrica'],b1e:['consecutivos'],b1f:['razón común','razon comun'],
+  b2a:[String(chosenSeq.r)],b2b:['multiplied'],b2c:[String(chosenSeq.r)],b2d:['multiplicado'],
+  b3a:['exponential growth','growth'],b3b:['exponential decay','decay'],
+  b3c:['crecimiento exponencial','crecimiento'],b3d:['decaimiento exponencial','decaimiento'],
+};
+
+function buildWB(){
+  const el=document.getElementById('wbc');el.innerHTML='';
+  shuffle([...WB[fLang]]).forEach(w=>{
+    const c=document.createElement('div');c.className='chip';c.dataset.word=w;
+    c.textContent=w;c.addEventListener('click',()=>onChip(c));el.appendChild(c);
+  });
+  syncChipUsed();
+}
+function setFL(l){
+  fLang=l;
+  document.getElementById('fen').classList.toggle('active',l==='en');
+  document.getElementById('fes').classList.toggle('active',l==='es');
+  // Show/hide EN/ES lines
+  ['f1en','f2en','f3en'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display=l==='en'?'':'none'});
+  ['f1es','f2es','f3es'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display=l==='es'?'block':'none'});
+  buildWB();
+}
+function syncChipUsed(){
+  // Mark chips used based on which blanks have values
+  const allBlanks=['b1a','b1b','b1c','b1d','b1e','b1f','b2a','b2b','b2c','b2d','b3a','b3b','b3c','b3d'];
+  const usedWords=new Set();
+  allBlanks.forEach(id=>{const el=document.getElementById(id);if(el&&el.value)usedWords.add(el.value.trim())});
+  document.querySelectorAll('.chip').forEach(c=>{
+    c.classList.toggle('used',usedWords.has(c.dataset.word));
+  });
+}
+
+// When student clicks a blank
+function ob(blank){
+  if(blank.value&&!blank.classList.contains('ok')){
+    // Return word to bank
+    const w=blank.value;
+    blank.value='';blank.dataset.prev='';
+    blank.classList.remove('err','ab');
+    syncChipUsed();
+    return;
+  }
+  if(blank.classList.contains('ok'))return; // locked
+  if(activeBlank)activeBlank.classList.remove('ab');
+  activeBlank=blank;blank.classList.add('ab');
+}
+
+function onChip(chip){
+  if(chip.classList.contains('used')){toast('Already used! Click the blank to return it. / ¡Ya usado! Haz clic en el espacio para devolverlo.',true);return}
+  if(!activeBlank){toast('Click a blank first! / ¡Haz clic en un espacio primero!',true);return}
+  if(activeBlank.classList.contains('ok'))return;
+  // Clear any previous word in the active blank
+  if(activeBlank.value){
+    // already handled by ob but just in case
+  }
+  activeBlank.value=chip.dataset.word;
+  activeBlank.dataset.prev=chip.dataset.word;
+  activeBlank.classList.remove('ab');
+  activeBlank=null;
+  syncChipUsed();
+}
+
+function cFb(q){
+  if(fb[q])return;
+  let ids=[],ok=true;
+  if(q===1){
+    ids=fLang==='en'?['b1a','b1b','b1c']:['b1d','b1e','b1f'];
+  } else if(q===2){
+    ids=fLang==='en'?['b2a','b2b']:['b2c','b2d'];
+  } else {
+    ids=fLang==='en'?['b3a','b3b']:['b3c','b3d'];
+  }
+  ids.forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    const isOk=el.value&&ANS[id]&&ANS[id].some(a=>norm(el.value)===norm(a));
+    el.classList.remove('ok','err');el.classList.add(isOk?'ok':'err');
+    if(!isOk)ok=false;
+  });
+  const xpMap={1:15,2:15,3:10};
+  if(ok){
+    fb[q]=true;a2XP+=xpMap[q];addXP(xpMap[q]);
+    setRes('fr'+q,true,`Perfect! / ¡Perfecto! +${xpMap[q]} XP`);
+    document.getElementById('rst'+q).style.display='none';
+  } else {
+    setRes('fr'+q,false,'Some blanks are incorrect — try again! / ¡Algunos espacios son incorrectos — inténtalo de nuevo!');
+    document.getElementById('rst'+q).style.display='inline-flex';
+  }
+}
+
+function rstQ(q){
+  const qMap={
+    1:{en:['b1a','b1b','b1c'],es:['b1d','b1e','b1f']},
+    2:{en:['b2a','b2b'],es:['b2c','b2d']},
+    3:{en:['b3a','b3b'],es:['b3c','b3d']},
+  };
+  // Clear all blanks for this question in BOTH languages
+  [...qMap[q].en,...qMap[q].es].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){el.value='';el.dataset.prev='';el.classList.remove('ok','err','ab')}
+  });
+  fb[q]=false;
+  document.getElementById('fr'+q).innerHTML='';
+  document.getElementById('rst'+q).style.display='none';
+  activeBlank=null;
+  syncChipUsed();
+}
+
+function buildSeq(){
+  const t=chosenSeq.terms;
+  const parts=t.map((v,i)=>i<t.length-1?`<strong>${v}</strong><span class="arr">→</span>`:`<strong>${v}</strong>`);
+  document.getElementById('seqd').innerHTML='Sequence / Secuencia: '+parts.join('')+' → …';
+  document.getElementById('hseq').textContent=`${t[1]} ÷ ${t[0]} = ${chosenSeq.r}`;
+}
+
+/* ══ ACTIVITY 3 · GRAPH ══════════════════════════════════════════════════════ */
+const CW=520,CH=320,OX=200,OY=255,SC=55;
+const mx=x=>OX+x*SC, my=y=>OY-y*SC;
+
+// Only 3 drag zones (domain/range become dropdowns)
+const ZONES=[
+  {id:'za',termId:'asymptote',cx:405,cy:252,w:95,h:28},
+  {id:'zy',termId:'yint',     cx:260,cy:188,w:95,h:28},
+  {id:'zg',termId:'growth',   cx:318,cy:62, w:122,h:28},
+];
+const G_TERMS=[
+  {id:'asymptote',en:'Asymptote',es:'Asíntota'},
+  {id:'yint',en:'y-intercept (0,1)',es:'Intercepto-y (0,1)'},
+  {id:'growth',en:'Exponential Growth ↑',es:'Crecimiento Exp. ↑'},
+];
+
+function drawGraph(){
+  const cv=document.getElementById('gc'),ctx=cv.getContext('2d');
+  ctx.clearRect(0,0,CW,CH);
+  ctx.fillStyle='#f8faff';ctx.fillRect(0,0,CW,CH);
+  // Grid
+  ctx.strokeStyle='#e4edf5';ctx.lineWidth=1;
+  for(let x=-3;x<=5;x++){ctx.beginPath();ctx.moveTo(mx(x),15);ctx.lineTo(mx(x),CH-15);ctx.stroke()}
+  for(let y=-1;y<=5;y++){ctx.beginPath();ctx.moveTo(20,my(y));ctx.lineTo(CW-15,my(y));ctx.stroke()}
+  // Axes
+  ctx.strokeStyle='#333';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(20,my(0));ctx.lineTo(CW-20,my(0));ctx.stroke();arrow(ctx,CW-20,my(0),'r');
+  ctx.beginPath();ctx.moveTo(mx(0),CH-15);ctx.lineTo(mx(0),15);ctx.stroke();arrow(ctx,mx(0),15,'u');
+  // Tick labels
+  ctx.fillStyle='#555';ctx.font='12px Arial';ctx.textAlign='center';
+  for(let x=-3;x<=3;x++){if(x!==0)ctx.fillText(x,mx(x),my(0)+16)}
+  ctx.textAlign='right';
+  for(let y=1;y<=4;y++){ctx.fillText(y,mx(0)-5,my(y)+4)}
+  ctx.fillStyle='#333';ctx.font='bold 13px Arial';
+  ctx.textAlign='center';ctx.fillText('x',CW-10,my(0)+5);
+  ctx.textAlign='left';ctx.fillText('y',mx(0)+5,18);
+  // Asymptote dashed
+  ctx.strokeStyle='#D4681A';ctx.lineWidth=1.8;ctx.setLineDash([8,4]);
+  ctx.beginPath();ctx.moveTo(22,my(0)-1);ctx.lineTo(CW-22,my(0)-1);ctx.stroke();
+  ctx.setLineDash([]);
+  // Curve y=2^x
+  ctx.strokeStyle='#2E6DA4';ctx.lineWidth=2.8;ctx.beginPath();
+  let first=true;
+  for(let xi=-3;xi<=2.25;xi+=0.04){
+    const yi=Math.pow(2,xi);if(yi>5.2)break;
+    first?(ctx.moveTo(mx(xi),my(yi)),first=false):ctx.lineTo(mx(xi),my(yi));
+  }
+  ctx.stroke();
+  // y-intercept
+  ctx.fillStyle='#D4681A';ctx.beginPath();ctx.arc(mx(0),my(1),6,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(mx(0),my(1),2.5,0,Math.PI*2);ctx.fill();
+  // Label
+  ctx.fillStyle='#2E6DA4';ctx.font='bold 12px Arial';ctx.textAlign='left';
+  ctx.fillText('y = 2ˣ',mx(1.5)+6,my(3));
+}
+function arrow(ctx,x,y,d){
+  ctx.fillStyle='#333';ctx.beginPath();
+  if(d==='r'){ctx.moveTo(x,y);ctx.lineTo(x-8,y-5);ctx.lineTo(x-8,y+5)}
+  else{ctx.moveTo(x,y);ctx.lineTo(x-5,y+8);ctx.lineTo(x+5,y+8)}
+  ctx.closePath();ctx.fill();
+}
+
+function buildDZ(){
+  const gw=document.getElementById('gw');
+  ZONES.forEach(z=>{
+    const d=document.createElement('div');
+    d.className='dz';d.id=z.id;d.dataset.id=z.id;d.textContent='?';
+    d.style.left=((z.cx-z.w/2)/CW*100)+'%';
+    d.style.top=((z.cy-z.h/2)/CH*100)+'%';
+    d.style.width=(z.w/CW*100)+'%';
+    d.style.height=(z.h/CH*100)+'%';
+    d.addEventListener('click',()=>onZone(z.id));
+    gw.appendChild(d);
+    zoneState[z.id]=null;
+  });
+}
+
+function buildGWB(){
+  const wb=document.getElementById('gwb');wb.innerHTML='';
+  G_TERMS.forEach(t=>{
+    const c=document.createElement('div');c.className='gc2';c.id='gch-'+t.id;c.dataset.id=t.id;
+    c.textContent=gLang==='en'?t.en:t.es;
+    c.addEventListener('click',()=>onGChip(t.id));wb.appendChild(c);
+  });
+}
+
+function setGL(l){
+  gLang=l;
+  document.getElementById('gen').classList.toggle('active',l==='en');
+  document.getElementById('ges').classList.toggle('active',l==='es');
+  buildGWB();
+  ZONES.forEach(z=>{
+    if(zoneState[z.id]){
+      const term=G_TERMS.find(t=>t.id===zoneState[z.id]);
+      if(term)document.getElementById(z.id).textContent=gLang==='en'?term.en:term.es;
+    }
+  });
+}
+
+function onGChip(id){
+  if(selGChip===id){document.getElementById('gch-'+id).classList.remove('gsel');selGChip=null;return}
+  if(selGChip)document.getElementById('gch-'+selGChip).classList.remove('gsel');
+  selGChip=id;document.getElementById('gch-'+id).classList.add('gsel');
+}
+
+function onZone(zid){
+  if(!selGChip){toast('Select a label first! / ¡Selecciona una etiqueta primero!',true);return}
+  const term=G_TERMS.find(t=>t.id===selGChip);
+  // Clear this chip from other zones
+  ZONES.forEach(z=>{if(zoneState[z.id]===selGChip&&z.id!==zid){
+    zoneState[z.id]=null;const e=document.getElementById(z.id);e.classList.remove('filled','ok','err');e.textContent='?';
+  }});
+  // If zone already has different chip, put it back
+  if(zoneState[zid]&&zoneState[zid]!==selGChip){
+    document.getElementById('gch-'+zoneState[zid]).classList.remove('gused');
+  }
+  zoneState[zid]=selGChip;
+  const ze=document.getElementById(zid);
+  ze.textContent=gLang==='en'?term.en:term.es;
+  ze.classList.add('filled','pulse');ze.classList.remove('ok','err');
+  setTimeout(()=>ze.classList.remove('pulse'),400);
+  document.getElementById('gch-'+selGChip).classList.remove('gsel');
+  document.getElementById('gch-'+selGChip).classList.add('gused');
+  selGChip=null;
+}
+
+function chkGraph(){
+  let correct=0;
+  ZONES.forEach(z=>{
+    const ze=document.getElementById(z.id);ze.classList.remove('ok','err');
+    if(!zoneState[z.id])return;
+    const ok=zoneState[z.id]===z.termId;ze.classList.add(ok?'ok':'err');
+    if(ok)correct++;
+  });
+  if(correct===ZONES.length){
+    a3XP+=30;addXP(30,'(graph labels / etiquetas)');
+    setRes('gr-res',true,'🎉 All 3 labels correct! / ¡Las 3 etiquetas correctas! +30 XP — now complete Domain & Range below!');
+  } else {
+    setRes('gr-res',false,`${correct}/3 correct / correctas. Red boxes need work! / ¡Los recuadros rojos necesitan corrección!`);
+  }
+}
+
+function rstGraph(){
+  ZONES.forEach(z=>{zoneState[z.id]=null;const e=document.getElementById(z.id);e.classList.remove('filled','ok','err');e.textContent='?'});
+  G_TERMS.forEach(t=>{const c=document.getElementById('gch-'+t.id);if(c)c.classList.remove('gused','gsel')});
+  selGChip=null;document.getElementById('gr-res').innerHTML='';
+}
+
+// Domain & Range dropdowns
+const DR_ANS={dom:'all',rng:'ygt0'};
+function chkDR(which){
+  const sel=document.getElementById(which+'-sel');
+  const def=document.getElementById(which+'-def');
+  const res=document.getElementById(which+'-res');
+  const val=sel.value;
+  if(!val)return;
+  const ok=val===DR_ANS[which];
+  sel.classList.remove('ok','err');sel.classList.add(ok?'ok':'err');
+  def.classList.toggle('on',!ok);
+  if(ok){
+    if(!dr[which]){dr[which]=true;a3XP+=10;addXP(10,`(${which==='dom'?'Domain/Dominio':'Range/Rango'})`)}
+    setRes(which+'-res',true,`✅ Correct! / ¡Correcto! +10 XP`);
+  } else {
+    setRes(which+'-res',false,'Not quite — read the hint below! / ¡No del todo — lee la pista abajo!');
+  }
+  autosave();
+}
+
+/* ══ COMPLETION ══════════════════════════════════════════════════════════════ */
+function tryComp(){
+  if(xp>=60){
+    const c=document.getElementById('comp');
+    if(c.style.display==='block')return;
+    c.style.display='block';
+    document.getElementById('cxp').textContent=xp+' XP';
+    document.getElementById('clv').textContent=getLv().badge+' · '+getLv().title;
+    c.scrollIntoView({behavior:'smooth'});
+    confettiFn();
+  }
+}
+
+/* ══ SUBMIT ══════════════════════════════════════════════════════════════════ */
+function submitWork(){
+  const name=document.getElementById('sname').value.trim();
+  if(!name){toast('Please enter your name first! / ¡Por favor escribe tu nombre primero!',true);document.getElementById('sname').focus();return}
+  const grd=calcGrade();
+  // Update autosave as submitted (localStorage + Firebase)
+  try{
+    const raw=localStorage.getItem('teacher_m3t1l1_'+name);
+    if(raw){const d=JSON.parse(raw);d.submitted=true;d.submitTimestamp=new Date().toISOString();localStorage.setItem('teacher_m3t1l1_'+name,JSON.stringify(d));localStorage.setItem('teacher_m3t1l1_latest',JSON.stringify(d));sendToFirebase(d,true);}
+    else{sendToFirebase({v:'1.1',course:'Algebra 1',module:'M3T1L1',assignment:'Exponential Functions Homework Practice',student:name,timestamp:new Date().toISOString(),xp:{total:xp,activity1:a1XP,activity2:a2XP,activity3:a3XP},grade:grd.g,maxXP:MAX_XP,wrongAttempts,completed:{a1:matchCount===VOCAB.length,a2:fb[1]&&fb[2]&&fb[3],a3:Object.values(zoneState).filter(Boolean).length===3&&dr.dom&&dr.rng},seq:chosenSeq},true);}
+  }catch(e){}
+  // Build certificate
+  document.getElementById('cname').textContent=name;
+  document.getElementById('cgrade').textContent=grd.g+'/100';
+  document.getElementById('cgrade').style.color=grd.col;
+  document.getElementById('cglbl').textContent=grd.lbl;
+  document.getElementById('ct1').textContent=`${a1XP}/80 XP`;
+  document.getElementById('cs1').textContent=matchCount===VOCAB.length?'✅ Complete':'⬜ Partial';
+  document.getElementById('ct2').textContent=`${a2XP}/40 XP`;
+  document.getElementById('cs2').textContent=(fb[1]&&fb[2]&&fb[3])?'✅ Complete':'⬜ Partial';
+  document.getElementById('ct3').textContent=`${a3XP}/50 XP`;
+  document.getElementById('cs3').textContent=(dr.dom&&dr.rng&&Object.values(zoneState).filter(v=>v).length===3)?'✅ Complete':'⬜ Partial';
+  document.getElementById('cttot').textContent=`${xp}/${MAX_XP} XP`;
+  document.getElementById('cstot').textContent=`Grade / Calificación: ${grd.g}/100`;
+  document.getElementById('cwrong').textContent=wrongAttempts;
+  document.getElementById('cdate').textContent='Submitted / Enviado: '+new Date().toLocaleString();
+  document.getElementById('cert-overlay').classList.add('on');
+}
+
+/* ══ CONFETTI ════════════════════════════════════════════════════════════════ */
+function confettiFn(){
+  const cv=document.getElementById('confetti');const ctx=cv.getContext('2d');
+  cv.width=window.innerWidth;cv.height=window.innerHeight;
+  const C=['#F4C430','#2E6DA4','#1A5C1A','#D4681A','#5C2D91','#fff','#43e97b'];
+  const ps=Array.from({length:140},()=>({x:Math.random()*cv.width,y:Math.random()*-cv.height,r:Math.random()*8+4,spd:Math.random()*3+2,col:C[Math.floor(Math.random()*C.length)],ang:0,ts:(Math.random()*3)+1,tilt:0}));
+  let f=0;
+  function draw(){ctx.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{ctx.beginPath();ctx.lineWidth=p.r/2;ctx.strokeStyle=p.col;ctx.moveTo(p.x+p.tilt+p.r/4,p.y);ctx.lineTo(p.x+p.tilt,p.y+p.tilt+p.r/4);ctx.stroke();p.tilt=Math.sin((p.ang+=.07*p.ts))*14;p.y+=p.spd;p.x+=Math.sin(f/60)*1.2;if(p.y>cv.height){p.y=-10;p.x=Math.random()*cv.width}});f++;if(f<320)requestAnimationFrame(draw);else ctx.clearRect(0,0,cv.width,cv.height)}
+  draw();
+}
+
+/* ══ SAVE AS PDF ════════════════════════════════════════════════════════════ */
+function savePDF(){
+  // Capture canvas to img so it shows in print/PDF
+  const cv=document.getElementById('gc');
+  const img=document.getElementById('gc-print');
+  if(cv&&img){img.src=cv.toDataURL('image/png');img.style.display='block'}
+  // Populate print-header name
+  const pname=document.getElementById('print-name');
+  if(pname){pname.textContent=document.getElementById('sname').value.trim()||''}
+  // Show tip and trigger print dialog
+  const tip=document.getElementById('pdf-tip');
+  if(tip){tip.style.display='block';setTimeout(()=>{tip.style.display='none'},7000)}
+  setTimeout(()=>{window.print();},150);
+}
+
+/* ══ INIT ════════════════════════════════════════════════════════════════════ */
+buildMatch();
+buildSeq();
+buildWB();
+setFL('en'); // init EN mode
+drawGraph();
+buildDZ();
+buildGWB();
+updateBar();
+autosave();
+</script>
+</body>
+</html>

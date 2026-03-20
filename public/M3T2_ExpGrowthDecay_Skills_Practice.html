@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exp. Growth &amp; Decay Skills Practice – Miss Alvarado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080d1c;--card:#0d1528;--card2:#101a30;
+  --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);
+  --acc:#f43f5e;--pur:#a78bfa;--gld:#e8a832;
+  --grn:#34d399;--red:#f87171;--yel:#fbbf24;--blue:#60a5fa;--org:#fb923c;
+  --txt:#e2e8f0;--txt2:#94a3b8;--txt3:#475569;
+  --mono:'JetBrains Mono',monospace;--sans:'Space Grotesk',sans-serif;--body:'Inter',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--bg);color:var(--txt);padding-bottom:90px;
+  background-image:radial-gradient(ellipse at 10% 10%,rgba(220,38,38,.09),transparent 55%),
+    radial-gradient(ellipse at 90% 85%,rgba(139,92,246,.07),transparent 55%)}
+body.es .lang-en{display:none!important}
+body:not(.es) .lang-es{display:none!important}
+
+/* ── XP Bar ── */
+#xp-bar{position:sticky;top:0;z-index:999;background:rgba(8,13,28,.96);
+  backdrop-filter:blur(12px);border-bottom:1px solid var(--border2);
+  padding:8px 18px;display:flex;align-items:center;gap:10px}
+.xp-logo{font-family:var(--sans);font-weight:700;font-size:.8rem;color:var(--txt2);white-space:nowrap}
+.xp-logo span{color:var(--gld);font-weight:800}
+#xp-track{flex:1;background:rgba(255,255,255,.1);border-radius:99px;height:10px;overflow:hidden;min-width:60px;position:relative}
+#xp-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--grn),var(--pur));border-radius:99px;transition:width .5s}
+#xp-track.lose #xp-fill{background:linear-gradient(90deg,var(--red),var(--org));animation:shake .3s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+#xp-nums{font-family:var(--mono);font-size:.73rem;color:var(--txt2);white-space:nowrap}
+#xp-tot{font-family:var(--mono);font-weight:700;font-size:.85rem;color:var(--gld);white-space:nowrap}
+
+/* ── Toast ── */
+#toast{position:fixed;bottom:24px;right:24px;z-index:9999;color:#fff;font-family:var(--sans);
+  font-weight:700;font-size:.92rem;padding:10px 20px;border-radius:99px;opacity:0;
+  transform:translateY(14px);transition:opacity .3s,transform .3s;pointer-events:none;
+  background:rgba(52,211,153,.9);backdrop-filter:blur(8px)}
+#toast.on{opacity:1;transform:translateY(0)}
+#toast.bad{background:rgba(248,113,113,.9)}
+#toast.warn{background:rgba(251,191,36,.9);color:#1a1a2e}
+
+/* ── Hero ── */
+#hero{background:linear-gradient(160deg,#0a1020 0%,#0f1830 60%,#080d1c 100%);
+  border-bottom:1px solid rgba(244,63,94,.18);padding:32px 18px 26px;text-align:center;position:relative;overflow:hidden}
+#hero::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% -10%,rgba(244,63,94,.13),transparent 60%);pointer-events:none}
+#hero h1{font-family:var(--sans);font-size:clamp(1.2rem,4vw,2rem);font-weight:700;
+  background:linear-gradient(135deg,#f43f5e 0%,#a78bfa 52%,#e8a832 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;position:relative}
+#hero .sub{margin-top:6px;color:var(--txt2);font-size:.85rem;font-style:italic;position:relative}
+.name-row{margin:18px auto 0;max-width:420px;display:flex;gap:8px;align-items:center;position:relative}
+.name-row label{color:var(--gld);font-family:var(--sans);font-weight:700;font-size:.86rem;white-space:nowrap}
+.name-row input{flex:1;padding:9px 14px;border-radius:10px;border:1.5px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.07);color:var(--txt);font-family:var(--body);font-size:.93rem;outline:none;transition:border-color .2s}
+.name-row input::placeholder{color:var(--txt3)}
+.name-row input:focus{border-color:var(--acc)}
+.lang-toggle{display:inline-flex;border-radius:99px;overflow:hidden;border:1.5px solid var(--border2);margin-top:14px;font-size:.8rem}
+.lang-toggle button{padding:5px 16px;border:none;cursor:pointer;font-family:var(--sans);font-weight:700;
+  background:transparent;color:var(--txt2);transition:all .2s}
+.lang-toggle button.active{background:var(--pur);color:#fff}
+
+/* ── Cards ── */
+.wrap{max-width:880px;margin:0 auto;padding:0 13px}
+.qcard{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  box-shadow:0 4px 24px rgba(0,0,0,.4);margin:22px auto;overflow:hidden;transition:border-color .3s}
+.qcard.correct{border-color:rgba(52,211,153,.38)}
+.qcard.partial{border-color:rgba(232,168,50,.38)}
+.qcard:hover{border-color:var(--border2)}
+.ch{display:flex;align-items:center;flex-wrap:wrap;gap:7px;padding:12px 18px;font-family:var(--sans);font-weight:700;font-size:.9rem}
+.ch .q-num{background:rgba(255,255,255,.1);font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px;font-family:var(--mono);color:var(--txt2)}
+.ch .q-type{font-size:.64rem;font-weight:700;padding:2px 9px;border-radius:99px;letter-spacing:.06em;text-transform:uppercase}
+.ch .q-type.table-type{background:rgba(232,168,50,.15);color:var(--gld);border:1px solid rgba(232,168,50,.3)}
+.ch .q-type.context-type{background:rgba(96,165,250,.15);color:var(--blue);border:1px solid rgba(96,165,250,.3)}
+.ch .xpc{margin-left:auto;background:rgba(52,211,153,.1);color:var(--grn);font-size:.68rem;font-weight:800;padding:3px 10px;border-radius:99px;font-family:var(--mono);border:1px solid rgba(52,211,153,.2)}
+.ch .dir-badge{font-size:.64rem;padding:2px 8px;border-radius:99px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.ch .dir-badge.inc{background:rgba(52,211,153,.1);color:var(--grn);border:1px solid rgba(52,211,153,.25)}
+.ch .dir-badge.dec{background:rgba(248,113,113,.1);color:var(--red);border:1px solid rgba(248,113,113,.25)}
+.cb{padding:15px 18px 22px}
+.prompt{font-size:.87rem;color:var(--txt2);margin-bottom:14px;line-height:1.6}
+.prompt strong{color:var(--txt)}
+
+/* ── Context card (population scenario) ── */
+.context-scenario{background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.18);border-radius:12px;
+  padding:16px 18px;margin:10px 0 16px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.context-city{font-family:var(--sans);font-size:1.1rem;font-weight:700;color:var(--blue);flex:1;min-width:140px}
+.context-stats{display:flex;flex-direction:column;gap:6px}
+.context-stat{font-family:var(--mono);font-size:.85rem;color:var(--txt)}
+.context-stat .label{color:var(--txt2);font-size:.72rem;font-family:var(--sans);font-weight:600;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:1px}
+.context-stat .val{font-weight:700}
+.context-stat .val.growth{color:var(--grn)}
+.context-stat .val.decay{color:var(--red)}
+.context-tip{background:rgba(232,168,50,.07);border-left:3px solid var(--gld);border-radius:0 8px 8px 0;
+  padding:9px 13px;font-size:.78rem;color:var(--txt2);line-height:1.5;margin:10px 0 6px}
+.context-tip strong{color:var(--gld)}
+
+/* ── Table ── */
+.q-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.87rem;border-radius:10px;overflow:hidden}
+.q-table th{background:rgba(167,139,250,.12);color:var(--pur);font-family:var(--sans);font-weight:700;padding:9px 14px;text-align:center;border-bottom:1px solid rgba(167,139,250,.2)}
+.q-table td{padding:9px 14px;text-align:center;font-family:var(--mono);color:var(--txt);border-bottom:1px solid var(--border)}
+.q-table tr:nth-child(even) td{background:rgba(255,255,255,.025)}
+.q-table td.x-col{color:var(--gld);font-weight:700}
+
+/* ── Growth / Decay buttons ── */
+.section-label{font-family:var(--sans);font-size:.72rem;font-weight:700;color:var(--txt2);
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.section-label .slxp{font-size:.65rem;color:var(--grn);font-family:var(--mono);padding:2px 7px;
+  border-radius:99px;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.2)}
+.section-label .slxp.neg{color:var(--red);background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.2)}
+.gd-row{display:flex;gap:10px;margin-bottom:6px;flex-wrap:wrap}
+.gd-btn{flex:1;min-width:120px;padding:10px 16px;border-radius:10px;font-family:var(--sans);
+  font-size:.88rem;font-weight:700;cursor:pointer;border:1.5px solid var(--border2);
+  background:rgba(255,255,255,.05);color:var(--txt2);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.gd-btn:hover:not(:disabled){background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25);color:var(--txt)}
+.gd-btn.selected-growth{background:rgba(52,211,153,.14);border-color:rgba(52,211,153,.45);color:var(--grn)}
+.gd-btn.selected-decay{background:rgba(248,113,113,.14);border-color:rgba(248,113,113,.45);color:var(--red)}
+.gd-btn.correct-growth{background:rgba(52,211,153,.18);border-color:var(--grn);color:var(--grn);pointer-events:none}
+.gd-btn.correct-decay{background:rgba(248,113,113,.18);border-color:var(--red);color:var(--red);pointer-events:none}
+.gd-btn.wrong{background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.25);color:var(--red);opacity:.5;pointer-events:none}
+.gd-result{font-family:var(--sans);font-size:.82rem;font-weight:700;min-height:18px;margin-top:4px}
+.gd-result.ok{color:var(--grn)}.gd-result.bad{color:var(--red)}
+
+/* ── Fields ── */
+.fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+@media(max-width:560px){.fields-grid{grid-template-columns:1fr}}
+.field-group{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:12px 14px;position:relative}
+.field-group label{display:block;font-family:var(--sans);font-size:.71rem;font-weight:700;
+  color:var(--txt2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+.field-group input[type=text]{width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.15);
+  border-radius:8px;padding:8px 12px;font-family:var(--mono);font-size:.95rem;color:var(--txt);outline:none;transition:border-color .2s,background .2s}
+.field-group input:focus{border-color:var(--pur);background:rgba(167,139,250,.06)}
+.field-group input.ok{border-color:var(--grn)!important;background:rgba(52,211,153,.07)!important;color:var(--grn)!important;pointer-events:none}
+.field-group input.err{border-color:var(--red)!important;background:rgba(248,113,113,.07)!important;color:var(--red)!important}
+.hint-btn{position:absolute;top:10px;right:10px;background:none;border:none;cursor:pointer;font-size:.95rem;opacity:.45;transition:opacity .2s,transform .15s;line-height:1;padding:2px}
+.hint-btn:hover{opacity:1;transform:scale(1.2)}
+.hint-box{margin-top:7px;padding:8px 11px;background:rgba(232,168,50,.07);border-left:3px solid var(--gld);border-radius:0 8px 8px 0;font-size:.78rem;color:var(--txt2);display:none;animation:fadeIn .25s;line-height:1.5}
+.hint-box.on{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Equation field ── */
+.eq-section{margin-top:14px;background:rgba(167,139,250,.05);border:1px solid rgba(167,139,250,.2);border-radius:12px;padding:13px 15px}
+.eq-template{font-family:var(--mono);font-size:.88rem;color:var(--txt2);margin-bottom:9px;line-height:1.6}
+.eq-template span{color:var(--pur);font-weight:700}
+.eq-input-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.eq-label{font-family:var(--mono);font-size:.88rem;color:var(--txt2)}
+.eq-input{flex:1;min-width:180px;background:rgba(255,255,255,.06);border:1.5px solid rgba(167,139,250,.3);
+  border-radius:8px;padding:8px 12px;font-family:var(--mono);font-size:.9rem;color:var(--txt);outline:none;transition:border-color .2s,background .2s}
+.eq-input:focus{border-color:var(--pur);background:rgba(167,139,250,.08)}
+.eq-input.ok{border-color:var(--grn)!important;background:rgba(52,211,153,.07)!important;color:var(--grn)!important;pointer-events:none}
+.eq-input.err{border-color:var(--red)!important;background:rgba(248,113,113,.07)!important;color:var(--red)!important}
+.eq-format-hint{font-size:.73rem;color:var(--txt3);margin-top:5px;font-family:var(--body)}
+
+/* ── Check button ── */
+.check-btn{display:inline-flex;align-items:center;gap:6px;background:rgba(167,139,250,.12);
+  color:var(--pur);border:1.5px solid rgba(167,139,250,.3);border-radius:8px;
+  padding:8px 18px;font-family:var(--sans);font-size:.82rem;font-weight:700;cursor:pointer;margin-top:14px;transition:all .2s}
+.check-btn:hover{background:rgba(167,139,250,.22);border-color:var(--pur);transform:translateY(-1px)}
+.res-msg{margin-top:9px;font-family:var(--sans);font-size:.85rem;font-weight:700;min-height:18px}
+.res-msg.good{color:var(--grn)}.res-msg.bad{color:var(--red)}.res-msg.part{color:var(--yel)}
+
+/* ── Function reveal ── */
+.fn-display{margin-top:11px;background:rgba(52,211,153,.05);border:1px solid rgba(52,211,153,.18);border-radius:8px;padding:9px 14px;font-family:var(--mono);font-size:.88rem;color:var(--grn);display:none;animation:fadeIn .3s}
+.fn-display.on{display:block}
+.fn-label{font-size:.67rem;color:var(--txt2);font-family:var(--sans);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+
+/* ── Submit ── */
+#submit-section{text-align:center;margin:30px auto;max-width:880px;padding:0 13px}
+.submit-btn{background:linear-gradient(135deg,#f43f5e,#a78bfa);color:#fff;border:none;border-radius:12px;
+  padding:15px 42px;font-family:var(--sans);font-size:1rem;font-weight:700;cursor:pointer;
+  box-shadow:0 4px 24px rgba(244,63,94,.3);transition:all .2s;letter-spacing:.02em}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(244,63,94,.4)}
+.submit-note{color:var(--txt3);font-size:.78rem;margin-top:8px}
+
+/* ── Certificate ── */
+#cert-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9990;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)}
+#cert-overlay.on{display:flex}
+#cert-box{background:#0e1528;border:1px solid rgba(244,63,94,.2);border-radius:20px;max-width:820px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 32px 80px rgba(0,0,0,.65)}
+.cert-inner{padding:26px}
+.cert-header-bar{background:linear-gradient(135deg,#f43f5e,#a78bfa);border-radius:14px 14px 0 0;margin:-26px -26px 20px;padding:18px 22px;text-align:center}
+.cert-header-bar h2{font-family:var(--sans);font-size:1.2rem;font-weight:700;color:#fff}
+.cert-header-bar .csub{font-style:italic;opacity:.85;font-size:.79rem;margin-top:3px;color:#fff}
+.cert-summary{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:20px}
+.cert-stat{text-align:center;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:14px 20px;min-width:120px}
+.cert-stat .val{font-family:var(--mono);font-size:2rem;font-weight:800}
+.cert-stat .lbl{font-size:.72rem;color:var(--txt2);font-family:var(--sans);text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
+.cert-grade{font-size:3.2rem;font-weight:800}
+.cert-grade.Refining{color:var(--grn)}.cert-grade.Developing{color:var(--blue)}.cert-grade.Approaching{color:var(--yel)}.cert-grade.Emerging{color:var(--org)}.cert-grade.Missing{color:var(--red)}
+.cert-grade-lbl{font-size:.88rem;color:var(--txt2);margin-top:4px}
+
+/* ── Per-question breakdown table ── */
+.breakdown-title{font-family:var(--sans);font-size:.88rem;font-weight:700;color:var(--txt);margin:18px 0 10px;display:flex;align-items:center;gap:8px}
+.breakdown-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.breakdown-table{width:100%;border-collapse:collapse;font-size:.78rem;overflow:hidden}
+.breakdown-table th{background:rgba(255,255,255,.06);color:var(--txt2);padding:7px 10px;font-family:var(--sans);font-weight:700;text-align:center;border-bottom:1px solid var(--border2);white-space:nowrap}
+.breakdown-table th:first-child{text-align:left}
+.breakdown-table td{padding:7px 10px;border-bottom:1px solid var(--border);color:var(--txt);text-align:center;vertical-align:middle}
+.breakdown-table td:first-child{text-align:left;font-weight:600;color:var(--txt2)}
+.breakdown-table tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.breakdown-table .total-row td{font-weight:800;border-top:2px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);font-family:var(--mono)}
+.breakdown-table .cumul{font-family:var(--mono);font-size:.8rem}
+.xp-plus{color:var(--grn);font-family:var(--mono);font-weight:700}
+.xp-minus{color:var(--red);font-family:var(--mono);font-weight:700}
+.xp-net{font-family:var(--mono);font-weight:800}
+.xp-net.pos{color:var(--grn)}.xp-net.zero{color:var(--txt3)}.xp-net.neg{color:var(--red)}
+.tick-ok{color:var(--grn)}.tick-no{color:var(--red)}.tick-skip{color:var(--txt3)}
+.cert-name{font-family:var(--sans);font-size:1.4rem;font-weight:700;color:var(--gld);text-align:center;margin:8px 0 4px}
+.cert-date{font-size:.73rem;color:var(--txt3);font-family:var(--mono);text-align:center;margin-top:10px}
+.cert-btns{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.cert-close-btn{background:rgba(255,255,255,.08);color:var(--txt2);border:1px solid var(--border2);border-radius:10px;padding:10px 24px;font-family:var(--sans);font-size:.87rem;font-weight:700;cursor:pointer;transition:all .2s}
+.cert-close-btn:hover{background:rgba(255,255,255,.14);color:var(--txt)}
+
+/* ── Rubric overlay ── */
+#rubric-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9991;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)}
+#rubric-overlay.on{display:flex}
+#rubric-box{background:#0e1528;border:1px solid rgba(167,139,250,.22);border-radius:20px;max-width:580px;width:100%;max-height:86vh;overflow-y:auto;position:relative;box-shadow:0 32px 80px rgba(0,0,0,.65)}
+.rubric-inner{padding:22px}
+.rubric-title{font-family:var(--sans);font-size:1.05rem;font-weight:700;color:var(--pur);margin-bottom:14px}
+.rubric-table{width:100%;border-collapse:collapse;font-size:.8rem;margin-bottom:14px}
+.rubric-table th{background:rgba(167,139,250,.12);color:var(--pur);padding:8px 10px;font-family:var(--sans);font-weight:700;text-align:left}
+.rubric-table td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--txt)}
+.rubric-table .bold-row td{font-weight:800;background:rgba(255,255,255,.04);font-family:var(--mono);color:var(--gld)}
+.grade-thresholds{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:10px}
+.grade-thresh{text-align:center;padding:8px 4px;border-radius:10px;font-family:var(--mono)}
+.grade-thresh .ltr{font-size:1.3rem;font-weight:800}
+.grade-thresh .xp{font-size:.66rem;color:var(--txt2)}
+.rubric-close{position:absolute;top:13px;right:13px;background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--txt2);transition:color .2s,transform .15s;line-height:1}
+.rubric-close:hover{color:var(--txt);transform:scale(1.15)}
+
+/* ── Floating rubric btn ── */
+#rubric-fab{position:fixed;bottom:24px;left:24px;z-index:990;background:rgba(167,139,250,.13);color:var(--pur);border:1.5px solid rgba(167,139,250,.3);border-radius:99px;padding:9px 18px;font-family:var(--sans);font-size:.78rem;font-weight:700;cursor:pointer;backdrop-filter:blur(8px);transition:all .2s}
+#rubric-fab:hover{background:rgba(167,139,250,.26);border-color:var(--pur);transform:translateY(-2px)}
+
+/* ── Confetti ── */
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:9998}
+
+@media(max-width:540px){.grade-thresholds{grid-template-columns:repeat(3,1fr)}.cert-summary{gap:10px}.cert-stat{min-width:90px;padding:10px 14px}.cert-stat .val{font-size:1.5rem}}
+</style>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig={apiKey:"AIzaSyAbnknXhx9VYY9L8UFW6uMpNYLM6SRsMVg",authDomain:"solving-systems-activities.firebaseapp.com",projectId:"solving-systems-activities",storageBucket:"solving-systems-activities.firebasestorage.app",messagingSenderId:"81374640982",appId:"1:81374640982:web:ad4796df648ddf464774f7"};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore();
+function sendToFirebase(data,isSubmit){
+  if(!data.student)return;
+  const docId='M3T2SP_'+data.student.replace(/\s+/g,'_');
+  const payload={...data};
+  if(isSubmit){payload.submitted=true;payload.submitTimestamp=new Date().toISOString();}
+  db.collection('homework').doc(docId).set(payload,{merge:true}).catch(err=>console.warn('Firebase:',err));
+}
+</script>
+</head>
+<body>
+
+<div id="xp-bar">
+  <div class="xp-logo">M3T2 <span>★</span> Skills</div>
+  <div id="xp-track"><div id="xp-fill"></div></div>
+  <div id="xp-nums">0 / 200 XP</div>
+  <div id="xp-tot">0 XP</div>
+</div>
+<div id="toast"></div>
+<canvas id="confetti"></canvas>
+
+<div id="hero">
+  <h1>Exponential Growth &amp; Decay Skills Practice</h1>
+  <div class="sub">Algebra 1 · Module 3 · Topic 2 · Skills Practice · Funciones Exponenciales</div>
+  <div class="name-row">
+    <label>👤 <span class="lang-en">Name:</span><span class="lang-es">Nombre:</span></label>
+    <input type="text" id="student-name" autocomplete="name" placeholder="Enter your full name / Escribe tu nombre completo">
+  </div>
+  <div>
+    <div class="lang-toggle" style="margin-top:14px">
+      <button class="active" onclick="setLang('en')">EN</button>
+      <button onclick="setLang('es')">ES</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap" id="questions-container" style="margin-top:10px"></div>
+
+<div id="submit-section">
+  <button class="submit-btn" onclick="submitAll()">
+    🎓 <span class="lang-en">Submit Assignment</span><span class="lang-es">Entregar Tarea</span>
+  </button>
+  <div class="submit-note lang-en">Make sure your name is filled in before submitting.</div>
+  <div class="submit-note lang-es">Asegúrate de escribir tu nombre antes de entregar.</div>
+</div>
+
+<!-- Certificate Overlay -->
+<div id="cert-overlay">
+  <div id="cert-box">
+    <div class="cert-inner">
+      <div class="cert-header-bar">
+        <h2>🎓 Assignment Complete!</h2>
+        <div class="csub">Exp. Growth &amp; Decay Skills Practice · M3T2</div>
+      </div>
+      <div class="cert-name" id="cert-name">—</div>
+      <div class="cert-summary" id="cert-summary"></div>
+      <div class="breakdown-title">📊 XP Breakdown by Question</div>
+      <div style="overflow-x:auto">
+        <table class="breakdown-table" id="breakdown-table"></table>
+      </div>
+      <div class="cert-date" id="cert-date">—</div>
+      <div class="cert-btns">
+        <button class="cert-close-btn" onclick="closeCert()">✕ Close</button>
+        <button class="cert-close-btn" style="background:rgba(52,211,153,.1);color:var(--grn);border-color:rgba(52,211,153,.28)" onclick="window.print()">🖨 Print</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Rubric Overlay -->
+<div id="rubric-overlay">
+  <div id="rubric-box">
+    <button class="rubric-close" onclick="closeRubric()">✕</button>
+    <div class="rubric-inner">
+      <div class="rubric-title">📋 Scoring Rubric — Exp. Growth &amp; Decay Skills Practice</div>
+      <table class="rubric-table">
+        <thead><tr><th>Criteria</th><th>1st Correct</th><th>2nd Correct</th><th>3rd+ Correct</th><th>Wrong Attempt</th></tr></thead>
+        <tbody>
+          <tr><td>Growth or Decay?</td><td style="color:var(--grn);font-family:var(--mono)">+5 XP</td><td style="color:var(--blue);font-family:var(--mono)">+2 XP</td><td style="color:var(--txt3)">—</td><td style="color:var(--red);font-family:var(--mono)">−3 XP</td></tr>
+          <tr><td><em>a</em> — Initial value</td><td style="color:var(--grn);font-family:var(--mono)">+10 XP</td><td style="color:var(--yel);font-family:var(--mono)">+7 XP</td><td style="color:var(--txt2);font-family:var(--mono)">+4 XP</td><td style="color:var(--red);font-family:var(--mono)">−2 XP</td></tr>
+          <tr><td><em>b</em> — Growth/decay factor</td><td style="color:var(--grn);font-family:var(--mono)">+10 XP</td><td style="color:var(--yel);font-family:var(--mono)">+7 XP</td><td style="color:var(--txt2);font-family:var(--mono)">+4 XP</td><td style="color:var(--red);font-family:var(--mono)">−2 XP</td></tr>
+          <tr><td>Equation: P(t) = a·b^t or f(x) = a·b^x</td><td style="color:var(--grn);font-family:var(--mono)">+15 XP</td><td style="color:var(--yel);font-family:var(--mono)">+10 XP</td><td style="color:var(--txt2);font-family:var(--mono)">+5 XP</td><td style="color:var(--red);font-family:var(--mono)">−3 XP</td></tr>
+          <tr class="bold-row"><td>Max per question</td><td colspan="4" style="text-align:center">40 XP (5 + 10 + 10 + 15)</td></tr>
+          <tr class="bold-row"><td>Total Max (5 questions)</td><td colspan="4" style="text-align:center">200 XP</td></tr>
+        </tbody>
+      </table>
+      <div style="font-family:var(--sans);font-size:.77rem;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.05em;margin:12px 0 8px">Grade Thresholds</div>
+      <div class="grade-thresholds">
+        <div class="grade-thresh" style="background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.28)"><div class="ltr" style="color:var(--grn)">Refining</div><div class="xp">200 XP</div><div class="xp">100%</div></div>
+        <div class="grade-thresh" style="background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.24)"><div class="ltr" style="color:var(--blue)">Developing</div><div class="xp">170+ XP</div><div class="xp">≥ 85%</div></div>
+        <div class="grade-thresh" style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.24)"><div class="ltr" style="color:var(--yel)">Approaching</div><div class="xp">130+ XP</div><div class="xp">≥ 65%</div></div>
+        <div class="grade-thresh" style="background:rgba(251,146,60,.08);border:1px solid rgba(251,146,60,.24)"><div class="ltr" style="color:var(--org)">Emerging</div><div class="xp">110+ XP</div><div class="xp">≥ 55%</div></div>
+        <div class="grade-thresh" style="background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.24)"><div class="ltr" style="color:var(--red)">Missing</div><div class="xp">&lt;110 XP</div><div class="xp">&lt;55%</div></div>
+      </div>
+      <div style="margin-top:14px;padding:10px 13px;background:rgba(248,113,113,.07);border-radius:8px;border-left:3px solid var(--red);font-size:.78rem;color:var(--txt2);font-family:var(--body);line-height:1.5">
+        ⚠️ <strong style="color:var(--txt)">XP can decrease!</strong> Wrong attempts deduct XP. Take your time and think before answering. XP cannot go below 0.
+      </div>
+    </div>
+  </div>
+</div>
+
+<button id="rubric-fab" onclick="openRubric()">📋 Rubric</button>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   QUESTION DATA
+═══════════════════════════════════════════════════ */
+const QUESTIONS = [
+  // ── POPULATION CONTEXT QUESTIONS ──────────────────
+  {
+    id:'C1', type:'context', dir:'inc',
+    city:'Joyville', initPop:20750, rate:'2.7%',
+    prompt:{
+      en:'<strong>Joyville</strong> has a population of <strong>20,750</strong> people. Its population is <strong>increasing at a rate of 2.7%</strong> each year. Write a function <strong>P(t)</strong> representing the population as a function of time <em>t</em> in years.',
+      es:'<strong>Joyville</strong> tiene una población de <strong>20,750</strong> personas. Su población <strong>aumenta un 2.7%</strong> cada año. Escribe una función <strong>P(t)</strong> que represente la población en función del tiempo <em>t</em> en años.'
+    },
+    ansA:20750, ansB:1.027,
+    fn:'P(t) = 20,750 · 1.027^t',
+    eqVar:'t',
+    tip:{en:'Growth factor b = 1 + rate = 1 + 0.027 = 1.027', es:'Factor b = 1 + tasa = 1 + 0.027 = 1.027'},
+    hintGD:{en:'Is the population increasing or decreasing? Increasing = growth, decreasing = decay.',es:'¿La población aumenta o disminuye? Aumenta = crecimiento, disminuye = decaimiento.'},
+    hintA:{en:'The initial population at t = 0 is the a-value. Here a = 20,750.',es:'La población inicial en t = 0 es el valor a. Aquí a = 20,750.'},
+    hintB:{en:'Growth: b = 1 + rate = 1 + 0.027 = 1.027. The population grows by 2.7% each year.',es:'Crecimiento: b = 1 + tasa = 1 + 0.027 = 1.027. La población crece un 2.7% cada año.'},
+    hintEQ:{en:'Substitute a = 20,750 and b = 1.027 into P(t) = a · b^t. Use ^ for the exponent.',es:'Sustituye a = 20,750 y b = 1.027 en P(t) = a · b^t. Usa ^ para el exponente.'}
+  },
+  {
+    id:'C2', type:'context', dir:'dec',
+    city:'Hannonville', initPop:6075, rate:'0.5%',
+    prompt:{
+      en:'<strong>Hannonville</strong> has a population of <strong>6,075</strong> people. Its population is <strong>decreasing at a rate of 0.5%</strong> each year. Write a function <strong>P(t)</strong> representing the population as a function of time <em>t</em> in years.',
+      es:'<strong>Hannonville</strong> tiene una población de <strong>6,075</strong> personas. Su población <strong>disminuye un 0.5%</strong> cada año. Escribe una función <strong>P(t)</strong> que represente la población en función del tiempo <em>t</em> en años.'
+    },
+    ansA:6075, ansB:0.995,
+    fn:'P(t) = 6,075 · 0.995^t',
+    eqVar:'t',
+    tip:{en:'Decay factor b = 1 − rate = 1 − 0.005 = 0.995', es:'Factor b = 1 − tasa = 1 − 0.005 = 0.995'},
+    hintGD:{en:'The population is decreasing — that means exponential decay (0 < b < 1).',es:'La población disminuye — eso significa decaimiento exponencial (0 < b < 1).'},
+    hintA:{en:'The initial population at t = 0 is the a-value. Here a = 6,075.',es:'La población inicial en t = 0 es el valor a. Aquí a = 6,075.'},
+    hintB:{en:'Decay: b = 1 − rate = 1 − 0.005 = 0.995. The population shrinks 0.5% per year.',es:'Decaimiento: b = 1 − tasa = 1 − 0.005 = 0.995. La población disminuye 0.5% cada año.'},
+    hintEQ:{en:'Substitute a = 6,075 and b = 0.995 into P(t) = a · b^t. Use ^ for the exponent.',es:'Sustituye a = 6,075 y b = 0.995 en P(t) = a · b^t. Usa ^ para el exponente.'}
+  },
+  {
+    id:'C3', type:'context', dir:'dec',
+    city:'Mapletown', initPop:95000, rate:'1.375%',
+    prompt:{
+      en:'<strong>Mapletown</strong> has a population of <strong>95,000</strong> people. Its population is <strong>decreasing at a rate of 1.375%</strong> each year. Write a function <strong>P(t)</strong> representing the population as a function of time <em>t</em> in years.',
+      es:'<strong>Mapletown</strong> tiene una población de <strong>95,000</strong> personas. Su población <strong>disminuye un 1.375%</strong> cada año. Escribe una función <strong>P(t)</strong> que represente la población en función del tiempo <em>t</em> en años.'
+    },
+    ansA:95000, ansB:0.98625,
+    fn:'P(t) = 95,000 · 0.98625^t',
+    eqVar:'t',
+    tip:{en:'Decay factor b = 1 − 0.01375 = 0.98625', es:'Factor b = 1 − 0.01375 = 0.98625'},
+    hintGD:{en:'The population is decreasing — that means exponential decay.',es:'La población disminuye — eso significa decaimiento exponencial.'},
+    hintA:{en:'The initial population at t = 0 is the a-value. Here a = 95,000.',es:'La población inicial en t = 0 es el valor a. Aquí a = 95,000.'},
+    hintB:{en:'Decay: b = 1 − 0.01375 = 0.98625. (Rate 1.375% = 0.01375 as a decimal.)',es:'Decaimiento: b = 1 − 0.01375 = 0.98625. (Tasa 1.375% = 0.01375 como decimal.)'},
+    hintEQ:{en:'Substitute a = 95,000 and b = 0.98625 into P(t) = a · b^t.',es:'Sustituye a = 95,000 y b = 0.98625 en P(t) = a · b^t.'}
+  },
+  {
+    id:'C4', type:'context', dir:'inc',
+    city:'Waterville', initPop:985, rate:'0.65%',
+    prompt:{
+      en:'<strong>Waterville</strong> has a population of <strong>985</strong> people. Its population is <strong>increasing at a rate of 0.65%</strong> each year. Write a function <strong>P(t)</strong> representing the population as a function of time <em>t</em> in years.',
+      es:'<strong>Waterville</strong> tiene una población de <strong>985</strong> personas. Su población <strong>aumenta un 0.65%</strong> cada año. Escribe una función <strong>P(t)</strong> que represente la población en función del tiempo <em>t</em> en años.'
+    },
+    ansA:985, ansB:1.0065,
+    fn:'P(t) = 985 · 1.0065^t',
+    eqVar:'t',
+    tip:{en:'Growth factor b = 1 + 0.0065 = 1.0065', es:'Factor b = 1 + 0.0065 = 1.0065'},
+    hintGD:{en:'The population is increasing — that means exponential growth (b > 1).',es:'La población aumenta — eso significa crecimiento exponencial (b > 1).'},
+    hintA:{en:'The initial population at t = 0 is the a-value. Here a = 985.',es:'La población inicial en t = 0 es el valor a. Aquí a = 985.'},
+    hintB:{en:'Growth: b = 1 + rate = 1 + 0.0065 = 1.0065. (Rate 0.65% = 0.0065.)',es:'Crecimiento: b = 1 + tasa = 1 + 0.0065 = 1.0065. (Tasa 0.65% = 0.0065.)'},
+    hintEQ:{en:'Substitute a = 985 and b = 1.0065 into P(t) = a · b^t.',es:'Sustituye a = 985 y b = 1.0065 en P(t) = a · b^t.'}
+  },
+  {
+    id:'C5', type:'context', dir:'inc',
+    city:'Krystal City', initPop:40500, rate:'3.8%',
+    prompt:{
+      en:'<strong>Krystal City</strong> has a population of <strong>40,500</strong> people. Its population is <strong>increasing at a rate of 3.8%</strong> each year. Write a function <strong>P(t)</strong> representing the population as a function of time <em>t</em> in years.',
+      es:'<strong>Krystal City</strong> tiene una población de <strong>40,500</strong> personas. Su población <strong>aumenta un 3.8%</strong> cada año. Escribe una función <strong>P(t)</strong> que represente la población en función del tiempo <em>t</em> en años.'
+    },
+    ansA:40500, ansB:1.038,
+    fn:'P(t) = 40,500 · 1.038^t',
+    eqVar:'t',
+    tip:{en:'Growth factor b = 1 + 0.038 = 1.038', es:'Factor b = 1 + 0.038 = 1.038'},
+    hintGD:{en:'The population is increasing — that means exponential growth (b > 1).',es:'La población aumenta — eso significa crecimiento exponencial (b > 1).'},
+    hintA:{en:'The initial population at t = 0 is the a-value. Here a = 40,500.',es:'La población inicial en t = 0 es el valor a. Aquí a = 40,500.'},
+    hintB:{en:'Growth: b = 1 + rate = 1 + 0.038 = 1.038.',es:'Crecimiento: b = 1 + tasa = 1 + 0.038 = 1.038.'},
+    hintEQ:{en:'Substitute a = 40,500 and b = 1.038 into P(t) = a · b^t.',es:'Sustituye a = 40,500 y b = 1.038 en P(t) = a · b^t.'}
+  },
+];
+
+/* ═══════════════════════════════════════════════════
+   XP RUBRIC
+═══════════════════════════════════════════════════ */
+const XP = {
+  gd:   { correct:[5,2,2], wrong:-3  },
+  a:    { correct:[10,7,4], wrong:-2 },
+  b:    { correct:[10,7,4], wrong:-2 },
+  eq:   { correct:[15,10,5], wrong:-3 }
+};
+const MAX_XP = 200;
+
+function xpForCorrect(table, attempts) {
+  const idx = Math.min(attempts - 1, table.length - 1);
+  return table[idx];
+}
+
+/* ═══════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════ */
+let lang = 'en';
+let rawXP = 0;
+let displayXP = 0;
+let shuffledQ = [];
+let attempts = [];
+
+function newAttempt() {
+  return { gd:0,gdDone:false, a:0,aDone:false, b:0,bDone:false, eq:0,eqDone:false, earned:0, penalty:0 };
+}
+
+/* ═══════════════════════════════════════════════════
+   SEED + SHUFFLE
+═══════════════════════════════════════════════════ */
+function getSeed(){let s=localStorage.getItem('m3t2sp_seed');if(!s){s=String(Math.floor(Math.random()*1e9));localStorage.setItem('m3t2sp_seed',s);}return parseInt(s,10);}
+function seededRNG(seed){let s=seed;return()=>{s=(s*1664525+1013904223)&0xffffffff;return(s>>>0)/4294967295;};}
+function seededShuffle(arr,seed){const rng=seededRNG(seed),a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+/* ═══════════════════════════════════════════════════
+   UTILITIES
+═══════════════════════════════════════════════════ */
+function parseAns(str){
+  str=str.trim();
+  if(str.includes('/')){const p=str.split('/');if(p.length===2){const n=parseFloat(p[0]),d=parseFloat(p[1]);if(!isNaN(n)&&!isNaN(d)&&d!==0)return n/d;}}
+  return parseFloat(str);
+}
+function approxEq(a,b){return Math.abs(a-b)<=0.005;}
+
+function checkEquation(str, ansA, ansB) {
+  const s = str.replace(/\s/g,'').toLowerCase();
+  // Accept ^x, ^(x), ^t, ^(t)
+  if (!s.includes('^x') && !s.includes('^(x)') && !s.includes('^t') && !s.includes('^(t)')) return false;
+  const nums = [];
+  const s2 = s.replace(/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)/g, (_,n,d) => {
+    nums.push(parseFloat(n)/parseFloat(d)); return '§';
+  });
+  let m; const re = /\d+(?:\.\d+)?/g;
+  while((m=re.exec(s2))!==null){const n=parseFloat(m[0]);if(!isNaN(n))nums.push(n);}
+  const hasA = approxEq(ansA,1) ? true : nums.some(n=>approxEq(n,ansA));
+  const hasB = nums.some(n=>approxEq(n,ansB));
+  return hasA && hasB;
+}
+
+function toast(msg, type='good'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='on'+(type==='bad'?' bad':type==='warn'?' warn':'');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.className='',2300);
+}
+
+function setLang(l){
+  lang=l;
+  document.body.classList.toggle('es',l==='es');
+  document.querySelectorAll('.lang-toggle button').forEach((b,i)=>{b.className=((i===0&&l==='en')||(i===1&&l==='es'))?'active':'';});
+}
+
+/* ═══════════════════════════════════════════════════
+   XP ENGINE
+═══════════════════════════════════════════════════ */
+function applyXP(qIdx, delta) {
+  const st = attempts[qIdx];
+  if (delta > 0) {
+    st.earned += delta; rawXP += delta;
+    toast('+' + delta + ' XP! ✓');
+  } else {
+    st.penalty += Math.abs(delta); rawXP += delta;
+    toast(delta + ' XP', 'bad');
+    const track = document.getElementById('xp-track');
+    track.classList.add('lose');
+    setTimeout(() => track.classList.remove('lose'), 400);
+  }
+  displayXP = Math.max(0, rawXP);
+  const pct = Math.min(100, displayXP / MAX_XP * 100);
+  document.getElementById('xp-fill').style.width = pct + '%';
+  document.getElementById('xp-nums').textContent = displayXP + ' / 200 XP';
+  document.getElementById('xp-tot').textContent = displayXP + ' XP';
+}
+
+/* ═══════════════════════════════════════════════════
+   RENDER
+═══════════════════════════════════════════════════ */
+function renderQuestions() {
+  shuffledQ = seededShuffle(QUESTIONS, getSeed());
+  attempts = shuffledQ.map(() => newAttempt());
+  const container = document.getElementById('questions-container');
+  container.innerHTML = '';
+
+  shuffledQ.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'qcard'; card.id = 'card-' + i;
+
+    const hBg = q.dir==='inc'
+      ? 'linear-gradient(135deg,rgba(52,211,153,.16),rgba(52,211,153,.04))'
+      : 'linear-gradient(135deg,rgba(248,113,113,.14),rgba(248,113,113,.04))';
+
+    const typeLabel = q.type === 'context' ? 'Population' : 'Table';
+    const typeLabelEs = q.type === 'context' ? 'Población' : 'Tabla';
+
+    let html = `
+      <div class="ch" style="background:${hBg}">
+        <span class="q-num">#${i+1}</span>
+        <span class="q-type ${q.type}-type lang-en">${typeLabel}</span>
+        <span class="q-type ${q.type}-type lang-es">${typeLabelEs}</span>
+        <span class="xpc">⚡ Max 40 XP</span>
+      </div>
+      <div class="cb">
+        <p class="prompt lang-en">${q.prompt.en}</p>
+        <p class="prompt lang-es">${q.prompt.es}</p>
+    `;
+
+    // Key formula hint (shown below prompt)
+    html += `
+      <div class="context-tip">
+        <strong class="lang-en">Key Formula:</strong><strong class="lang-es">Fórmula clave:</strong>
+        <span class="lang-en"> Growth → b = 1 + r &nbsp;|&nbsp; Decay → b = 1 − r</span>
+        <span class="lang-es"> Crecimiento → b = 1 + r &nbsp;|&nbsp; Decaimiento → b = 1 − r</span>
+        &nbsp;&nbsp;•&nbsp;&nbsp;<em>${q.tip.en}</em>
+      </div>
+    `;
+
+    // Section 1: Growth or Decay
+    html += `
+      <div style="margin-top:16px">
+        <div class="section-label">
+          <span class="lang-en">① Exponential Growth or Decay?</span>
+          <span class="lang-es">① ¿Crecimiento o Decaimiento Exponencial?</span>
+          <span class="slxp">+5 XP / −3 XP</span>
+        </div>
+        <div class="gd-row">
+          <button class="gd-btn" id="gd-growth-${i}" onclick="checkGD(${i},'growth')">
+            📈 <span class="lang-en">Growth</span><span class="lang-es">Crecimiento</span>
+          </button>
+          <button class="gd-btn" id="gd-decay-${i}" onclick="checkGD(${i},'decay')">
+            📉 <span class="lang-en">Decay</span><span class="lang-es">Decaimiento</span>
+          </button>
+        </div>
+        <button class="hint-btn" style="position:static;margin-bottom:4px" onclick="toggleHint(${i},'gd')">💡</button>
+        <div class="hint-box" id="hint-gd-${i}">
+          <span class="lang-en">${q.hintGD.en}</span>
+          <span class="lang-es">${q.hintGD.es}</span>
+        </div>
+        <div class="gd-result" id="gd-res-${i}"></div>
+      </div>
+    `;
+
+    // Section 2: a and b inputs
+    const aLabelEn = q.type === 'context' ? '② a = Initial Population' : '② a = y-intercept';
+    const aLabelEs = q.type === 'context' ? '② a = Población inicial' : '② a = intersección y';
+    const aSubEn  = q.type === 'context' ? 'Population at time t = 0' : 'Value when x = 0';
+    const aSubEs  = q.type === 'context' ? 'Población cuando t = 0' : 'Valor cuando x = 0';
+    const bLabelEn = q.type === 'context' ? '③ b = Growth/Decay Factor' : '③ b = common ratio';
+    const bLabelEs = q.type === 'context' ? '③ b = Factor de crecimiento/decaimiento' : '③ b = razón común';
+    const bSubEn  = q.type === 'context' ? 'Growth: 1 + r  |  Decay: 1 − r' : 'Multiplier per step';
+    const bSubEs  = q.type === 'context' ? 'Crecimiento: 1 + r  |  Decaimiento: 1 − r' : 'Multiplicador por paso';
+
+    html += `
+      <div class="fields-grid" style="margin-top:14px">
+        <div class="field-group">
+          <div class="section-label" style="margin-bottom:0">
+            <span class="lang-en">${aLabelEn}</span><span class="lang-es">${aLabelEs}</span>
+            <span class="slxp">+10 XP / −2 XP</span>
+          </div>
+          <label style="font-size:.68rem;margin-top:4px;margin-bottom:6px">
+            <span class="lang-en">${aSubEn}</span><span class="lang-es">${aSubEs}</span>
+          </label>
+          <input type="text" id="inp-a-${i}" inputmode="decimal" placeholder="e.g. ${q.ansA}" onkeydown="if(event.key==='Enter')checkField(${i},'a')">
+          <button class="hint-btn" onclick="toggleHint(${i},'a')">💡</button>
+          <div class="hint-box" id="hint-a-${i}"><span class="lang-en">${q.hintA.en}</span><span class="lang-es">${q.hintA.es}</span></div>
+        </div>
+        <div class="field-group">
+          <div class="section-label" style="margin-bottom:0">
+            <span class="lang-en">${bLabelEn}</span><span class="lang-es">${bLabelEs}</span>
+            <span class="slxp">+10 XP / −2 XP</span>
+          </div>
+          <label style="font-size:.68rem;margin-top:4px;margin-bottom:6px">
+            <span class="lang-en">${bSubEn}</span><span class="lang-es">${bSubEs}</span>
+          </label>
+          <input type="text" id="inp-b-${i}" inputmode="decimal" placeholder="e.g. ${q.ansB}" onkeydown="if(event.key==='Enter')checkField(${i},'b')">
+          <button class="hint-btn" onclick="toggleHint(${i},'b')">💡</button>
+          <div class="hint-box" id="hint-b-${i}"><span class="lang-en">${q.hintB.en}</span><span class="lang-es">${q.hintB.es}</span></div>
+        </div>
+      </div>
+    `;
+
+    // Section 3: Equation
+    const eqVar = q.eqVar || 'x';
+    const fnName = eqVar === 't' ? 'P(t)' : 'f(x)';
+    const eqPlaceholder = eqVar === 't'
+      ? `e.g. P(t) = ${q.ansA}(${q.ansB})^t`
+      : `e.g. f(x) = ${q.ansA}(${q.ansB})^x`;
+    const eqFormatHintEn = eqVar === 't'
+      ? `Use ^ for the exponent — e.g. P(t) = 20750(1.027)^t`
+      : `Use ^ for the exponent — e.g. f(x) = 2(1/2)^x`;
+    const eqFormatHintEs = eqVar === 't'
+      ? `Usa ^ para el exponente — ej. P(t) = 20750(1.027)^t`
+      : `Usa ^ para el exponente — ej. f(x) = 2(1/2)^x`;
+
+    html += `
+      <div class="eq-section" style="margin-top:14px">
+        <div class="section-label">
+          <span class="lang-en">④ Write the Complete Exponential Function</span>
+          <span class="lang-es">④ Escribe la Función Exponencial Completa</span>
+          <span class="slxp">+15 XP / −3 XP</span>
+        </div>
+        <div class="eq-template lang-en">Use the form <span>${fnName} = a · b^${eqVar}</span> — substitute your values of <em>a</em> and <em>b</em></div>
+        <div class="eq-template lang-es">Usa la forma <span>${fnName} = a · b^${eqVar}</span> — sustituye tus valores de <em>a</em> y <em>b</em></div>
+        <div class="eq-input-row" style="margin-top:8px">
+          <input class="eq-input" type="text" id="inp-eq-${i}"
+            placeholder="${eqPlaceholder}"
+            onkeydown="if(event.key==='Enter')checkField(${i},'eq')">
+          <button class="hint-btn" style="position:static" onclick="toggleHint(${i},'eq')">💡</button>
+        </div>
+        <div class="eq-format-hint lang-en">${eqFormatHintEn}</div>
+        <div class="eq-format-hint lang-es">${eqFormatHintEs}</div>
+        <div class="hint-box" id="hint-eq-${i}" style="margin-top:6px">
+          <span class="lang-en">${q.hintEQ.en}</span><span class="lang-es">${q.hintEQ.es}</span>
+        </div>
+      </div>
+    `;
+
+    html += `
+        <button class="check-btn" id="chk-${i}" onclick="checkQuestion(${i})">
+          <span class="lang-en">✓ Check All Answers</span><span class="lang-es">✓ Verificar Todas</span>
+        </button>
+        <div class="res-msg" id="res-${i}"></div>
+        <div class="fn-display" id="fn-${i}">
+          <div class="fn-label">✓ Correct Equation</div>
+          ${q.fn}
+        </div>
+      </div>
+    `;
+
+    card.innerHTML = html;
+    container.appendChild(card);
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   HINT
+═══════════════════════════════════════════════════ */
+function toggleHint(i, field) {
+  document.getElementById('hint-'+field+'-'+i).classList.toggle('on');
+}
+
+/* ═══════════════════════════════════════════════════
+   GROWTH / DECAY CHECK
+═══════════════════════════════════════════════════ */
+function checkGD(i, choice) {
+  const st = attempts[i];
+  if (st.gdDone) return;
+  const q = shuffledQ[i];
+  const correct = q.dir === 'inc' ? 'growth' : 'decay';
+  const isCorrect = choice === correct;
+  st.gd++;
+
+  const growthBtn = document.getElementById('gd-growth-'+i);
+  const decayBtn  = document.getElementById('gd-decay-'+i);
+  const resEl     = document.getElementById('gd-res-'+i);
+
+  if (isCorrect) {
+    st.gdDone = true;
+    const earned = xpForCorrect(XP.gd.correct, st.gd);
+    applyXP(i, earned);
+    if (choice==='growth') { growthBtn.className='gd-btn correct-growth'; decayBtn.className='gd-btn'; decayBtn.disabled=true; }
+    else                   { decayBtn.className='gd-btn correct-decay';   growthBtn.className='gd-btn'; growthBtn.disabled=true; }
+    resEl.className = 'gd-result ok';
+    resEl.textContent = (lang==='es') ? '✓ ¡Correcto!' : '✓ Correct!';
+    autoSave();
+  } else {
+    applyXP(i, XP.gd.wrong);
+    document.getElementById('gd-'+choice+'-'+i).className = 'gd-btn wrong';
+    resEl.className = 'gd-result bad';
+    resEl.textContent = (lang==='es') ? '✗ Incorrecto — intenta de nuevo.' : '✗ Wrong — try again!';
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   FIELD CHECK (Enter key)
+═══════════════════════════════════════════════════ */
+function checkField(i, field) {
+  const st = attempts[i];
+  if (st[field+'Done']) return;
+  const q = shuffledQ[i];
+  const inp = document.getElementById(field==='eq' ? 'inp-eq-'+i : 'inp-'+field+'-'+i);
+  const val = inp.value.trim();
+  if (!val) { toast(lang==='es'?'Escribe un valor primero.':'Enter a value first!','warn'); return; }
+
+  let correct = false;
+
+  if (field === 'a') {
+    st.a++; correct = approxEq(parseAns(val), q.ansA);
+  } else if (field === 'b') {
+    st.b++; correct = approxEq(parseAns(val), q.ansB);
+  } else if (field === 'eq') {
+    const eqVar = q.eqVar || 'x';
+    const hasExp = val.includes('^x') || val.includes('^(x)') || val.includes('^t') || val.includes('^(t)');
+    if (!hasExp) {
+      const ex = eqVar==='t' ? 'P(t)=20750(1.027)^t' : 'f(x)=2(0.5)^x';
+      toast((lang==='es'?'Usa ^ para el exponente — ej. ':'Use ^ for exponent — e.g. ')+ex,'warn'); return;
+    }
+    st.eq++; correct = checkEquation(val, q.ansA, q.ansB);
+  }
+
+  const xpTable = XP[field === 'eq' ? 'eq' : field];
+  if (correct) {
+    st[field+'Done'] = true;
+    if (field==='eq') inp.className = 'eq-input ok'; else inp.className = 'ok';
+    const earned = xpForCorrect(xpTable.correct, st[field]);
+    applyXP(i, earned);
+    autoSave();
+    checkAllDone(i);
+  } else {
+    if (field==='eq') inp.classList.add('err'); else inp.className = 'err';
+    applyXP(i, xpTable.wrong);
+    setTimeout(() => { if (!st[field+'Done']) { if(field==='eq') inp.classList.remove('err'); else inp.className=''; } }, 900);
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   CHECK QUESTION (button)
+═══════════════════════════════════════════════════ */
+function checkQuestion(i) {
+  const q = shuffledQ[i], st = attempts[i];
+  let anyInput = false;
+
+  ['a','b'].forEach(field => {
+    if (st[field+'Done']) return;
+    const inp = document.getElementById('inp-'+field+'-'+i);
+    const val = inp.value.trim();
+    if (!val) return;
+    anyInput = true;
+    const correct = approxEq(parseAns(val), field==='a'?q.ansA:q.ansB);
+    st[field]++;
+    if (correct) {
+      st[field+'Done'] = true; inp.className = 'ok';
+      applyXP(i, xpForCorrect(XP[field].correct, st[field]));
+    } else {
+      inp.className = 'err'; applyXP(i, XP[field].wrong);
+      setTimeout(() => { if(!st[field+'Done']) inp.className=''; }, 900);
+    }
+  });
+
+  if (!st.eqDone) {
+    const inp = document.getElementById('inp-eq-'+i);
+    const val = inp.value.trim();
+    if (val) {
+      anyInput = true;
+      const hasExp = val.includes('^x') || val.includes('^(x)') || val.includes('^t') || val.includes('^(t)');
+      if (!hasExp) {
+        toast(lang==='es'?'Usa ^ para el exponente':'Use ^ for the exponent','warn');
+      } else {
+        st.eq++;
+        const correct = checkEquation(val, q.ansA, q.ansB);
+        if (correct) {
+          st.eqDone = true; inp.className = 'eq-input ok';
+          applyXP(i, xpForCorrect(XP.eq.correct, st.eq));
+        } else {
+          inp.classList.add('err'); applyXP(i, XP.eq.wrong);
+          setTimeout(() => { if(!st.eqDone) inp.classList.remove('err'); }, 900);
+        }
+      }
+    }
+  }
+
+  if (!anyInput && !st.gdDone) {
+    toast(lang==='es'?'Completa al menos una respuesta primero.':'Complete at least one answer first!','warn'); return;
+  }
+
+  const res = document.getElementById('res-'+i);
+  const card = document.getElementById('card-'+i);
+  const allDone = st.gdDone && st.aDone && st.bDone && st.eqDone;
+  const someDone = st.gdDone || st.aDone || st.bDone || st.eqDone;
+
+  if (allDone) {
+    res.className='res-msg good'; res.textContent = lang==='es'?'✓ ¡Todo correcto! ¡Excelente!':'✓ All correct! Excellent!';
+    card.className='qcard correct'; autoSave();
+  } else if (someDone) {
+    res.className='res-msg part'; res.textContent = lang==='es'?'Parcialmente correcto — sigue intentando.':'Partially correct — keep going!';
+    card.className='qcard partial'; autoSave();
+  } else {
+    res.className='res-msg bad'; res.textContent = lang==='es'?'Incorrecto — revisa e intenta de nuevo.':'Not correct — review and try again.';
+  }
+}
+
+function checkAllDone(i) {
+  const st = attempts[i];
+  if (st.gdDone && st.aDone && st.bDone && st.eqDone) {
+    const res = document.getElementById('res-'+i);
+    res.className='res-msg good';
+    res.textContent = lang==='es'?'✓ ¡Todo correcto!':'✓ All correct!';
+    document.getElementById('card-'+i).className='qcard correct';
+    document.getElementById('fn-'+i).classList.add('on');
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   AUTO SAVE
+═══════════════════════════════════════════════════ */
+function autoSave() {
+  const name = document.getElementById('student-name').value.trim();
+  if (!name) return;
+  const progress = {};
+  shuffledQ.forEach((q,i) => {
+    progress[q.id] = { gdDone:attempts[i].gdDone, aDone:attempts[i].aDone, bDone:attempts[i].bDone, eqDone:attempts[i].eqDone, earned:attempts[i].earned, penalty:attempts[i].penalty };
+  });
+  sendToFirebase({ student:name, module:'M3T2_SkillsPractice', xp:displayXP, progress }, false);
+}
+
+/* ═══════════════════════════════════════════════════
+   SUBMIT
+═══════════════════════════════════════════════════ */
+function submitAll() {
+  const name = document.getElementById('student-name').value.trim();
+  if (!name) { toast(lang==='es'?'¡Escribe tu nombre primero!':'Please enter your name first!','warn'); return; }
+  const progress = {};
+  shuffledQ.forEach((q,i) => {
+    progress[q.id] = { gdDone:attempts[i].gdDone, aDone:attempts[i].aDone, bDone:attempts[i].bDone, eqDone:attempts[i].eqDone, earned:attempts[i].earned, penalty:attempts[i].penalty };
+  });
+  sendToFirebase({ student:name, module:'M3T2_SkillsPractice', xp:displayXP, progress }, true);
+  showCertificate(name);
+}
+
+/* ═══════════════════════════════════════════════════
+   CERTIFICATE
+═══════════════════════════════════════════════════ */
+function showCertificate(name) {
+  const pct = displayXP / MAX_XP;
+  let grade;
+  if (pct>=1.0) grade='Refining'; else if(pct>=0.85) grade='Developing'; else if(pct>=0.65) grade='Approaching'; else if(pct>=0.55) grade='Emerging'; else grade='Missing';
+  const msg = {Refining:'Outstanding! 🌟',Developing:'Great work! 🎉',Approaching:'Good effort! 👍',Emerging:'Keep practicing! 💪',Missing:'Needs more practice. 📚'};
+
+  const totalEarned = attempts.reduce((s,a)=>s+a.earned, 0);
+  const totalPenalty = attempts.reduce((s,a)=>s+a.penalty, 0);
+  const totalDone = attempts.filter(a=>a.gdDone&&a.aDone&&a.bDone&&a.eqDone).length;
+  const totalQs = shuffledQ.length;
+
+  document.getElementById('cert-name').textContent = name;
+  document.getElementById('cert-summary').innerHTML = `
+    <div class="cert-stat"><div class="val cert-grade ${grade}">${grade}</div><div class="lbl">${msg[grade]}</div></div>
+    <div class="cert-stat"><div class="val" style="color:var(--gld)">${displayXP}</div><div class="lbl">Final XP</div></div>
+    <div class="cert-stat"><div class="val" style="color:var(--grn)">+${totalEarned}</div><div class="lbl">XP Earned</div></div>
+    <div class="cert-stat"><div class="val" style="color:var(--red)">−${totalPenalty}</div><div class="lbl">XP Lost</div></div>
+    <div class="cert-stat"><div class="val" style="color:var(--blue)">${totalDone}/${totalQs}</div><div class="lbl">Complete</div></div>
+  `;
+
+  let cumulative = 0;
+  let rows = '';
+  shuffledQ.forEach((q, i) => {
+    const st = attempts[i];
+    const net = st.earned - st.penalty;
+    cumulative = Math.max(0, cumulative + net);
+    const netCls = net > 0 ? 'pos' : net < 0 ? 'neg' : 'zero';
+    const tick = done => done ? '<span class="tick-ok">✓</span>' : '<span class="tick-skip">—</span>';
+    const typeLabel = q.type==='context' ? '🏙️' : '📋';
+    const dirLabel  = q.dir==='inc' ? '📈' : '📉';
+    rows += `
+      <tr>
+        <td style="font-family:var(--mono)">#${i+1} ${typeLabel}${dirLabel}</td>
+        <td>${tick(st.gdDone)}</td>
+        <td>${tick(st.aDone)}</td>
+        <td>${tick(st.bDone)}</td>
+        <td>${tick(st.eqDone)}</td>
+        <td class="xp-plus">+${st.earned}</td>
+        <td class="xp-minus">${st.penalty > 0 ? '−'+st.penalty : '—'}</td>
+        <td class="xp-net ${netCls}">${net>=0?'+':''}${net}</td>
+        <td class="cumul" style="color:var(--gld)">${cumulative}</td>
+      </tr>
+    `;
+  });
+
+  const totalNet = displayXP;
+  rows += `
+    <tr class="total-row">
+      <td>TOTAL</td>
+      <td colspan="4" style="text-align:center;color:var(--txt2)">${totalDone} / ${totalQs} complete</td>
+      <td class="xp-plus">+${totalEarned}</td>
+      <td class="xp-minus">${totalPenalty > 0 ? '−'+totalPenalty : '—'}</td>
+      <td class="xp-net pos">${totalNet}</td>
+      <td class="cumul" style="color:var(--gld)">${totalNet} XP</td>
+    </tr>
+  `;
+
+  document.getElementById('breakdown-table').innerHTML = `
+    <thead><tr>
+      <th style="text-align:left">Question</th>
+      <th>G/D</th><th>a</th><th>b</th><th>Equation</th>
+      <th>+XP</th><th>−XP</th><th>Net</th><th>Running Total</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  `;
+
+  document.getElementById('cert-date').textContent = 'Submitted: ' + new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'});
+  document.getElementById('cert-overlay').classList.add('on');
+  launchConfetti();
+}
+
+function closeCert() { document.getElementById('cert-overlay').classList.remove('on'); }
+function openRubric() { document.getElementById('rubric-overlay').classList.add('on'); }
+function closeRubric() { document.getElementById('rubric-overlay').classList.remove('on'); }
+
+/* ═══════════════════════════════════════════════════
+   CONFETTI
+═══════════════════════════════════════════════════ */
+function launchConfetti() {
+  const c=document.getElementById('confetti');
+  c.width=window.innerWidth;c.height=window.innerHeight;
+  const ctx=c.getContext('2d');
+  const colors=['#f43f5e','#a78bfa','#e8a832','#34d399','#60a5fa','#fb923c'];
+  const pieces=Array.from({length:120},()=>({
+    x:Math.random()*c.width,y:Math.random()*c.height-c.height,
+    r:Math.random()*5+3,color:colors[Math.floor(Math.random()*colors.length)],
+    rot:Math.random()*360,rotV:(Math.random()-.5)*6,
+    vx:(Math.random()-.5)*3,vy:Math.random()*3.5+1.5,
+    shape:Math.random()>.5?'rect':'circ'
+  }));
+  let frame=0;
+  (function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    pieces.forEach(p=>{
+      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle=p.color;
+      if(p.shape==='rect')ctx.fillRect(-p.r,-p.r/2,p.r*2,p.r);
+      else{ctx.beginPath();ctx.arc(0,0,p.r,0,Math.PI*2);ctx.fill();}
+      ctx.restore();
+      p.x+=p.vx;p.y+=p.vy;p.rot+=p.rotV;p.vy+=0.04;
+    });
+    frame++;
+    if(frame<190)requestAnimationFrame(draw);
+    else ctx.clearRect(0,0,c.width,c.height);
+  })();
+}
+
+/* ═══════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  renderQuestions();
+  document.getElementById('student-name').addEventListener('input', () => {
+    clearTimeout(window._nameSave);
+    window._nameSave = setTimeout(autoSave, 1500);
+  });
+});
+</script>
+</body>
+</html>
