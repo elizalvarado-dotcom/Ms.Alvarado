@@ -33,6 +33,28 @@ service cloud.firestore {
                    && request.resource.data.email == request.auth.token.email;
     }
 
+    // ── homework/{docId} ──────────────────────────────────────────────────
+    // Students write homework submissions; any signed-in user can read.
+    match /homework/{docId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+
+    // ── feedback/{docId} ──────────────────────────────────────────────────
+    // Students submit feedback; any signed-in user can read.
+    match /feedback/{docId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update, delete: if false;
+    }
+
+    // ── students/{uid} ────────────────────────────────────────────────────
+    // Students read/write their own period record; any signed-in user can read.
+    match /students/{uid} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == uid;
+    }
+
     // Block everything else
     match /{document=**} {
       allow read, write: if false;

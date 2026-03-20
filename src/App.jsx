@@ -625,7 +625,7 @@ function ModuleDetailPage({ mod, onOpen, lang, user }) {
           )}
         </div>
 
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))', gap:'24px' }}>
+        <div style={{ display:'flex', flexDirection:'column', gap:'32px' }}>
           {baseUnits.map(unit => (
             <div key={unit.id} style={S.unitCol}>
               <div style={S.unitHead}>
@@ -639,7 +639,7 @@ function ModuleDetailPage({ mod, onOpen, lang, user }) {
                 </span>
                 <span style={S.unitTitle}>{L(unit.title, lang)}</span>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'row', overflowX: 'auto', gap: '16px', paddingBottom: '8px', WebkitOverflowScrolling: 'touch' }}>
+              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '16px' }}>
                 {getOrderedAssignments(unit).map((a, idx) => {
                   const isDragging   = drag?.unitId === unit.id && drag?.idx === idx
                   const isDropTarget = dragOver?.unitId === unit.id && dragOver?.idx === idx
