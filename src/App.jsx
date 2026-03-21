@@ -3,7 +3,7 @@ import {
   getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged,
 } from 'firebase/auth'
 import {
-  getFirestore, doc, setDoc, addDoc, collection, getDocs, getDoc, serverTimestamp,
+  getFirestore, doc, setDoc, addDoc, collection, getDocs, getDoc, serverTimestamp, query, where,
 } from 'firebase/firestore'
 import { initializeApp } from 'firebase/app'
 import './App.css'
@@ -368,7 +368,7 @@ function LoginScreen({ lang, setLang }) {
 }
 
 /* ── Assignment Card ──────────────────────────────────────────────────────── */
-function AssignmentCard({ assignment: a, onOpen, lang, dueDate }) {
+function AssignmentCard({ assignment: a, onOpen, lang, dueDate, completed }) {
   const [hov, setHov] = useState(false)
   const math = isMathIcon(a.icon)
 
@@ -431,6 +431,13 @@ function AssignmentCard({ assignment: a, onOpen, lang, dueDate }) {
       {dueBadge && (
         <div style={{ marginTop:'10px', display:'inline-flex', alignItems:'center', gap:'6px', padding:'3px 10px', borderRadius:'20px', background:dueBadge.bg, border:`1px solid ${dueBadge.border}`, fontSize:'.72rem', fontWeight:700, color:dueBadge.color, fontFamily:"'JetBrains Mono',monospace", letterSpacing:'.3px' }}>
           {dueBadge.label}
+        </div>
+      )}
+
+      {/* Completion badge */}
+      {completed && (
+        <div style={{ marginTop:'8px', display:'inline-flex', alignItems:'center', gap:'6px', padding:'3px 12px', borderRadius:'20px', background:'rgba(52,211,153,0.12)', border:'1px solid rgba(52,211,153,0.35)', fontSize:'.72rem', fontWeight:700, color:'#34d399', fontFamily:"'JetBrains Mono',monospace", letterSpacing:'.3px' }}>
+          ✅ Submitted
         </div>
       )}
 
@@ -571,7 +578,7 @@ function ModulesPage({ user, onOpen, lang, setLang }) {
 }
 
 /* ── Module Detail Page (assignments within a module) ─────────────────────── */
-function ModuleDetailPage({ mod, onOpen, lang, user, dueDates, hiddenAssignments }) {
+function ModuleDetailPage({ mod, onOpen, lang, user, dueDates, hiddenAssignments, completionMap }) {
   const baseUnits = UNITS.filter(u => mod.unitIds.includes(u.id))
   const math = isMathIcon(mod.icon)
   const teacher = isTeacher(user?.email)
@@ -700,7 +707,7 @@ function ModuleDetailPage({ mod, onOpen, lang, user, dueDates, hiddenAssignments
                           </span>
                         </div>
                       )}
-                      <AssignmentCard assignment={a} onOpen={customizeMode ? () => {} : onOpen} lang={lang} dueDate={dueDates?.[a.id]} />
+                      <AssignmentCard assignment={a} onOpen={customizeMode ? () => {} : onOpen} lang={lang} dueDate={dueDates?.[a.id]} completed={!isTeacher(user?.email) && !!completionMap?.[a.id]} />
                     </div>
                   )
                 })}
@@ -1967,6 +1974,7 @@ export default function App() {
   const [period,           setPeriod]           = useState('')
   const [dueDates,         setDueDates]         = useState({})
   const [hiddenAssignments,setHiddenAssignments] = useState({})
+  const [completionMap,    setCompletionMap]    = useState({})
 
   useEffect(() => {
     return onAuthStateChanged(auth, u => {
@@ -2010,6 +2018,35 @@ export default function App() {
     }).catch(() => {})
   }, [user])
 
+  // Load student completion data from Firestore on login
+  useEffect(() => {
+    if (!user || isTeacher(user.email)) return
+    const map = {}
+    Promise.all([
+      getDocs(query(collection(db, 'scores'), where('email', '==', user.email))),
+      getDocs(collection(db, 'homework')),
+    ]).then(([scoresSnap, hwSnap]) => {
+      scoresSnap.docs.forEach(d => {
+        const { activity } = d.data()
+        if (!activity) return
+        if (['graphing','substitution','elimination'].includes(activity))
+          map['systems-equations'] = true
+        if (activity.toLowerCase().includes('inequal'))
+          map['systems-inequalities'] = true
+      })
+      const studentName = (user.displayName || user.email || '').trim().toLowerCase()
+      hwSnap.docs.forEach(d => {
+        const { module, student, submitted } = d.data()
+        if (!submitted) return
+        if ((student || '').trim().toLowerCase() !== studentName) return
+        if (module === 'M3T1L1') map['exponential'] = true
+        if (module === 'M3T1L2') map['writing-exponential'] = true
+        if (module === 'M3T2_SkillsPractice') map['exp-growth-decay-word-problems'] = true
+      })
+      setCompletionMap(map)
+    }).catch(() => {})
+  }, [user])
+
   const savePeriod = async (p) => {
     setPeriod(p)
     if (!user) return
@@ -2022,8 +2059,14 @@ export default function App() {
   }
 
   const handleMessage = useCallback(async e => {
-    if (e.data?.type === 'scoreUpdate')
+    if (e.data?.type === 'scoreUpdate') {
       await saveScore(user, e.data.from, e.data.score, e.data.total)
+      const activity = e.data.from || ''
+      if (['graphing','substitution','elimination'].includes(activity))
+        setCompletionMap(prev => ({ ...prev, 'systems-equations': true }))
+      else if (activity.toLowerCase().includes('inequal'))
+        setCompletionMap(prev => ({ ...prev, 'systems-inequalities': true }))
+    }
   }, [user])
 
   useEffect(() => {
@@ -2103,7 +2146,7 @@ export default function App() {
                 }}
               >
                 <option value="">📚 Set Period</option>
-                {['1','2','3','4','5','6','7'].map(p => (
+                {['1','3','8','9'].map(p => (
                   <option key={p} value={p}>Period {p}</option>
                 ))}
               </select>
@@ -2121,7 +2164,7 @@ export default function App() {
       {/* ── Screens ── */}
       <main style={S.main}>
         {screen === 'assignments'  && <ModulesPage      user={user} onOpen={openModule} lang={lang} setLang={setLang} />}
-        {screen === 'moduleDetail' && <ModuleDetailPage mod={activeModule} onOpen={openAssignment} lang={lang} user={user} dueDates={dueDates} hiddenAssignments={hiddenAssignments} />}
+        {screen === 'moduleDetail' && <ModuleDetailPage mod={activeModule} onOpen={openAssignment} lang={lang} user={user} dueDates={dueDates} hiddenAssignments={hiddenAssignments} completionMap={completionMap} />}
         {screen === 'methods'      && <MethodsPicker    assignment={activeAssignment} onOpen={openMethod} lang={lang} />}
         {screen === 'activity'     && <ActivityFrame    file={activeFile} />}
         {screen === 'dashboard'    && isTeacher(user.email) && <TeacherDashboard dueDates={dueDates} saveDueDate={saveDueDate} hiddenAssignments={hiddenAssignments} toggleHidden={toggleHidden} />}
