@@ -1274,6 +1274,320 @@ function StudentDetailModal({ row, tab, onClose }) {
   )
 }
 
+/* ── Jeopardy Data ────────────────────────────────────────────────────────── */
+const JEOPARDY_CATEGORIES = [
+  'Systems of Equations',
+  'Systems of Inequalities',
+  'Exponential Functions',
+  'Vocabulary',
+  'Word Problems',
+]
+const JEOPARDY_PTS = [100, 200, 300, 400, 500]
+
+const JEOPARDY_QUESTIONS = {
+  'Systems of Equations': {
+    100: { q: 'What does the solution to a system of equations represent graphically?', a: 'The point where the two lines intersect (cross).' },
+    200: { q: 'Solve by substitution:\ny = 2x + 1\ny = x + 4', a: 'x = 3, y = 7  →  (3, 7)' },
+    300: { q: 'Solve by elimination:\n2x + y = 7\nx − y = 2', a: 'x = 3, y = 1  →  (3, 1)' },
+    400: { q: 'Solve by graphing (describe steps):\ny = −x + 5  and  y = x − 1', a: 'Lines intersect at (3, 2).' },
+    500: { q: 'Solve:\n3x + 2y = 12\n6x + 4y = 24\nWhat type of solution is this?', a: 'Infinitely many solutions — both equations describe the same line.' },
+  },
+  'Systems of Inequalities': {
+    100: { q: 'When graphing a linear inequality, when do you use a DASHED boundary line?', a: 'When the inequality is strict: < or > (not equal to).' },
+    200: { q: 'For y > 2x + 1, should you shade above or below the line?', a: 'Above the line.' },
+    300: { q: 'How do you check whether a point is a solution to a system of inequalities?', a: 'Substitute it into each inequality — it must satisfy ALL of them.' },
+    400: { q: 'Describe the solution region of a system of inequalities when the shaded regions do NOT overlap.', a: 'There is NO solution — no point satisfies both inequalities at once.' },
+    500: { q: 'Graph and describe the solution:\ny ≤ x + 3\ny > −2x + 1', a: 'Shade below (solid) y = x + 3 and above (dashed) y = −2x + 1; the overlap is the solution region.' },
+  },
+  'Exponential Functions': {
+    100: { q: 'Write the general form of an exponential function.', a: 'f(x) = a · bˣ, where a is the initial value and b is the growth/decay factor.' },
+    200: { q: 'In  P(t) = 500 · 1.06ᵗ, what does 1.06 represent?', a: 'The growth factor — a 6% increase per time period.' },
+    300: { q: 'A population of 200 doubles every year.\nWrite a function for the population after t years.', a: 'P(t) = 200 · 2ᵗ' },
+    400: { q: 'Is  y = 3 · (0.5)ˣ  growth or decay?\nWhat is the percent rate of change?', a: 'Decay — 50% decrease per period (b = 0.5 < 1).' },
+    500: { q: 'A table shows: x: 0, 1, 2, 3 → y: 4, 12, 36, 108\nFind a and b, then write the exponential function.', a: 'a = 4 (y-intercept), b = 3 (common ratio)  →  y = 4 · 3ˣ' },
+  },
+  'Vocabulary': {
+    100: { q: 'What is the common ratio in a geometric sequence?', a: 'The constant factor multiplied between consecutive terms (e.g., ×2, ×3, ×0.5).' },
+    200: { q: 'What is the y-intercept of an exponential function  f(x) = a · bˣ?', a: 'It is a — the value of the function when x = 0.' },
+    300: { q: 'Define "elimination" as a method for solving systems.', a: 'Adding or subtracting equations to cancel (eliminate) one variable, making it easier to solve for the other.' },
+    400: { q: 'What is an asymptote?', a: 'A line that a graph approaches but never actually touches or crosses.' },
+    500: { q: 'What does it mean for a system of equations to have "no solution"?', a: 'The lines are parallel — they never intersect, so there is no point that satisfies both equations.' },
+  },
+  'Word Problems': {
+    100: { q: 'A movie ticket costs $12. Write an equation for the total cost C of n tickets.', a: 'C = 12n' },
+    200: { q: 'Alex has $50 and saves $10/week. Sam has $20 and saves $15/week.\nAfter how many weeks will they have the same amount?', a: '6 weeks — both will have $110.' },
+    300: { q: 'A bacteria culture starts at 100 and triples every hour.\nHow many bacteria are there after 4 hours?', a: 'P(4) = 100 · 3⁴ = 8,100 bacteria.' },
+    400: { q: 'A town has 3,000 people and grows at 5% per year.\nWrite P(t) and find the population after 10 years.', a: 'P(t) = 3000 · 1.05ᵗ;  P(10) ≈ 4,887 people.' },
+    500: { q: 'John mows lawns for $15/hr and babysits for $10/hr.\nHe worked 8 hours total and earned $100.\nHow many hours did he spend on each job?', a: '4 hours mowing ($60) + 4 hours babysitting ($40) = $100.' },
+  },
+}
+
+const DEFAULT_TEAMS = [
+  { name: 'Team 1', score: 0 },
+  { name: 'Team 2', score: 0 },
+  { name: 'Team 3', score: 0 },
+]
+
+/* ── Jeopardy Game Component ──────────────────────────────────────────────── */
+function JeopardyGame() {
+  const [periodId,       setPeriodId]       = useState('1')
+  const [usedQuestions,  setUsedQuestions]  = useState({})
+  const [teams,          setTeams]          = useState(DEFAULT_TEAMS.map(t => ({ ...t })))
+  const [activeQ,        setActiveQ]        = useState(null)  // { cat, pts }
+  const [loadingGame,    setLoadingGame]    = useState(false)
+  const [saving,         setSaving]         = useState(false)
+  const [saveMsg,        setSaveMsg]        = useState('')
+
+  // Load game state from Firestore for selected period
+  useEffect(() => {
+    setLoadingGame(true)
+    getDoc(doc(db, 'jeopardy', `period${periodId}`))
+      .then(snap => {
+        if (snap.exists()) {
+          const data = snap.data()
+          setUsedQuestions(data.usedQuestions || {})
+          if (data.teams && data.teams.length) setTeams(data.teams)
+          else setTeams(DEFAULT_TEAMS.map(t => ({ ...t })))
+        } else {
+          setUsedQuestions({})
+          setTeams(DEFAULT_TEAMS.map(t => ({ ...t })))
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoadingGame(false))
+  }, [periodId])
+
+  async function saveGame(newUsed, newTeams) {
+    setSaving(true)
+    try {
+      await setDoc(doc(db, 'jeopardy', `period${periodId}`), {
+        usedQuestions: newUsed,
+        teams: newTeams,
+        updatedAt: serverTimestamp(),
+      })
+      setSaveMsg('Saved!')
+      setTimeout(() => setSaveMsg(''), 1800)
+    } catch (e) { console.error('[Jeopardy save]', e) }
+    finally { setSaving(false) }
+  }
+
+  function markUsed(cat, pts) {
+    const key = `${cat}-${pts}`
+    const updated = { ...usedQuestions, [key]: true }
+    setUsedQuestions(updated)
+    saveGame(updated, teams)
+  }
+
+  function updateTeamScore(idx, val) {
+    const updated = teams.map((t, i) => i === idx ? { ...t, score: val } : t)
+    setTeams(updated)
+    saveGame(usedQuestions, updated)
+  }
+
+  function updateTeamName(idx, val) {
+    const updated = teams.map((t, i) => i === idx ? { ...t, name: val } : t)
+    setTeams(updated)
+    saveGame(usedQuestions, updated)
+  }
+
+  async function resetGame() {
+    const fresh = DEFAULT_TEAMS.map(t => ({ ...t }))
+    setUsedQuestions({})
+    setTeams(fresh)
+    await saveGame({}, fresh)
+  }
+
+  const cellKey = (cat, pts) => `${cat}-${pts}`
+  const isUsed  = (cat, pts) => !!usedQuestions[cellKey(cat, pts)]
+
+  return (
+    <div style={{ width: '100%' }}>
+      {/* Header row */}
+      <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'20px', flexWrap:'wrap' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+          <span style={{ fontSize:'.72rem', color:'#6b7a9a', fontFamily:"'JetBrains Mono',monospace", fontWeight:700, letterSpacing:'1px', textTransform:'uppercase' }}>Period:</span>
+          {['1','3','8','9'].map(p => (
+            <button key={p} onClick={() => setPeriodId(p)} style={{
+              padding:'5px 14px', borderRadius:'20px', cursor:'pointer', fontFamily:"'JetBrains Mono',monospace", fontSize:'.78rem', fontWeight:700,
+              background: periodId===p ? 'rgba(232,168,50,0.15)' : 'rgba(255,255,255,0.03)',
+              border:`1px solid ${periodId===p ? 'rgba(232,168,50,0.5)' : 'rgba(255,255,255,0.08)'}`,
+              color: periodId===p ? '#e8a832' : '#6b7a9a',
+            }}>P{p}</button>
+          ))}
+        </div>
+        <button onClick={resetGame} style={{ marginLeft:'auto', padding:'5px 14px', borderRadius:'20px', border:'1px solid rgba(248,113,113,0.35)', background:'rgba(248,113,113,0.08)', color:'#f87171', fontFamily:"'Inter',sans-serif", fontSize:'.78rem', fontWeight:700, cursor:'pointer' }}>
+          🔄 Reset Game
+        </button>
+        {saving && <span style={{ fontSize:'.75rem', color:'#6b7a9a', fontFamily:"'Inter',sans-serif" }}>Saving…</span>}
+        {saveMsg && <span style={{ fontSize:'.75rem', color:'#34d399', fontFamily:"'Inter',sans-serif", fontWeight:700 }}>{saveMsg}</span>}
+      </div>
+
+      {loadingGame ? (
+        <p style={{ color:'#6b7a9a', fontFamily:"'Inter',sans-serif" }}>Loading game…</p>
+      ) : (
+        <div style={{ display:'flex', gap:'24px', alignItems:'flex-start', flexWrap:'wrap' }}>
+
+          {/* ── Board ── */}
+          <div style={{ flex:'1 1 600px', overflowX:'auto' }}>
+            <table style={{ borderCollapse:'separate', borderSpacing:'6px', width:'100%', tableLayout:'fixed' }}>
+              <thead>
+                <tr>
+                  {JEOPARDY_CATEGORIES.map(cat => (
+                    <th key={cat} style={{
+                      background:'linear-gradient(135deg,rgba(232,168,50,0.18),rgba(232,168,50,0.08))',
+                      border:'1px solid rgba(232,168,50,0.35)',
+                      borderRadius:'10px', padding:'10px 6px', color:'#e8a832',
+                      fontFamily:"'Space Grotesk',sans-serif", fontWeight:800,
+                      fontSize:'clamp(.65rem,1.1vw,.82rem)', textAlign:'center',
+                      lineHeight:1.3, wordBreak:'break-word',
+                    }}>{cat}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {JEOPARDY_PTS.map(pts => (
+                  <tr key={pts}>
+                    {JEOPARDY_CATEGORIES.map(cat => {
+                      const used = isUsed(cat, pts)
+                      return (
+                        <td key={cat} onClick={() => !used && setActiveQ({ cat, pts })} style={{
+                          background: used
+                            ? 'rgba(255,255,255,0.03)'
+                            : 'linear-gradient(135deg,rgba(79,195,247,0.15),rgba(79,195,247,0.06))',
+                          border: used
+                            ? '1px solid rgba(255,255,255,0.06)'
+                            : '1px solid rgba(79,195,247,0.35)',
+                          borderRadius:'10px', padding:'14px 6px',
+                          textAlign:'center', cursor: used ? 'default' : 'pointer',
+                          transition:'all .15s', userSelect:'none',
+                        }}
+                          onMouseEnter={e => { if (!used) e.currentTarget.style.background='linear-gradient(135deg,rgba(79,195,247,0.28),rgba(79,195,247,0.14))' }}
+                          onMouseLeave={e => { if (!used) e.currentTarget.style.background='linear-gradient(135deg,rgba(79,195,247,0.15),rgba(79,195,247,0.06))' }}
+                        >
+                          {used ? (
+                            <span style={{ color:'rgba(255,255,255,0.12)', fontSize:'1.1rem', fontWeight:800 }}>—</span>
+                          ) : (
+                            <span style={{ color:'#4fc3f7', fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, fontSize:'clamp(1rem,1.8vw,1.3rem)' }}>${pts}</span>
+                          )}
+                        </td>
+                      )
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* ── Scoreboard ── */}
+          <div style={{ flex:'0 0 220px', display:'flex', flexDirection:'column', gap:'10px' }}>
+            <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, fontSize:'.88rem', color:'#e8a832', letterSpacing:'1px', textTransform:'uppercase', marginBottom:'4px' }}>
+              🏆 Scoreboard
+            </div>
+            {teams.map((team, idx) => (
+              <div key={idx} style={{ background:'rgba(14,21,40,0.7)', border:'1px solid rgba(232,168,50,0.22)', borderRadius:'14px', padding:'12px 14px', display:'flex', flexDirection:'column', gap:'8px' }}>
+                <input
+                  value={team.name}
+                  onChange={e => updateTeamName(idx, e.target.value)}
+                  style={{
+                    background:'transparent', border:'none', borderBottom:'1px solid rgba(255,255,255,0.12)',
+                    color:'#ede9f4', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700,
+                    fontSize:'.88rem', padding:'2px 0', outline:'none', width:'100%',
+                  }}
+                />
+                <input
+                  type="number"
+                  min="0"
+                  value={team.score}
+                  onChange={e => updateTeamScore(idx, Number(e.target.value) || 0)}
+                  onFocus={e => { if (!e.target.value || e.target.value === '0') e.target.value = '' }}
+                  onBlur={e => { if (e.target.value === '') updateTeamScore(idx, 0) }}
+                  style={{
+                    background:'rgba(232,168,50,0.08)', border:'1px solid rgba(232,168,50,0.3)',
+                    borderRadius:'8px', color:'#e8a832', fontFamily:"'JetBrains Mono',monospace",
+                    fontWeight:800, fontSize:'1.3rem', padding:'6px 10px', outline:'none',
+                    width:'100%', boxSizing:'border-box', textAlign:'center',
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── Question Modal ── */}
+      {activeQ && (() => {
+        const qData = JEOPARDY_QUESTIONS[activeQ.cat]?.[activeQ.pts]
+        return (
+          <div style={{
+            position:'fixed', inset:0, background:'rgba(8,13,28,0.92)', zIndex:1000,
+            display:'flex', alignItems:'center', justifyContent:'center', padding:'20px',
+          }} onClick={() => setActiveQ(null)}>
+            <div onClick={e => e.stopPropagation()} style={{
+              background:'linear-gradient(135deg,rgba(14,21,40,0.98),rgba(8,13,28,0.98))',
+              border:'1px solid rgba(79,195,247,0.3)', borderRadius:'20px',
+              padding:'32px', maxWidth:'600px', width:'100%', display:'flex', flexDirection:'column', gap:'20px',
+              boxShadow:'0 24px 64px rgba(0,0,0,0.6)',
+            }}>
+              {/* Category + points */}
+              <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
+                <span style={{ background:'rgba(232,168,50,0.12)', color:'#e8a832', border:'1px solid rgba(232,168,50,0.35)', padding:'4px 14px', borderRadius:'20px', fontFamily:"'JetBrains Mono',monospace", fontWeight:800, fontSize:'.75rem' }}>
+                  {activeQ.cat}
+                </span>
+                <span style={{ background:'rgba(79,195,247,0.12)', color:'#4fc3f7', border:'1px solid rgba(79,195,247,0.35)', padding:'4px 14px', borderRadius:'20px', fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, fontSize:'.9rem' }}>
+                  ${activeQ.pts}
+                </span>
+              </div>
+              {/* Question */}
+              <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'clamp(1rem,2vw,1.25rem)', color:'#ede9f4', lineHeight:1.55, whiteSpace:'pre-line' }}>
+                {qData?.q || 'Question not found.'}
+              </div>
+              {/* Answer (hidden until revealed) */}
+              <AnswerReveal answer={qData?.a || ''} />
+              {/* Action buttons */}
+              <div style={{ display:'flex', gap:'10px', marginTop:'4px', flexWrap:'wrap' }}>
+                <button onClick={() => { markUsed(activeQ.cat, activeQ.pts); setActiveQ(null) }} style={{
+                  flex:1, padding:'10px 0', borderRadius:'12px', border:'1px solid rgba(52,211,153,0.45)',
+                  background:'rgba(52,211,153,0.12)', color:'#34d399', fontFamily:"'Inter',sans-serif",
+                  fontWeight:700, fontSize:'.9rem', cursor:'pointer',
+                }}>✅ Mark Used</button>
+                <button onClick={() => setActiveQ(null)} style={{
+                  flex:1, padding:'10px 0', borderRadius:'12px', border:'1px solid rgba(255,255,255,0.1)',
+                  background:'rgba(255,255,255,0.04)', color:'#6b7a9a', fontFamily:"'Inter',sans-serif",
+                  fontWeight:700, fontSize:'.9rem', cursor:'pointer',
+                }}>← Back</button>
+              </div>
+            </div>
+          </div>
+        )
+      })()}
+    </div>
+  )
+}
+
+function AnswerReveal({ answer }) {
+  const [shown, setShown] = useState(false)
+  return (
+    <div>
+      {!shown ? (
+        <button onClick={() => setShown(true)} style={{
+          padding:'8px 20px', borderRadius:'10px', border:'1px solid rgba(167,139,250,0.4)',
+          background:'rgba(167,139,250,0.1)', color:'#a78bfa', fontFamily:"'Inter',sans-serif",
+          fontWeight:700, fontSize:'.85rem', cursor:'pointer',
+        }}>👁 Reveal Answer</button>
+      ) : (
+        <div style={{
+          background:'rgba(52,211,153,0.08)', border:'1px solid rgba(52,211,153,0.3)',
+          borderRadius:'12px', padding:'14px 18px', color:'#34d399',
+          fontFamily:"'Inter',sans-serif", fontWeight:600, fontSize:'.95rem',
+          lineHeight:1.6, whiteSpace:'pre-line',
+        }}>
+          {answer}
+        </div>
+      )}
+    </div>
+  )
+}
+
 /* ── Teacher Dashboard ────────────────────────────────────────────────────── */
 // Map dashboard tab → assignment ID (used as key in dueDates)
 const TAB_ASSIGNMENT = {
@@ -1527,6 +1841,7 @@ function TeacherDashboard({ dueDates, saveDueDate, hiddenAssignments, toggleHidd
     { id:'exponential', label:'x² Introduction to Exponential Functions', color:'#D4681A', dim:'rgba(212,104,26,0.12)', border:'rgba(212,104,26,0.35)', isMath:true },
     { id:'writing-exp', label:'x² Writing Exponential Functions',         color:'#a78bfa', dim:'rgba(167,139,250,0.12)', border:'rgba(167,139,250,0.35)', isMath:true },
     { id:'m3t2sp',      label:'x² Exp Growth & Decay',                   color:'#34d399', dim:'rgba(52,211,153,0.12)',  border:'rgba(52,211,153,0.35)',  isMath:true },
+    { id:'jeopardy',    label:'🎯 Jeopardy',                color:'#f43f5e', dim:'rgba(244,63,94,0.12)',   border:'rgba(244,63,94,0.35)'   },
     { id:'feedback',    label:'💬 Feedback',                color:'#e8a832', dim:'rgba(232,168,50,0.12)',  border:'rgba(232,168,50,0.35)',  badge: unreadCount },
   ]
 
@@ -1883,6 +2198,17 @@ function TeacherDashboard({ dueDates, saveDueDate, hiddenAssignments, toggleHidd
         )}
 
         {/* ── Feedback ── */}
+        {/* ── Jeopardy ── */}
+        {tab === 'jeopardy' && (
+          <div style={{ width:'100%' }}>
+            <div style={S.dashSectionHead}>
+              <span style={S.dashSectionTitle}>🎯 Jeopardy · Algebra 1 Review</span>
+              <span style={S.dashSectionSub}>Click a dollar value to reveal the question · Mark it used to gray it out · Scores save automatically per period</span>
+            </div>
+            <JeopardyGame />
+          </div>
+        )}
+
         {!loading && tab === 'feedback' && (
           <div style={{ width:'100%' }}>
             <div style={S.dashSectionHead}>
