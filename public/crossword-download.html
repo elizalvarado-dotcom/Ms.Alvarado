@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polynomial Crossword Puzzle – Miss Alvarado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080d1c;--card:#0d1528;--card2:#101a30;
+  --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);
+  --acc:#f43f5e;--pur:#a78bfa;--gld:#e8a832;
+  --grn:#34d399;--red:#f87171;--yel:#fbbf24;--blue:#60a5fa;
+  --txt:#e2e8f0;--txt2:#94a3b8;--txt3:#475569;
+  --mono:'JetBrains Mono',monospace;--sans:'Space Grotesk',sans-serif;--body:'Inter',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--body);background:var(--bg);color:var(--txt);
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  padding:0 16px 60px;
+  background-image:
+    radial-gradient(ellipse at 15% 10%,rgba(244,63,94,.10),transparent 50%),
+    radial-gradient(ellipse at 85% 80%,rgba(139,92,246,.09),transparent 50%);
+}
+
+/* ── Nav bar ── */
+.topbar{
+  width:100%;max-width:860px;display:flex;align-items:center;justify-content:space-between;
+  padding:14px 0;border-bottom:1px solid var(--border);margin-bottom:0;
+}
+.topbar .brand{font-family:var(--sans);font-weight:700;font-size:.9rem;color:var(--txt2)}
+.topbar .brand span{color:var(--gld)}
+.back-link{
+  display:inline-flex;align-items:center;gap:5px;font-family:var(--sans);font-size:.8rem;
+  font-weight:600;color:var(--txt2);text-decoration:none;padding:5px 12px;
+  border-radius:99px;border:1px solid var(--border2);transition:all .2s;
+}
+.back-link:hover{color:var(--txt);border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.05)}
+
+/* ── Hero ── */
+.hero{
+  width:100%;max-width:860px;text-align:center;padding:48px 0 36px;position:relative;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(232,168,50,.1);border:1px solid rgba(232,168,50,.3);
+  color:var(--gld);font-family:var(--sans);font-size:.72rem;font-weight:700;
+  padding:5px 14px;border-radius:99px;letter-spacing:.06em;text-transform:uppercase;
+  margin-bottom:20px;
+}
+.hero h1{
+  font-family:var(--sans);font-size:clamp(1.6rem,5vw,2.6rem);font-weight:700;
+  background:linear-gradient(135deg,#f43f5e 0%,#a78bfa 50%,#e8a832 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1.2;margin-bottom:10px;
+}
+.hero .sub{
+  font-style:italic;color:var(--txt2);font-size:1rem;margin-bottom:6px;
+}
+.hero .teacher{
+  font-family:var(--sans);font-size:.82rem;font-weight:600;color:var(--txt3);
+  margin-bottom:30px;
+}
+
+/* ── Preview card ── */
+.preview-card{
+  width:100%;max-width:860px;background:var(--card);
+  border:1px solid var(--border2);border-radius:20px;
+  box-shadow:0 8px 40px rgba(0,0,0,.5);overflow:hidden;margin-bottom:32px;
+}
+.preview-header{
+  background:linear-gradient(135deg,rgba(244,63,94,.15),rgba(167,139,250,.12));
+  border-bottom:1px solid var(--border2);padding:18px 24px;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+}
+.preview-header h2{
+  font-family:var(--sans);font-weight:700;font-size:1rem;color:var(--txt);flex:1;
+}
+.pages-badge{
+  font-family:var(--mono);font-size:.7rem;color:var(--txt2);
+  background:rgba(255,255,255,.07);border:1px solid var(--border2);
+  padding:3px 10px;border-radius:99px;
+}
+.preview-body{padding:24px}
+
+/* ── Levels grid ── */
+.levels-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:14px;margin-bottom:24px;
+}
+.level-card{
+  background:var(--card2);border:1px solid var(--border);border-radius:14px;
+  padding:16px 18px;transition:border-color .2s;
+}
+.level-card:hover{border-color:var(--border2)}
+.level-stars{font-size:1.1rem;margin-bottom:8px}
+.level-title{font-family:var(--sans);font-weight:700;font-size:.9rem;color:var(--txt);margin-bottom:4px}
+.level-sub{font-size:.75rem;color:var(--txt2);font-style:italic;margin-bottom:10px}
+.level-feats{list-style:none;display:flex;flex-direction:column;gap:4px}
+.level-feats li{font-size:.76rem;color:var(--txt2);display:flex;align-items:flex-start;gap:6px}
+.level-feats li::before{content:'→';color:var(--pur);font-weight:700;flex-shrink:0}
+.level-card.easy{border-color:rgba(52,211,153,.2)}
+.level-card.easy .level-title{color:#34d399}
+.level-card.medium{border-color:rgba(251,191,36,.2)}
+.level-card.medium .level-title{color:var(--yel)}
+.level-card.hard{border-color:rgba(248,113,113,.2)}
+.level-card.hard .level-title{color:var(--red)}
+
+/* ── Word bank preview ── */
+.section-label{
+  font-family:var(--sans);font-size:.7rem;font-weight:700;color:var(--txt2);
+  text-transform:uppercase;letter-spacing:.07em;
+  display:flex;align-items:center;gap:8px;margin-bottom:12px;
+}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.word-chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:24px}
+.chip{
+  display:inline-flex;flex-direction:column;align-items:flex-start;
+  background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);
+  border-radius:10px;padding:6px 12px;
+}
+.chip .en{font-family:var(--sans);font-size:.82rem;font-weight:700;color:var(--pur)}
+.chip .es{font-family:var(--body);font-size:.68rem;color:var(--txt2);font-style:italic;margin-top:1px}
+
+/* ── Crossword mini preview ── */
+.grid-preview{margin-bottom:8px}
+.grid-row{
+  display:flex;align-items:center;gap:6px;margin-bottom:5px;
+  font-family:var(--mono);font-size:.78rem;
+}
+.row-num{
+  color:var(--txt3);font-size:.65rem;width:20px;text-align:right;flex-shrink:0;
+}
+.boxes{display:flex;gap:3px}
+.box{
+  width:16px;height:16px;border:1px solid rgba(255,255,255,.25);border-radius:3px;
+  background:rgba(255,255,255,.04);flex-shrink:0;
+}
+.group-gap{width:4px;flex-shrink:0}
+
+/* ── Download section ── */
+.download-section{
+  width:100%;max-width:860px;text-align:center;margin-bottom:40px;
+}
+.download-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  background:linear-gradient(135deg,#f43f5e,#a78bfa);
+  color:#fff;text-decoration:none;border:none;
+  border-radius:14px;padding:16px 40px;cursor:pointer;
+  font-family:var(--sans);font-size:1.05rem;font-weight:700;
+  box-shadow:0 4px 28px rgba(244,63,94,.35);
+  transition:all .22s;letter-spacing:.02em;
+}
+.download-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 36px rgba(244,63,94,.5);
+}
+.download-btn svg{width:20px;height:20px;flex-shrink:0}
+.download-hint{
+  margin-top:10px;font-size:.78rem;color:var(--txt3);
+  font-style:italic;
+}
+
+/* ── Info pills ── */
+.info-pills{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:10px;
+  margin-bottom:32px;
+}
+.pill{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.05);border:1px solid var(--border2);
+  border-radius:99px;padding:6px 14px;
+  font-family:var(--sans);font-size:.78rem;color:var(--txt2);
+}
+.pill .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.pill .dot.grn{background:var(--grn)}
+.pill .dot.pur{background:var(--pur)}
+.pill .dot.gld{background:var(--gld)}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="topbar">
+  <span class="brand">Miss <span>Alvarado</span></span>
+  <a class="back-link" href="javascript:history.back()">← Back</a>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-badge">📄 Printable Resource</div>
+  <h1>Polynomial Vocabulary<br>Crossword Puzzle</h1>
+  <p class="sub">Rompecabezas de vocabulario de polinomios</p>
+  <p class="teacher">Miss Alvarado · Algebra</p>
+
+  <!-- Info pills -->
+  <div class="info-pills">
+    <span class="pill"><span class="dot grn"></span>11 vocabulary terms</span>
+    <span class="pill"><span class="dot pur"></span>3 difficulty levels</span>
+    <span class="pill"><span class="dot gld"></span>English &amp; Spanish</span>
+    <span class="pill"><span class="dot grn"></span>Teacher answer key included</span>
+  </div>
+</section>
+
+<!-- Download button -->
+<div class="download-section">
+  <a class="download-btn" href="Polynomial_Crossword.pdf" download="Polynomial_Crossword_MissAlvarado.pdf">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+      <polyline points="7 10 12 15 17 10"/>
+      <line x1="12" y1="15" x2="12" y2="3"/>
+    </svg>
+    Download PDF (Free)
+  </a>
+  <p class="download-hint">5 pages · Printable · Letter size (8.5 × 11 in)</p>
+</div>
+
+<!-- Preview card -->
+<div class="preview-card">
+  <div class="preview-header">
+    <h2>What's inside</h2>
+    <span class="pages-badge">5 pages</span>
+  </div>
+  <div class="preview-body">
+
+    <!-- Levels -->
+    <div class="section-label">Difficulty Levels · Niveles de dificultad</div>
+    <div class="levels-grid">
+
+      <div class="level-card easy">
+        <div class="level-stars">⭐</div>
+        <div class="level-title">Level 1 – Easy</div>
+        <div class="level-sub">Nivel 1 – Fácil</div>
+        <ul class="level-feats">
+          <li>Bilingual word bank (EN + ES)</li>
+          <li>Fill-in-the-blank answer boxes</li>
+          <li>All 11 across clues provided</li>
+        </ul>
+      </div>
+
+      <div class="level-card medium">
+        <div class="level-stars">⭐⭐</div>
+        <div class="level-title">Level 2 – Medium</div>
+        <div class="level-sub">Nivel 2 – Intermedio</div>
+        <ul class="level-feats">
+          <li>English-only word bank</li>
+          <li>Same answer box grid</li>
+          <li>All 11 across clues</li>
+        </ul>
+      </div>
+
+      <div class="level-card hard">
+        <div class="level-stars">⭐⭐⭐</div>
+        <div class="level-title">Level 3 – Challenge</div>
+        <div class="level-sub">Nivel 3 – Desafío</div>
+        <ul class="level-feats">
+          <li>No word bank</li>
+          <li>Across + bonus Down clues</li>
+          <li>Full critical-thinking challenge</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Word bank preview -->
+    <div class="section-label">Word Bank Preview · Vista previa del banco de palabras</div>
+    <div class="word-chips">
+      <div class="chip"><span class="en">Polynomial</span><span class="es">polinomio</span></div>
+      <div class="chip"><span class="en">Term</span><span class="es">término</span></div>
+      <div class="chip"><span class="en">Like Terms</span><span class="es">términos semejantes</span></div>
+      <div class="chip"><span class="en">Coefficient</span><span class="es">coeficiente</span></div>
+      <div class="chip"><span class="en">Constant</span><span class="es">constante</span></div>
+      <div class="chip"><span class="en">Simplify</span><span class="es">simplificar</span></div>
+      <div class="chip"><span class="en">Add</span><span class="es">sumar</span></div>
+      <div class="chip"><span class="en">Variable</span><span class="es">variable</span></div>
+      <div class="chip"><span class="en">Subtract</span><span class="es">restar</span></div>
+      <div class="chip"><span class="en">Expression</span><span class="es">expresión</span></div>
+      <div class="chip"><span class="en">Degree</span><span class="es">grado</span></div>
+    </div>
+
+    <!-- Grid preview -->
+    <div class="section-label">Answer Grid Preview</div>
+    <div class="grid-preview" id="grid"></div>
+
+  </div>
+</div>
+
+<script>
+// Render the mini box grid
+const words = [
+  {n:1,  len:10, label:'POLYNOMIAL'},
+  {n:2,  len:4,  label:'TERM'},
+  {n:3,  len:9,  label:'LIKE TERMS'},
+  {n:4,  len:11, label:'COEFFICIENT'},
+  {n:5,  len:8,  label:'CONSTANT'},
+  {n:6,  len:8,  label:'SIMPLIFY'},
+  {n:7,  len:3,  label:'ADD'},
+  {n:8,  len:8,  label:'VARIABLE'},
+  {n:9,  len:8,  label:'SUBTRACT'},
+  {n:10, len:10, label:'EXPRESSION'},
+  {n:11, len:6,  label:'DEGREE'},
+];
+
+const container = document.getElementById('grid');
+words.forEach(w => {
+  const row = document.createElement('div');
+  row.className = 'grid-row';
+
+  const num = document.createElement('span');
+  num.className = 'row-num';
+  num.textContent = w.n + '.';
+  row.appendChild(num);
+
+  const boxes = document.createElement('div');
+  boxes.className = 'boxes';
+
+  for (let i = 0; i < w.len; i++) {
+    if (i > 0 && i % 3 === 0) {
+      const gap = document.createElement('div');
+      gap.className = 'group-gap';
+      boxes.appendChild(gap);
+    }
+    const box = document.createElement('div');
+    box.className = 'box';
+    boxes.appendChild(box);
+  }
+
+  const lbl = document.createElement('span');
+  lbl.style.cssText = 'font-size:.65rem;color:var(--txt3);margin-left:8px;font-family:var(--sans)';
+  lbl.textContent = w.label;
+  row.appendChild(boxes);
+  row.appendChild(lbl);
+  container.appendChild(row);
+});
+</script>
+
+</body>
+</html>
