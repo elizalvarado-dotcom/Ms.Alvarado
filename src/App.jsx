@@ -1980,6 +1980,7 @@ export default function App() {
     return onAuthStateChanged(auth, u => {
       setUser(u ?? null)
       if (!u) { setScreen('assignments'); setActiveModule(null); setActiveAssignment(null); setActiveFile(null); setPeriod('') }
+      else if (u && isTeacher(u.email)) { setScreen('dashboard') }
     })
   }, [])
 
@@ -2125,9 +2126,9 @@ export default function App() {
           {screen === 'dashboard' &&
             <button style={S.navBtn} onClick={() => setScreen('assignments')}>{t.assignments}</button>}
           {isTeacher(user.email) && screen !== 'dashboard' &&
-            <button style={{ ...S.navBtn, color:'#a78bfa', borderColor:'rgba(167,139,250,0.3)' }}
+            <button style={{ ...S.navBtn, color:'#fff', background:'rgba(167,139,250,0.18)', borderColor:'rgba(167,139,250,0.6)', fontWeight:800 }}
               onClick={() => setScreen('dashboard')}>
-              {t.dashboard}
+              📊 {t.dashboard}
             </button>}
           {/* Period selector — students only */}
           {!isTeacher(user.email) && (
