@@ -2119,17 +2119,22 @@ export default function App() {
             <div style={S.navTitle}>Miss Alvarado's Algebra World</div>
             <div style={S.navSub}>Algebra 1 · 2025–2026</div>
           </div>
+          {/* Teacher dashboard toggle — anchored next to the logo */}
+          {isTeacher(user.email) && (
+            <>
+              <div style={S.navDivider} />
+              {screen === 'dashboard'
+                ? <button style={{ ...S.navBtn, color:'#34d399', borderColor:'rgba(52,211,153,0.5)', fontWeight:800 }}
+                    onClick={() => setScreen('assignments')}>← {t.assignments}</button>
+                : <button style={{ ...S.navBtn, color:'#fff', background:'rgba(167,139,250,0.25)', borderColor:'rgba(167,139,250,0.7)', fontWeight:800, fontSize:'.85rem' }}
+                    onClick={() => setScreen('dashboard')}>📊 {t.dashboard}</button>
+              }
+            </>
+          )}
         </div>
         <div style={S.navRight}>
           {(screen === 'activity' || screen === 'methods' || screen === 'moduleDetail') &&
             <button style={S.navBtn} onClick={goBack}>{t.back}</button>}
-          {screen === 'dashboard' &&
-            <button style={S.navBtn} onClick={() => setScreen('assignments')}>{t.assignments}</button>}
-          {isTeacher(user.email) && screen !== 'dashboard' &&
-            <button style={{ ...S.navBtn, color:'#fff', background:'rgba(167,139,250,0.18)', borderColor:'rgba(167,139,250,0.6)', fontWeight:800 }}
-              onClick={() => setScreen('dashboard')}>
-              📊 {t.dashboard}
-            </button>}
           {/* Period selector — students only */}
           {!isTeacher(user.email) && (
             <>
