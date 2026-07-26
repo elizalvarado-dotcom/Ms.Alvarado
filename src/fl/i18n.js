@@ -3,7 +3,6 @@ export const T = {
   en: {
     siteName: 'Money Matters',
     siteTag: '9th Grade Financial Literacy',
-    backToAlgebra: 'Algebra World →',
 
     // Name fields (shown at the top of each module's quiz)
     nameFieldsTitle: 'Write your name and period before you begin',
@@ -109,7 +108,6 @@ export const T = {
   es: {
     siteName: 'Cuestión de Dinero',
     siteTag: 'Educación Financiera · 9º Grado',
-    backToAlgebra: 'Mundo del Álgebra →',
 
     nameFieldsTitle: 'Escribe tu nombre y período antes de comenzar',
     firstNameLabel: 'Nombre',

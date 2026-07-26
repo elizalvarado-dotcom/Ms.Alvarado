@@ -175,6 +175,8 @@ export default function ModuleView({ mod, unitTitle, lang, onBack, onCompleteQui
         <p style={S.greetSub}>{L(mod.tagline, lang)}</p>
       </div>
 
+      <NameFields lang={lang} value={studentInfo} onChange={handleNameChange} />
+
       <div style={{ ...S.eyebrow, marginBottom: '14px' }}>{t.lessonLabel}</div>
       {mod.lesson.map((sec, i) => (
         <div key={i} style={S.lessonCard}>
@@ -197,7 +199,6 @@ export default function ModuleView({ mod, unitTitle, lang, onBack, onCompleteQui
       )}
 
       <div style={{ ...S.eyebrow, marginBottom: '14px', marginTop: '30px' }}>{t.quizLabel}</div>
-      <NameFields lang={lang} value={studentInfo} onChange={handleNameChange} />
 
       {report ? (
         <>

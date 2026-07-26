@@ -52,7 +52,6 @@ export default function Home({ lang, setLang, onOpenUnit, onTeacherClick }) {
         </div>
         <div style={S.headerRight}>
           <LangToggle lang={lang} setLang={setLang} />
-          <a href="/" style={{ ...S.navBtn, textDecoration: 'none', display: 'inline-block' }}>{t.backToAlgebra}</a>
           <button style={S.navBtn} onClick={onTeacherClick}>🔒 {t.teacherLoginLink}</button>
         </div>
       </div>
