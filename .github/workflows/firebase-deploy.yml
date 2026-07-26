@@ -35,3 +35,19 @@ jobs:
       # deploy Firestore rules. Re-add ",firestore:rules" here once that's
       # sorted out and the Algebra World app's rules need CI deploys too.
       - run: npx firebase-tools@15 deploy --only hosting --project solving-systems-activities --non-interactive
+
+      # Temporary diagnostic: confirm what's actually being served at each
+      # URL right now, from a real internet vantage point (this sandbox's
+      # own network can't reach either URL directly). Safe to remove later.
+      - name: Verify live content
+        run: |
+          echo "── solving-systems-activities.web.app ──"
+          curl -s -D - -o /tmp/algebra.html "https://solving-systems-activities.web.app/?cachebust=$(date +%s)" | head -20
+          echo "--- title/heading grep ---"
+          grep -o '<title>[^<]*</title>' /tmp/algebra.html || true
+          grep -o "Algebra 1 · [0-9–-]*" /tmp/algebra.html || true
+          echo
+          echo "── alvarado-money-matters.web.app ──"
+          curl -s -D - -o /tmp/moneymatters.html "https://alvarado-money-matters.web.app/?cachebust=$(date +%s)" | head -20
+          echo "--- title/heading grep ---"
+          grep -o '<title>[^<]*</title>' /tmp/moneymatters.html || true
