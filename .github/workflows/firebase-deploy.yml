@@ -25,4 +25,9 @@ jobs:
         with:
           credentials_json: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
 
+      # One-time provisioning: create the Money Matters Hosting site if it
+      # doesn't exist yet. Safe to leave in permanently — it's a no-op once
+      # the site exists.
+      - run: npx firebase-tools@15 hosting:sites:create alvarado-money-matters --project solving-systems-activities --non-interactive || true
+
       - run: npx firebase-tools@15 deploy --only hosting,firestore:rules --project solving-systems-activities --non-interactive

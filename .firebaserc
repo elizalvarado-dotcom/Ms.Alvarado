@@ -1,5 +1,17 @@
 {
   "projects": {
     "default": "solving-systems-activities"
+  },
+  "targets": {
+    "solving-systems-activities": {
+      "hosting": {
+        "algebra": [
+          "solving-systems-activities"
+        ],
+        "moneymatters": [
+          "alvarado-money-matters"
+        ]
+      }
+    }
   }
 }
