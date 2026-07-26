@@ -182,6 +182,17 @@ export default function ModuleView({ mod, unitTitle, lang, onBack, onCompleteQui
         <div key={i} style={S.lessonCard}>
           <div style={S.lessonHeading}>{L(sec.heading, lang)}</div>
           {L(sec.body, lang).map((p, j) => <p key={j} style={S.lessonPara}>{p}</p>)}
+          {sec.resources?.map((r, j) => (
+            <a
+              key={j} href={r.url} target="_blank" rel="noopener noreferrer"
+              style={{
+                display: 'inline-block', marginTop: '6px', marginRight: '10px', fontSize: '.85rem', fontWeight: 700,
+                color: mod.color, textDecoration: 'none', borderBottom: `1px solid ${mod.color}`, paddingBottom: '1px',
+              }}
+            >
+              {L(r.label, lang)}
+            </a>
+          ))}
         </div>
       ))}
 

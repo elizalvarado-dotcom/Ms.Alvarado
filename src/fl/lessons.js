@@ -19,7 +19,147 @@ export const UNITS = [
       en: 'Trade schools, apprenticeships, the military, and other paths after high school.',
       es: 'Escuelas técnicas, aprendizajes, el ejército y otros caminos después de la preparatoria.',
     },
-    modules: [],
+    modules: [
+      {
+        id: 'college-alt-basics',
+        title: { en: 'Life After High School: Is College Required?', es: 'La Vida Después de la Preparatoria: ¿Es Necesaria la Universidad?' },
+        tagline: {
+          en: 'Weigh the real cost of a 4-year degree against trade school, apprenticeships, the military, and working right away.',
+          es: 'Compara el costo real de un título de 4 años con la escuela técnica, aprendizajes, el ejército y comenzar a trabajar de inmediato.',
+        },
+        lesson: [
+          {
+            heading: { en: 'Does your career actually require a 4-year degree?', es: '¿Tu carrera realmente requiere un título de 4 años?' },
+            body: {
+              en: [
+                'The path to a career after high school looks different for everyone. A four-year college degree is one option — but it is not the only one, and it is not required for every job.',
+                'Some careers (like nursing, teaching, or engineering) legally require a specific degree or license. Many others — including many well-paying skilled trades and tech jobs — do not.',
+                'Before deciding on a path, the first question to ask is simple: does the career I want actually require a four-year degree?',
+              ],
+              es: [
+                'El camino hacia una carrera después de la preparatoria se ve diferente para cada persona. Un título universitario de cuatro años es una opción — pero no es la única, y no se requiere para todos los trabajos.',
+                'Algunas carreras (como enfermería, docencia o ingeniería) requieren legalmente un título o licencia específica. Muchas otras — incluyendo varios oficios calificados y empleos de tecnología bien pagados — no lo requieren.',
+                'Antes de decidir un camino, la primera pregunta que hay que hacerse es simple: ¿la carrera que quiero realmente requiere un título de cuatro años?',
+              ],
+            },
+            resources: [
+              { label: { en: '🎥 Watch: Decrease in Four-Year Degrees', es: '🎥 Ver: Disminución de Títulos de Cuatro Años' }, url: 'https://www.youtube.com/watch?v=sp6dNckhhD0' },
+            ],
+          },
+          {
+            heading: { en: 'Weighing the real cost of college', es: 'Cómo sopesar el costo real de la universidad' },
+            body: {
+              en: [
+                'College tuition has risen a lot over the past few decades. Today a four-year degree can cost tens of thousands of dollars a year at many public and private universities once you include tuition, fees, and living expenses.',
+                'That cost usually means years of saving beforehand, or student loan debt that has to be paid back — often for years after graduation.',
+                'This doesn\'t mean college is a bad choice — for many careers it pays off. It just means the cost is a real factor to weigh honestly against your other options, not something to ignore.',
+              ],
+              es: [
+                'La matrícula universitaria ha subido mucho en las últimas décadas. Hoy un título de cuatro años puede costar decenas de miles de dólares al año en muchas universidades públicas y privadas, considerando matrícula, cuotas y gastos de vivienda.',
+                'Ese costo generalmente significa años de ahorro previo, o una deuda de préstamos estudiantiles que hay que pagar — muchas veces durante años después de graduarse.',
+                'Esto no significa que la universidad sea una mala decisión — para muchas carreras vale la pena. Solo significa que el costo es un factor real que hay que sopesar honestamente frente a tus otras opciones, no algo que se debe ignorar.',
+              ],
+            },
+            resources: [
+              { label: { en: '🎥 Watch: Do You Really Need a College Degree?', es: '🎥 Ver: ¿Realmente Necesitas un Título Universitario?' }, url: 'https://www.youtube.com/watch?v=YX9NWYz3Gzk' },
+            ],
+          },
+          {
+            heading: { en: 'Alternative paths after high school', es: 'Caminos alternativos después de la preparatoria' },
+            body: {
+              en: [
+                'Apprenticeships combine paid, on-the-job training with related classroom instruction — usually over one to four years — and often lead directly to a certification in a skilled trade like electrical work, plumbing, or HVAC.',
+                'Internships are usually shorter (a summer or semester), may or may not be paid, and are meant to give exposure to a field rather than a full occupational credential.',
+                'Trade and technical schools, military enlistment, and going straight to work are other common paths — each trading a four-year degree for faster, often lower-cost entry into the workforce.',
+              ],
+              es: [
+                'Los aprendizajes combinan capacitación pagada en el trabajo con instrucción relacionada en el aula — generalmente durante uno a cuatro años — y a menudo llevan directamente a una certificación en un oficio calificado como electricidad, plomería o climatización.',
+                'Las pasantías suelen ser más cortas (un verano o un semestre), pueden ser pagadas o no, y están pensadas para dar exposición a un campo en lugar de una credencial ocupacional completa.',
+                'Las escuelas técnicas, el alistamiento militar y comenzar a trabajar de inmediato son otros caminos comunes — cada uno cambia un título de cuatro años por una entrada más rápida y a menudo más económica al mundo laboral.',
+              ],
+            },
+            resources: [
+              { label: { en: '📄 Read: Alternatives To College After High School', es: '📄 Leer: Alternativas a la Universidad Después de la Preparatoria' }, url: 'https://www.asvabprogram.com/media-center-article/61' },
+            ],
+          },
+          {
+            heading: { en: 'How to decide what\'s right for you', es: 'Cómo decidir qué es lo correcto para ti' },
+            body: {
+              en: [
+                'There is no single right answer — the best path depends on the career you want, how you learn best, your finances, and how ready you are to decide right now.',
+                'A few questions worth asking yourself: Does my goal require a specific degree? Can I afford the cost (or debt) of college? Would I rather learn by doing, or in a classroom? Is there a faster path that still gets me where I want to go?',
+                'Choosing an apprenticeship, trade school, the military, or going straight to work is not "settling" — for a lot of careers, it\'s simply the smarter, faster route.',
+              ],
+              es: [
+                'No hay una única respuesta correcta — el mejor camino depende de la carrera que quieras, de cómo aprendes mejor, de tus finanzas y de qué tan listo estás para decidir ahora mismo.',
+                'Algunas preguntas que vale la pena hacerte: ¿Mi meta requiere un título específico? ¿Puedo pagar el costo (o la deuda) de la universidad? ¿Prefiero aprender haciendo, o en un salón de clases? ¿Hay un camino más rápido que igual me lleve a donde quiero llegar?',
+                'Elegir un aprendizaje, una escuela técnica, el ejército o comenzar a trabajar de inmediato no es "conformarse" — para muchas carreras, es simplemente la ruta más inteligente y rápida.',
+              ],
+            },
+            resources: [
+              { label: { en: '📄 Read: College Degree vs. No College Degree', es: '📄 Leer: Título Universitario vs. Sin Título Universitario' }, url: 'https://www.indeed.com/career-advice/finding-a-job/college-degree-vs-no-college-degree' },
+            ],
+          },
+        ],
+        quiz: [
+          {
+            q: { en: 'Which of the following is NOT typically required to start a skilled-trade apprenticeship?', es: '¿Cuál de las siguientes NO se requiere típicamente para comenzar un aprendizaje en un oficio calificado?' },
+            choices: [
+              { en: 'A four-year college degree', es: 'Un título universitario de cuatro años' },
+              { en: 'Paid on-the-job training', es: 'Capacitación pagada en el trabajo' },
+              { en: 'Related classroom instruction', es: 'Instrucción relacionada en el aula' },
+              { en: 'A structured multi-year program', es: 'Un programa estructurado de varios años' },
+            ],
+            correct: 0,
+            explain: { en: 'Apprenticeships are designed as an alternative to a four-year degree — they combine paid work experience with related instruction instead.', es: 'Los aprendizajes están diseñados como una alternativa a un título de cuatro años — combinan experiencia laboral pagada con instrucción relacionada en su lugar.' },
+          },
+          {
+            q: { en: 'What is a key difference between an apprenticeship and an internship?', es: '¿Cuál es una diferencia clave entre un aprendizaje y una pasantía?' },
+            choices: [
+              { en: 'Apprenticeships combine paid work with related instruction over a longer period; internships are usually shorter and mainly for exposure to a field', es: 'Los aprendizajes combinan trabajo pagado con instrucción relacionada durante un período más largo; las pasantías suelen ser más cortas y principalmente para exponerte a un campo' },
+              { en: 'Internships always pay more than apprenticeships', es: 'Las pasantías siempre pagan más que los aprendizajes' },
+              { en: 'Apprenticeships never include any classroom instruction', es: 'Los aprendizajes nunca incluyen instrucción en el aula' },
+              { en: 'There is no real difference between them', es: 'No hay una diferencia real entre ellos' },
+            ],
+            correct: 0,
+            explain: { en: 'Apprenticeships are longer, paid, and combine work with related instruction toward a credential; internships are shorter-term exposure to a field.', es: 'Los aprendizajes son más largos, pagados, y combinan trabajo con instrucción relacionada hacia una credencial; las pasantías son una exposición más corta a un campo.' },
+          },
+          {
+            q: { en: 'Which of these is generally an advantage of starting work right after high school instead of college?', es: '¿Cuál de estas es generalmente una ventaja de comenzar a trabajar justo después de la preparatoria en lugar de la universidad?' },
+            choices: [
+              { en: 'You start earning income and gaining experience immediately, without taking on student debt', es: 'Comienzas a ganar ingresos y adquirir experiencia de inmediato, sin adquirir deuda estudiantil' },
+              { en: 'It guarantees a higher salary than college in every career', es: 'Garantiza un salario más alto que la universidad en cualquier carrera' },
+              { en: 'Every career legally requires this path', es: 'Toda carrera requiere legalmente este camino' },
+              { en: 'You can never attend college later', es: 'Nunca podrás asistir a la universidad después' },
+            ],
+            correct: 0,
+            explain: { en: 'Working right away means immediate income and real-world experience with no student debt — though it isn\'t a guarantee of higher pay, and college later is still possible.', es: 'Trabajar de inmediato significa ingresos inmediatos y experiencia real sin deuda estudiantil — aunque no garantiza un salario más alto, y todavía es posible ir a la universidad después.' },
+          },
+          {
+            q: { en: 'Which career is most likely to legally require a specific college degree?', es: '¿Qué carrera probablemente requiera legalmente un título universitario específico?' },
+            choices: [
+              { en: 'Registered nurse', es: 'Enfermera/o registrada/o' },
+              { en: 'Electrician', es: 'Electricista' },
+              { en: 'Web developer', es: 'Desarrollador(a) web' },
+              { en: 'Small business owner', es: 'Dueño(a) de un pequeño negocio' },
+            ],
+            correct: 0,
+            explain: { en: 'Nursing requires a specific accredited degree and license. Electricians typically train through apprenticeships, and many web developers and business owners never need a specific degree.', es: 'La enfermería requiere un título acreditado específico y una licencia. Los electricistas generalmente se capacitan mediante aprendizajes, y muchos desarrolladores web y dueños de negocios nunca necesitan un título específico.' },
+          },
+          {
+            q: { en: 'Yuna wants to start working right after high school, save money, and possibly go to college later if a job ever requires it. What should she weigh most carefully before deciding?', es: 'Yuna quiere empezar a trabajar justo después de la preparatoria, ahorrar dinero y tal vez ir a la universidad después si algún trabajo lo requiere. ¿Qué debería considerar con más cuidado antes de decidir?' },
+            choices: [
+              { en: 'Whether her actual career goals ever require a specific degree or license', es: 'Si sus metas profesionales reales alguna vez requieren un título o licencia específica' },
+              { en: 'Whether most of her friends are going to college', es: 'Si la mayoría de sus amigos van a la universidad' },
+              { en: 'What her favorite subject in school is', es: 'Cuál es su materia favorita en la escuela' },
+              { en: 'Whether college exists as an option', es: 'Si la universidad existe como opción' },
+            ],
+            correct: 0,
+            explain: { en: 'The most important factor is whether the career she actually wants requires a specific credential — not what peers are doing or unrelated preferences.', es: 'El factor más importante es si la carrera que realmente quiere requiere una credencial específica — no lo que hacen sus compañeros ni preferencias sin relación.' },
+          },
+        ],
+      },
+    ],
   },
 
   {
