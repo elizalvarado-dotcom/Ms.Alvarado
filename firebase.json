@@ -31,7 +31,7 @@
     },
     {
       "target": "moneymatters",
-      "public": "dist",
+      "public": "dist-moneymatters",
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -40,7 +40,7 @@
       "rewrites": [
         {
           "source": "**",
-          "destination": "/financial-literacy.html"
+          "destination": "/index.html"
         }
       ]
     }
