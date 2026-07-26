@@ -4,9 +4,10 @@ import {
 } from 'firebase/auth'
 import { auth } from '../firebase.js'
 import { T, TEACHER_EMAIL } from './i18n.js'
-import { MODULES } from './lessons.js'
+import { UNITS, findModule } from './lessons.js'
 import TeacherLogin from './TeacherLogin.jsx'
 import Home from './Home.jsx'
+import UnitDetail from './UnitDetail.jsx'
 import ModuleView from './ModuleView.jsx'
 import TeacherDashboard from './TeacherDashboard.jsx'
 import LangToggle from './LangToggle.jsx'
@@ -18,6 +19,7 @@ export default function App() {
   const [lang, setLang] = useState(() => localStorage.getItem('fl_lang') || 'en')
   const [screen, setScreen] = useState('home') // home | teacherLogin | teacherDashboard
   const [progress, setProgress] = useState({})
+  const [activeUnitId, setActiveUnitId] = useState(null)
   const [activeModuleId, setActiveModuleId] = useState(null)
   const [authLoading, setAuthLoading] = useState(false)
   const [teacherError, setTeacherError] = useState(null)
@@ -101,7 +103,10 @@ export default function App() {
 
   // screen === 'home'
   if (activeModuleId) {
-    const mod = MODULES.find(m => m.id === activeModuleId)
+    const found = findModule(activeModuleId)
+    const mod = found
+      ? { ...found.mod, icon: found.unit.icon, color: found.unit.color, colorDim: found.unit.colorDim, colorBorder: found.unit.colorBorder }
+      : null
     return (
       <div style={S.page}>
         <div style={S.blob1} /><div style={S.blob2} /><div style={S.blob3} />
@@ -123,10 +128,33 @@ export default function App() {
     )
   }
 
+  if (activeUnitId) {
+    const unit = UNITS.find(u => u.id === activeUnitId)
+    return (
+      <div style={S.page}>
+        <div style={S.blob1} /><div style={S.blob2} /><div style={S.blob3} />
+        <div style={S.header}>
+          <div style={S.headerLeft}>
+            <div style={S.headerLogo}>💵</div>
+            <span style={S.headerName}>{T[lang].siteName}</span>
+          </div>
+          <div style={S.headerRight}>
+            <LangToggle lang={lang} setLang={setLang} />
+          </div>
+        </div>
+        <UnitDetail
+          unit={unit} lang={lang} progress={progress}
+          onBack={() => setActiveUnitId(null)}
+          onOpenModule={setActiveModuleId}
+        />
+      </div>
+    )
+  }
+
   return (
     <Home
-      lang={lang} setLang={setLang} progress={progress}
-      onOpenModule={setActiveModuleId}
+      lang={lang} setLang={setLang}
+      onOpenUnit={setActiveUnitId}
       onTeacherClick={goTeacherLogin}
     />
   )

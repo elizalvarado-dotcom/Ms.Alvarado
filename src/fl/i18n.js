@@ -28,13 +28,19 @@ export const T = {
     // Nav / header
     signOut: 'Sign out',
     dashboard: 'Teacher Answer Key',
-    home: 'Modules',
 
-    // Home page
+    // Home page (units)
     greeting: 'Welcome',
-    greetingSub: 'Pick a module below to start learning.',
+    greetingSub: 'Pick a unit below to see its classwork and project modules.',
     periodBadge: p => `Period ${p}`,
-    modulesLabel: 'Modules',
+    exploreUnit: 'Explore Unit',
+    classworkCount: n => `${n} classwork module${n === 1 ? '' : 's'}`,
+    comingSoonBadge: 'Coming Soon',
+
+    // Unit detail page
+    backToUnits: '← Back to Units',
+    comingSoonTitle: 'Coming Soon',
+    comingSoonSub: "Classwork and projects for this unit haven't been added yet — check back soon!",
     startModule: 'Start Module',
     reviewModule: 'Review Module',
     completedBadge: '✅ Completed',
@@ -42,7 +48,7 @@ export const T = {
     questionsCount: n => `${n} questions`,
 
     // Module / quiz
-    backToModules: '← Back to Modules',
+    backToModules: '← Back to Unit',
     lessonLabel: 'Lesson',
     quizLabel: 'Check Your Understanding',
     question: 'Question',
@@ -83,7 +89,8 @@ export const T = {
 
     // Teacher answer key
     dashTitle: 'Answer Key — Money Matters',
-    dashSub: 'Every module\'s quiz questions with the correct answer highlighted and an explanation.',
+    dashSub: 'Every classwork module\'s quiz questions, grouped by unit, with the correct answer highlighted and an explanation.',
+    noClassworkYet: 'No classwork added to this unit yet.',
   },
   es: {
     siteName: 'Cuestión de Dinero',
@@ -110,19 +117,24 @@ export const T = {
 
     signOut: 'Cerrar sesión',
     dashboard: 'Clave de Respuestas',
-    home: 'Módulos',
 
     greeting: 'Bienvenido',
-    greetingSub: 'Elige un módulo abajo para comenzar a aprender.',
+    greetingSub: 'Elige una unidad abajo para ver sus tareas y proyectos.',
     periodBadge: p => `Período ${p}`,
-    modulesLabel: 'Módulos',
+    exploreUnit: 'Explorar Unidad',
+    classworkCount: n => `${n} módulo${n === 1 ? '' : 's'} de tarea`,
+    comingSoonBadge: 'Próximamente',
+
+    backToUnits: '← Volver a Unidades',
+    comingSoonTitle: 'Próximamente',
+    comingSoonSub: 'Las tareas y proyectos de esta unidad todavía no se han agregado — ¡vuelve pronto!',
     startModule: 'Comenzar Módulo',
     reviewModule: 'Repasar Módulo',
     completedBadge: '✅ Completado',
     scoreOf: (s, t) => `Puntaje: ${s}/${t}`,
     questionsCount: n => `${n} preguntas`,
 
-    backToModules: '← Volver a Módulos',
+    backToModules: '← Volver a la Unidad',
     lessonLabel: 'Lección',
     quizLabel: 'Comprueba tu Comprensión',
     question: 'Pregunta',
@@ -160,7 +172,8 @@ export const T = {
     totalInterestEarned: 'Interés Total Ganado',
 
     dashTitle: 'Clave de Respuestas — Cuestión de Dinero',
-    dashSub: 'Las preguntas de cada módulo con la respuesta correcta resaltada y una explicación.',
+    dashSub: 'Las preguntas de cada módulo de tarea, agrupadas por unidad, con la respuesta correcta resaltada y una explicación.',
+    noClassworkYet: 'Todavía no se ha agregado tarea a esta unidad.',
   },
 }
 

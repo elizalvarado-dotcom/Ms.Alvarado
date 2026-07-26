@@ -1,46 +1,45 @@
 import { useState } from 'react'
 import { S } from './styles.js'
 import { T, L } from './i18n.js'
-import { MODULES } from './lessons.js'
+import { UNITS } from './lessons.js'
 import LangToggle from './LangToggle.jsx'
 
-function ModuleCard({ mod, lang, progress, onOpen }) {
+function UnitCard({ unit, lang, onOpen }) {
   const [hov, setHov] = useState(false)
   const t = T[lang]
-  const p = progress?.[mod.id]
-  const completed = !!p?.completed
+  const count = unit.modules.length
 
   return (
     <button
-      onClick={() => onOpen(mod.id)}
+      onClick={() => onOpen(unit.id)}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
         ...S.moduleCard,
-        borderColor: hov ? mod.colorBorder : 'rgba(28,43,35,0.12)',
-        background: hov ? mod.colorDim : '#fffdf7',
+        borderColor: hov ? unit.colorBorder : 'rgba(28,43,35,0.12)',
+        background: hov ? unit.colorDim : '#fffdf7',
         transform: hov ? 'translateY(-4px)' : 'translateY(0)',
-        boxShadow: hov ? `0 18px 36px rgba(28,43,35,.14), 0 0 0 1px ${mod.colorBorder}` : '0 2px 10px rgba(28,43,35,.05)',
-        borderTop: `4px solid ${mod.color}`,
+        boxShadow: hov ? `0 18px 36px rgba(28,43,35,.14), 0 0 0 1px ${unit.colorBorder}` : '0 2px 10px rgba(28,43,35,.05)',
+        borderTop: `4px solid ${unit.color}`,
       }}
     >
-      <div style={{ ...S.moduleIcon, background: mod.colorDim, border: `1px solid ${mod.colorBorder}` }}>{mod.icon}</div>
-      <div style={S.moduleTitle}>{L(mod.title, lang)}</div>
-      <div style={S.moduleTagline}>{L(mod.tagline, lang)}</div>
-      {completed && (
-        <div style={{ display: 'inline-flex', alignSelf: 'flex-start', padding: '3px 12px', borderRadius: '20px', background: 'rgba(27,122,77,0.12)', border: '1px solid rgba(27,122,77,0.35)', fontSize: '.72rem', fontWeight: 700, color: '#1b7a4d' }}>
-          {t.scoreOf(p.score, p.total)}
+      <div style={{ ...S.moduleIcon, background: unit.colorDim, border: `1px solid ${unit.colorBorder}` }}>{unit.icon}</div>
+      <div style={S.moduleTitle}>{L(unit.title, lang)}</div>
+      <div style={S.moduleTagline}>{L(unit.tagline, lang)}</div>
+      {count === 0 && (
+        <div style={{ display: 'inline-flex', alignSelf: 'flex-start', padding: '3px 12px', borderRadius: '20px', background: 'rgba(28,43,35,0.05)', border: '1px solid rgba(28,43,35,0.14)', fontSize: '.72rem', fontWeight: 700, color: '#5b6b62' }}>
+          {t.comingSoonBadge}
         </div>
       )}
       <div style={S.moduleFooter}>
-        <span>{t.questionsCount(mod.quiz.length)}</span>
-        <span style={{ color: mod.color, fontWeight: 700 }}>{completed ? t.reviewModule : t.startModule} →</span>
+        <span>{t.classworkCount(count)}</span>
+        <span style={{ color: unit.color, fontWeight: 700 }}>{t.exploreUnit} →</span>
       </div>
     </button>
   )
 }
 
-export default function Home({ lang, setLang, progress, onOpenModule, onTeacherClick }) {
+export default function Home({ lang, setLang, onOpenUnit, onTeacherClick }) {
   const t = T[lang]
 
   return (
@@ -64,8 +63,8 @@ export default function Home({ lang, setLang, progress, onOpenModule, onTeacherC
         <p style={S.greetSub}>{t.greetingSub}</p>
 
         <div style={S.moduleGrid}>
-          {MODULES.map(mod => (
-            <ModuleCard key={mod.id} mod={mod} lang={lang} progress={progress} onOpen={onOpenModule} />
+          {UNITS.map(unit => (
+            <UnitCard key={unit.id} unit={unit} lang={lang} onOpen={onOpenUnit} />
           ))}
         </div>
       </div>
