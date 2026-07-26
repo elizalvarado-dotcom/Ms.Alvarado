@@ -37,7 +37,7 @@ export default function TeacherLogin({ lang, setLang, onSignIn, onBack, error, l
           </button>
 
           <button type="button" style={S.linkBtn} onClick={onBack}>
-            {t.studentLoginLink}
+            {t.backToModules}
           </button>
         </div>
       </div>

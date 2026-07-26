@@ -5,38 +5,34 @@ export const T = {
     siteTag: '9th Grade Financial Literacy',
     backToAlgebra: 'Algebra World →',
 
-    // Student login
-    loginTitle: 'Welcome to Money Matters',
-    loginSub: 'Enter your name and class period to start learning about money.',
+    // Name fields (shown at the top of each module's quiz)
+    nameFieldsTitle: 'Write your name and period before you begin',
     firstNameLabel: 'First Name',
     firstNamePh: 'e.g. Jordan',
     lastNameLabel: 'Last Name',
     lastNamePh: 'e.g. Rivera',
     periodLabel: 'Class Period',
-    periodPh: 'Select your period',
-    startBtn: 'Start Learning',
-    fillAllFields: 'Please fill in your first name, last name, and period.',
+    periodPh: 'e.g. 3',
+
     teacherLoginLink: 'Teacher login',
-    studentLoginLink: '← Back to student login',
 
     // Teacher login
-    teacherLoginTitle: 'Teacher Dashboard',
-    teacherLoginSub: 'Sign in with your school Google account to view class progress.',
+    teacherLoginTitle: 'Teacher Answer Key',
+    teacherLoginSub: 'Sign in with your school Google account to view the answer key for every module.',
     signInGoogle: 'Sign in with Google',
     signingIn: 'Signing in…',
-    accessDenied: 'Access denied. This dashboard is restricted to the class teacher.',
+    accessDenied: 'Access denied. This page is restricted to the class teacher.',
     signInFailed: 'Sign-in failed. Please try again.',
     popupBlocked: 'Popup blocked. Please allow popups for this site and try again.',
 
     // Nav / header
-    changeStudent: 'Not you? Switch student',
     signOut: 'Sign out',
-    dashboard: 'Teacher Dashboard',
+    dashboard: 'Teacher Answer Key',
     home: 'Modules',
 
     // Home page
     greeting: 'Welcome',
-    greetingSub: 'Pick a module below. Your progress is saved automatically.',
+    greetingSub: 'Pick a module below to start learning.',
     periodBadge: p => `Period ${p}`,
     modulesLabel: 'Modules',
     startModule: 'Start Module',
@@ -59,7 +55,6 @@ export const T = {
     quizComplete: 'Quiz Complete!',
     quizCompleteSub: (s, t) => `You scored ${s} out of ${t}. Great work!`,
     retakeQuiz: 'Retake Quiz',
-    savingProgress: 'Saving…',
 
     // Budget tool
     budgetToolTitle: '💰 Build Your Own Budget',
@@ -75,8 +70,6 @@ export const T = {
     remaining: 'Remaining',
     overBudget: '⚠️ You allocated more than your income!',
     perfectBudget: '🎉 Every dollar has a job — nice budgeting!',
-    saveBudget: 'Save My Budget',
-    budgetSaved: '✅ Budget saved!',
 
     // Interest tool
     interestToolTitle: '📈 Compound Interest Calculator',
@@ -88,50 +81,39 @@ export const T = {
     futureValue: 'Future Value',
     totalInterestEarned: 'Total Interest Earned',
 
-    // Teacher dashboard
-    dashTitle: 'Class Progress — Money Matters',
-    dashSub: 'Live view of every student’s progress across all modules.',
-    allPeriods: 'All Periods',
-    periodCol: 'Period',
-    studentCol: 'Student',
-    noStudents: 'No students have logged in yet.',
-    exportCsv: 'Export CSV',
-    avgScore: 'Avg Score',
-    studentsCount: n => `${n} student${n === 1 ? '' : 's'}`,
+    // Teacher answer key
+    dashTitle: 'Answer Key — Money Matters',
+    dashSub: 'Every module\'s quiz questions with the correct answer highlighted and an explanation.',
   },
   es: {
     siteName: 'Cuestión de Dinero',
     siteTag: 'Educación Financiera · 9º Grado',
     backToAlgebra: 'Mundo del Álgebra →',
 
-    loginTitle: 'Bienvenido a Cuestión de Dinero',
-    loginSub: 'Escribe tu nombre y tu período de clase para comenzar a aprender sobre el dinero.',
+    nameFieldsTitle: 'Escribe tu nombre y período antes de comenzar',
     firstNameLabel: 'Nombre',
     firstNamePh: 'ej. Jordan',
     lastNameLabel: 'Apellido',
     lastNamePh: 'ej. Rivera',
     periodLabel: 'Período de Clase',
-    periodPh: 'Selecciona tu período',
-    startBtn: 'Comenzar',
-    fillAllFields: 'Por favor completa tu nombre, apellido y período.',
-    teacherLoginLink: 'Inicio de sesión de maestra',
-    studentLoginLink: '← Volver al inicio de sesión de estudiante',
+    periodPh: 'ej. 3',
 
-    teacherLoginTitle: 'Panel de la Maestra',
-    teacherLoginSub: 'Inicia sesión con tu cuenta de Google escolar para ver el progreso de la clase.',
+    teacherLoginLink: 'Inicio de sesión de maestra',
+
+    teacherLoginTitle: 'Clave de Respuestas de la Maestra',
+    teacherLoginSub: 'Inicia sesión con tu cuenta de Google escolar para ver la clave de respuestas de todos los módulos.',
     signInGoogle: 'Iniciar sesión con Google',
     signingIn: 'Iniciando sesión…',
-    accessDenied: 'Acceso denegado. Este panel está restringido a la maestra de la clase.',
+    accessDenied: 'Acceso denegado. Esta página está restringida a la maestra de la clase.',
     signInFailed: 'Error al iniciar sesión. Intenta de nuevo.',
     popupBlocked: 'Ventana emergente bloqueada. Permite ventanas emergentes e intenta de nuevo.',
 
-    changeStudent: '¿No eres tú? Cambiar estudiante',
     signOut: 'Cerrar sesión',
-    dashboard: 'Panel de la Maestra',
+    dashboard: 'Clave de Respuestas',
     home: 'Módulos',
 
     greeting: 'Bienvenido',
-    greetingSub: 'Elige un módulo abajo. Tu progreso se guarda automáticamente.',
+    greetingSub: 'Elige un módulo abajo para comenzar a aprender.',
     periodBadge: p => `Período ${p}`,
     modulesLabel: 'Módulos',
     startModule: 'Comenzar Módulo',
@@ -153,7 +135,6 @@ export const T = {
     quizComplete: '¡Cuestionario Completo!',
     quizCompleteSub: (s, t) => `Obtuviste ${s} de ${t}. ¡Buen trabajo!`,
     retakeQuiz: 'Repetir Cuestionario',
-    savingProgress: 'Guardando…',
 
     budgetToolTitle: '💰 Crea Tu Propio Presupuesto',
     budgetToolSub: 'Ingresa un ingreso mensual y decide cuánto destinar a cada categoría. ¡Intenta darle un propósito a cada dólar!',
@@ -168,8 +149,6 @@ export const T = {
     remaining: 'Restante',
     overBudget: '⚠️ ¡Asignaste más de tu ingreso!',
     perfectBudget: '🎉 Cada dólar tiene un propósito — ¡buen presupuesto!',
-    saveBudget: 'Guardar Mi Presupuesto',
-    budgetSaved: '✅ ¡Presupuesto guardado!',
 
     interestToolTitle: '📈 Calculadora de Interés Compuesto',
     interestToolSub: 'Observa cómo tus ahorros pueden crecer con el tiempo gracias al interés compuesto.',
@@ -180,20 +159,12 @@ export const T = {
     futureValue: 'Valor Futuro',
     totalInterestEarned: 'Interés Total Ganado',
 
-    dashTitle: 'Progreso de la Clase — Cuestión de Dinero',
-    dashSub: 'Vista en vivo del progreso de cada estudiante en todos los módulos.',
-    allPeriods: 'Todos los Períodos',
-    periodCol: 'Período',
-    studentCol: 'Estudiante',
-    noStudents: 'Ningún estudiante ha iniciado sesión todavía.',
-    exportCsv: 'Exportar CSV',
-    avgScore: 'Promedio',
-    studentsCount: n => `${n} estudiante${n === 1 ? '' : 's'}`,
+    dashTitle: 'Clave de Respuestas — Cuestión de Dinero',
+    dashSub: 'Las preguntas de cada módulo con la respuesta correcta resaltada y una explicación.',
   },
 }
 
 /* Resolve a bilingual { en, es } value, or pass through plain strings */
 export const L = (val, lang) => (val && typeof val === 'object' && ('en' in val || 'es' in val)) ? (val[lang] ?? val.en) : (val ?? '')
 
-export const PERIODS = ['1', '3', '8', '9']
 export const TEACHER_EMAIL = 'elizalvarado@paps.net'

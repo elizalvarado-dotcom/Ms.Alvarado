@@ -39,7 +39,7 @@ function ModuleCard({ mod, lang, progress, onOpen }) {
   )
 }
 
-export default function Home({ profile, lang, setLang, progress, onOpenModule, onSwitchStudent, onTeacherClick }) {
+export default function Home({ lang, setLang, progress, onOpenModule, onTeacherClick }) {
   const t = T[lang]
 
   return (
@@ -51,17 +51,15 @@ export default function Home({ profile, lang, setLang, progress, onOpenModule, o
           <span style={S.headerName}>{t.siteName}</span>
         </div>
         <div style={S.headerRight}>
-          <span style={S.badge}>{profile.firstName} {profile.lastName} · {t.periodBadge(profile.period)}</span>
           <LangToggle lang={lang} setLang={setLang} />
           <a href="/" style={{ ...S.navBtn, textDecoration: 'none', display: 'inline-block' }}>{t.backToAlgebra}</a>
-          <button style={S.navBtn} onClick={onSwitchStudent}>{t.changeStudent}</button>
           <button style={S.navBtn} onClick={onTeacherClick}>🔒 {t.teacherLoginLink}</button>
         </div>
       </div>
 
       <div style={S.pageInner}>
-        <div style={S.greetEyebrow}>{t.greeting}</div>
-        <h2 style={S.greetName}>{profile.firstName} 👋</h2>
+        <div style={S.greetEyebrow}>{t.siteTag}</div>
+        <h2 style={S.greetName}>{t.greeting} 👋</h2>
         <p style={S.greetSub}>{t.greetingSub}</p>
 
         <div style={S.moduleGrid}>

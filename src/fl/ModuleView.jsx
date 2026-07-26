@@ -3,8 +3,9 @@ import { S } from './styles.js'
 import { T, L } from './i18n.js'
 import BudgetTool from './BudgetTool.jsx'
 import InterestTool from './InterestTool.jsx'
+import NameFields from './NameFields.jsx'
 
-function Quiz({ mod, lang, existing, onComplete }) {
+function Quiz({ mod, lang, onComplete }) {
   const t = T[lang]
   const questions = mod.quiz
   const [idx, setIdx] = useState(0)
@@ -12,7 +13,7 @@ function Quiz({ mod, lang, existing, onComplete }) {
   const [answered, setAnswered] = useState(false)
   const [score, setScore] = useState(0)
   const [done, setDone] = useState(false)
-  const [finalScore, setFinalScore] = useState(existing?.score ?? null)
+  const [finalScore, setFinalScore] = useState(null)
 
   const q = questions[idx]
 
@@ -92,9 +93,8 @@ function Quiz({ mod, lang, existing, onComplete }) {
   )
 }
 
-export default function ModuleView({ mod, lang, progress, onBack, onCompleteQuiz, onSaveBudget }) {
+export default function ModuleView({ mod, lang, onBack, onCompleteQuiz }) {
   const t = T[lang]
-  const existing = progress?.[mod.id]
 
   return (
     <div style={S.pageInner}>
@@ -117,7 +117,7 @@ export default function ModuleView({ mod, lang, progress, onBack, onCompleteQuiz
       {mod.tool === 'budget' && (
         <>
           <div style={{ ...S.eyebrow, marginBottom: '14px', marginTop: '30px' }}>{t.tryTool}</div>
-          <BudgetTool lang={lang} saved={existing?.budget} onSave={budget => onSaveBudget(mod.id, budget)} />
+          <BudgetTool lang={lang} />
         </>
       )}
       {mod.tool === 'interest' && (
@@ -128,11 +128,11 @@ export default function ModuleView({ mod, lang, progress, onBack, onCompleteQuiz
       )}
 
       <div style={{ ...S.eyebrow, marginBottom: '14px', marginTop: '30px' }}>{t.quizLabel}</div>
+      <NameFields lang={lang} />
       <Quiz
         key={mod.id}
         mod={mod}
         lang={lang}
-        existing={existing}
         onComplete={(score, total) => onCompleteQuiz(mod.id, score, total)}
       />
     </div>

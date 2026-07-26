@@ -1,30 +1,27 @@
 import { useState, useEffect, useRef } from 'react'
 import {
-  onAuthStateChanged, signInAnonymously, signInWithPopup, signOut, GoogleAuthProvider,
+  onAuthStateChanged, signInWithPopup, signOut, GoogleAuthProvider,
 } from 'firebase/auth'
 import { auth } from '../firebase.js'
 import { T, TEACHER_EMAIL } from './i18n.js'
 import { MODULES } from './lessons.js'
-import { loadProfile, saveProfile, saveModuleProgress } from './db.js'
-import StudentLogin from './StudentLogin.jsx'
 import TeacherLogin from './TeacherLogin.jsx'
 import Home from './Home.jsx'
 import ModuleView from './ModuleView.jsx'
 import TeacherDashboard from './TeacherDashboard.jsx'
+import LangToggle from './LangToggle.jsx'
 import { S } from './styles.js'
 
 const googleProvider = new GoogleAuthProvider()
 
 export default function App() {
   const [lang, setLang] = useState(() => localStorage.getItem('fl_lang') || 'en')
-  const [screen, setScreen] = useState('loading') // loading | studentLogin | teacherLogin | app | teacherDashboard
-  const [profile, setProfile] = useState(null)
+  const [screen, setScreen] = useState('home') // home | teacherLogin | teacherDashboard
   const [progress, setProgress] = useState({})
   const [activeModuleId, setActiveModuleId] = useState(null)
   const [authLoading, setAuthLoading] = useState(false)
   const [teacherError, setTeacherError] = useState(null)
 
-  const uidRef = useRef(null)
   const skipNextAuthEvent = useRef(false)
 
   useEffect(() => { localStorage.setItem('fl_lang', lang) }, [lang])
@@ -32,21 +29,8 @@ export default function App() {
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async user => {
       if (skipNextAuthEvent.current) { skipNextAuthEvent.current = false; return }
-
-      if (!user) { setScreen('studentLogin'); return }
-
-      uidRef.current = user.uid
-
-      if (user.isAnonymous) {
-        const p = await loadProfile(user.uid)
-        if (p) {
-          setProfile({ firstName: p.firstName, lastName: p.lastName, period: p.period })
-          setProgress(p.progress || {})
-          setScreen('app')
-        } else {
-          setScreen('studentLogin')
-        }
-      } else if (user.email === TEACHER_EMAIL) {
+      if (!user) return
+      if (user.email === TEACHER_EMAIL) {
         setScreen('teacherDashboard')
       } else {
         skipNextAuthEvent.current = true
@@ -56,23 +40,6 @@ export default function App() {
     return unsub
   }, [])
 
-  async function handleStudentLogin(profileData) {
-    setAuthLoading(true)
-    try {
-      skipNextAuthEvent.current = true
-      const cred = await signInAnonymously(auth)
-      uidRef.current = cred.user.uid
-      await saveProfile(cred.user.uid, profileData)
-      setProfile(profileData)
-      setProgress({})
-      setScreen('app')
-    } catch (e) {
-      console.error('[StudentLogin]', e)
-    } finally {
-      setAuthLoading(false)
-    }
-  }
-
   async function handleTeacherSignIn() {
     const t = T[lang]
     setAuthLoading(true)
@@ -81,12 +48,10 @@ export default function App() {
       skipNextAuthEvent.current = true
       const result = await signInWithPopup(auth, googleProvider)
       if (result.user.email === TEACHER_EMAIL) {
-        uidRef.current = result.user.uid
         setScreen('teacherDashboard')
       } else {
         skipNextAuthEvent.current = true
         await signOut(auth)
-        setProfile(null)
         setTeacherError(t.accessDenied)
       }
     } catch (err) {
@@ -98,38 +63,14 @@ export default function App() {
   }
 
   function handleQuizComplete(moduleId, score, total) {
-    setProgress(prev => {
-      const merged = { ...(prev[moduleId] || {}), score, total, completed: true }
-      const next = { ...prev, [moduleId]: merged }
-      if (uidRef.current) saveModuleProgress(uidRef.current, moduleId, merged).catch(e => console.error('[Progress]', e))
-      return next
-    })
-  }
-
-  function handleSaveBudget(moduleId, budgetData) {
-    setProgress(prev => {
-      const merged = { ...(prev[moduleId] || {}), budget: budgetData }
-      const next = { ...prev, [moduleId]: merged }
-      if (uidRef.current) saveModuleProgress(uidRef.current, moduleId, merged).catch(e => console.error('[Budget]', e))
-      return next
-    })
-  }
-
-  async function handleSwitchStudent() {
-    skipNextAuthEvent.current = true
-    await signOut(auth)
-    setProfile(null)
-    setProgress({})
-    setActiveModuleId(null)
-    setTeacherError(null)
-    setScreen('studentLogin')
+    setProgress(prev => ({ ...prev, [moduleId]: { score, total, completed: true } }))
   }
 
   async function handleTeacherSignOut() {
     skipNextAuthEvent.current = true
     await signOut(auth)
     setTeacherError(null)
-    setScreen('studentLogin')
+    setScreen('home')
   }
 
   function goTeacherLogin() {
@@ -137,24 +78,9 @@ export default function App() {
     setScreen('teacherLogin')
   }
 
-  function goStudentLogin() {
+  function goHome() {
     setTeacherError(null)
-    setScreen(profile ? 'app' : 'studentLogin')
-  }
-
-  if (screen === 'loading') {
-    return <div style={{ ...S.page, display: 'flex', alignItems: 'center', justifyContent: 'center' }} />
-  }
-
-  if (screen === 'studentLogin') {
-    return (
-      <StudentLogin
-        lang={lang} setLang={setLang}
-        onLogin={handleStudentLogin}
-        onTeacherClick={goTeacherLogin}
-        loading={authLoading}
-      />
-    )
+    setScreen('home')
   }
 
   if (screen === 'teacherLogin') {
@@ -162,7 +88,7 @@ export default function App() {
       <TeacherLogin
         lang={lang} setLang={setLang}
         onSignIn={handleTeacherSignIn}
-        onBack={goStudentLogin}
+        onBack={goHome}
         error={teacherError}
         loading={authLoading}
       />
@@ -173,7 +99,7 @@ export default function App() {
     return <TeacherDashboard lang={lang} setLang={setLang} onSignOut={handleTeacherSignOut} />
   }
 
-  // screen === 'app'
+  // screen === 'home'
   if (activeModuleId) {
     const mod = MODULES.find(m => m.id === activeModuleId)
     return (
@@ -185,14 +111,13 @@ export default function App() {
             <span style={S.headerName}>{T[lang].siteName}</span>
           </div>
           <div style={S.headerRight}>
-            <span style={S.badge}>{profile.firstName} {profile.lastName} · {T[lang].periodBadge(profile.period)}</span>
+            <LangToggle lang={lang} setLang={setLang} />
           </div>
         </div>
         <ModuleView
-          mod={mod} lang={lang} progress={progress}
+          mod={mod} lang={lang}
           onBack={() => setActiveModuleId(null)}
           onCompleteQuiz={handleQuizComplete}
-          onSaveBudget={handleSaveBudget}
         />
       </div>
     )
@@ -200,9 +125,8 @@ export default function App() {
 
   return (
     <Home
-      profile={profile} lang={lang} setLang={setLang} progress={progress}
+      lang={lang} setLang={setLang} progress={progress}
       onOpenModule={setActiveModuleId}
-      onSwitchStudent={handleSwitchStudent}
       onTeacherClick={goTeacherLogin}
     />
   )

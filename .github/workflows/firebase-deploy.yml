@@ -30,4 +30,8 @@ jobs:
       # the site exists.
       - run: npx firebase-tools@15 hosting:sites:create alvarado-money-matters --project solving-systems-activities --non-interactive || true
 
-      - run: npx firebase-tools@15 deploy --only hosting,firestore:rules --project solving-systems-activities --non-interactive
+      # Hosting-only: Money Matters no longer uses Firestore, and the
+      # service account currently lacks the IAM permissions needed to
+      # deploy Firestore rules. Re-add ",firestore:rules" here once that's
+      # sorted out and the Algebra World app's rules need CI deploys too.
+      - run: npx firebase-tools@15 deploy --only hosting --project solving-systems-activities --non-interactive

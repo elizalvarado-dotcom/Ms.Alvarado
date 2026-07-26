@@ -4,11 +4,10 @@ import { T } from './i18n.js'
 
 const CATEGORIES = ['housing', 'food', 'transportation', 'savings', 'fun', 'other']
 
-export default function BudgetTool({ lang, saved, onSave }) {
+export default function BudgetTool({ lang }) {
   const t = T[lang]
-  const [income, setIncome] = useState(saved?.income ?? '')
-  const [alloc, setAlloc] = useState(saved?.alloc ?? { housing: '', food: '', transportation: '', savings: '', fun: '', other: '' })
-  const [savedFlash, setSavedFlash] = useState(false)
+  const [income, setIncome] = useState('')
+  const [alloc, setAlloc] = useState({ housing: '', food: '', transportation: '', savings: '', fun: '', other: '' })
 
   const num = v => (v === '' || v === undefined ? 0 : parseFloat(v) || 0)
   const total = CATEGORIES.reduce((sum, c) => sum + num(alloc[c]), 0)
@@ -17,12 +16,6 @@ export default function BudgetTool({ lang, saved, onSave }) {
 
   function setCat(cat, val) {
     setAlloc(a => ({ ...a, [cat]: val }))
-  }
-
-  function handleSave() {
-    onSave({ income: num(income), alloc, remaining, total })
-    setSavedFlash(true)
-    setTimeout(() => setSavedFlash(false), 1800)
   }
 
   return (
@@ -69,10 +62,6 @@ export default function BudgetTool({ lang, saved, onSave }) {
           {over ? t.overBudget : (num(income) > 0 && Math.abs(remaining) < 0.01 ? t.perfectBudget : '')}
         </p>
       </div>
-
-      <button style={{ ...S.primaryBtn, marginTop: '18px' }} onClick={handleSave}>
-        {savedFlash ? t.budgetSaved : t.saveBudget}
-      </button>
     </div>
   )
 }
