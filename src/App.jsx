@@ -353,7 +353,7 @@ function LoginScreen({ lang, setLang }) {
       </div>
       <div style={S.loginCard}>
         <div style={S.loginLogoBox}>∑</div>
-        <p style={S.loginEyebrow}>Algebra 1 · 2025–2026</p>
+        <p style={S.loginEyebrow}>Algebra 1 · 2026–2027</p>
         <h1 style={S.loginTitle}>Miss Alvarado's<br />Algebra World</h1>
         <p style={S.loginSub}>{t.loginSub}</p>
         {error && <p style={S.loginErr}>{error}</p>}
@@ -2116,7 +2116,7 @@ export default function App() {
           <div style={S.navLogoBox}>∑</div>
           <div>
             <div style={S.navTitle}>Miss Alvarado's Algebra World</div>
-            <div style={S.navSub}>Algebra 1 · 2025–2026</div>
+            <div style={S.navSub}>Algebra 1 · 2026–2027</div>
           </div>
         </div>
         <div style={S.navRight}>
