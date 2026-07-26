@@ -17,17 +17,18 @@ function ModuleCard({ mod, lang, progress, onOpen }) {
       onMouseLeave={() => setHov(false)}
       style={{
         ...S.moduleCard,
-        borderColor: hov ? mod.colorBorder : 'rgba(255,255,255,0.07)',
-        background: hov ? mod.colorDim : 'rgba(14,21,40,0.7)',
+        borderColor: hov ? mod.colorBorder : 'rgba(28,43,35,0.12)',
+        background: hov ? mod.colorDim : '#fffdf7',
         transform: hov ? 'translateY(-4px)' : 'translateY(0)',
-        boxShadow: hov ? `0 18px 44px rgba(0,0,0,.4), 0 0 0 1px ${mod.colorBorder}` : '0 4px 20px rgba(0,0,0,.25)',
+        boxShadow: hov ? `0 18px 36px rgba(28,43,35,.14), 0 0 0 1px ${mod.colorBorder}` : '0 2px 10px rgba(28,43,35,.05)',
+        borderTop: `4px solid ${mod.color}`,
       }}
     >
       <div style={{ ...S.moduleIcon, background: mod.colorDim, border: `1px solid ${mod.colorBorder}` }}>{mod.icon}</div>
       <div style={S.moduleTitle}>{L(mod.title, lang)}</div>
       <div style={S.moduleTagline}>{L(mod.tagline, lang)}</div>
       {completed && (
-        <div style={{ display: 'inline-flex', alignSelf: 'flex-start', padding: '3px 12px', borderRadius: '20px', background: 'rgba(52,211,153,0.12)', border: '1px solid rgba(52,211,153,0.35)', fontSize: '.72rem', fontWeight: 700, color: '#34d399' }}>
+        <div style={{ display: 'inline-flex', alignSelf: 'flex-start', padding: '3px 12px', borderRadius: '20px', background: 'rgba(27,122,77,0.12)', border: '1px solid rgba(27,122,77,0.35)', fontSize: '.72rem', fontWeight: 700, color: '#1b7a4d' }}>
           {t.scoreOf(p.score, p.total)}
         </div>
       )}

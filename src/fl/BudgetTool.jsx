@@ -45,20 +45,20 @@ export default function BudgetTool({ lang }) {
 
       <div style={{
         marginTop: '18px', padding: '16px', borderRadius: '14px',
-        background: over ? 'rgba(248,113,113,0.08)' : 'rgba(52,211,153,0.08)',
-        border: `1px solid ${over ? 'rgba(248,113,113,0.3)' : 'rgba(52,211,153,0.3)'}`,
+        background: over ? 'rgba(122,46,58,0.07)' : 'rgba(27,122,77,0.08)',
+        border: `1px solid ${over ? 'rgba(122,46,58,0.3)' : 'rgba(27,122,77,0.3)'}`,
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '.88rem', marginBottom: '6px' }}>
-          <span style={{ color: '#8a96b8' }}>{t.totalAllocated}</span>
+          <span style={{ color: '#5b6b62' }}>{t.totalAllocated}</span>
           <strong>${total.toLocaleString(undefined, { maximumFractionDigits: 2 })}</strong>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '.88rem' }}>
-          <span style={{ color: '#8a96b8' }}>{t.remaining}</span>
-          <strong style={{ color: over ? '#f87171' : '#34d399' }}>
+          <span style={{ color: '#5b6b62' }}>{t.remaining}</span>
+          <strong style={{ color: over ? '#7a2e3a' : '#1b7a4d' }}>
             ${remaining.toLocaleString(undefined, { maximumFractionDigits: 2 })}
           </strong>
         </div>
-        <p style={{ marginTop: '10px', fontSize: '.85rem', fontWeight: 700, color: over ? '#f87171' : '#34d399' }}>
+        <p style={{ marginTop: '10px', fontSize: '.85rem', fontWeight: 700, color: over ? '#7a2e3a' : '#1b7a4d' }}>
           {over ? t.overBudget : (num(income) > 0 && Math.abs(remaining) < 0.01 ? t.perfectBudget : '')}
         </p>
       </div>

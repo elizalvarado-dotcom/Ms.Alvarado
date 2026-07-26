@@ -7,9 +7,9 @@ export const MODULES = [
   {
     id: 'income',
     icon: '💵',
-    color: '#34d399',
-    colorDim: 'rgba(52,211,153,0.10)',
-    colorBorder: 'rgba(52,211,153,0.28)',
+    color: '#1b7a4d',
+    colorDim: 'rgba(27,122,77,0.10)',
+    colorBorder: 'rgba(27,122,77,0.30)',
     title: { en: 'Income & Paychecks', es: 'Ingresos y Cheques de Pago' },
     tagline: {
       en: 'Where your money comes from, and why your paycheck is smaller than you think.',
@@ -116,9 +116,9 @@ export const MODULES = [
   {
     id: 'budgeting',
     icon: '📊',
-    color: '#4fc3f7',
-    colorDim: 'rgba(79,195,247,0.10)',
-    colorBorder: 'rgba(79,195,247,0.28)',
+    color: '#1e3a5f',
+    colorDim: 'rgba(30,58,95,0.10)',
+    colorBorder: 'rgba(30,58,95,0.30)',
     title: { en: 'Budgeting Basics', es: 'Fundamentos del Presupuesto' },
     tagline: {
       en: 'Give every dollar a job before it disappears.',
@@ -228,9 +228,9 @@ export const MODULES = [
   {
     id: 'saving',
     icon: '🏦',
-    color: '#e8a832',
-    colorDim: 'rgba(232,168,50,0.10)',
-    colorBorder: 'rgba(232,168,50,0.28)',
+    color: '#a3790a',
+    colorDim: 'rgba(163,121,10,0.10)',
+    colorBorder: 'rgba(163,121,10,0.30)',
     title: { en: 'Saving & Compound Interest', es: 'Ahorro e Interés Compuesto' },
     tagline: {
       en: 'How your money can earn more money over time.',
@@ -340,9 +340,9 @@ export const MODULES = [
   {
     id: 'banking',
     icon: '🏧',
-    color: '#a78bfa',
-    colorDim: 'rgba(167,139,250,0.10)',
-    colorBorder: 'rgba(167,139,250,0.28)',
+    color: '#0f6b66',
+    colorDim: 'rgba(15,107,102,0.10)',
+    colorBorder: 'rgba(15,107,102,0.30)',
     title: { en: 'Banking Basics', es: 'Fundamentos Bancarios' },
     tagline: {
       en: 'Checking, savings, and how to avoid costly fees.',
@@ -451,9 +451,9 @@ export const MODULES = [
   {
     id: 'credit',
     icon: '💳',
-    color: '#f87171',
-    colorDim: 'rgba(248,113,113,0.10)',
-    colorBorder: 'rgba(248,113,113,0.28)',
+    color: '#7a2e3a',
+    colorDim: 'rgba(122,46,58,0.10)',
+    colorBorder: 'rgba(122,46,58,0.30)',
     title: { en: 'Credit & Debt', es: 'Crédito y Deudas' },
     tagline: {
       en: 'Borrowing money responsibly and understanding your credit score.',

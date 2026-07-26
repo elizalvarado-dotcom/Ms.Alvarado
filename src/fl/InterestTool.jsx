@@ -48,14 +48,14 @@ export default function InterestTool({ lang }) {
         </div>
       </div>
 
-      <div style={{ marginTop: '18px', padding: '16px', borderRadius: '14px', background: 'rgba(232,168,50,0.08)', border: '1px solid rgba(232,168,50,0.3)' }}>
+      <div style={{ marginTop: '18px', padding: '16px', borderRadius: '14px', background: 'rgba(163,121,10,0.08)', border: '1px solid rgba(163,121,10,0.3)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '.9rem', marginBottom: '8px' }}>
-          <span style={{ color: '#8a96b8' }}>{t.futureValue}</span>
-          <strong style={{ color: '#e8a832', fontSize: '1.1rem' }}>${fmt(futureValue)}</strong>
+          <span style={{ color: '#5b6b62' }}>{t.futureValue}</span>
+          <strong style={{ color: '#a3790a', fontSize: '1.1rem' }}>${fmt(futureValue)}</strong>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '.9rem' }}>
-          <span style={{ color: '#8a96b8' }}>{t.totalInterestEarned}</span>
-          <strong style={{ color: '#34d399' }}>${fmt(interestEarned)}</strong>
+          <span style={{ color: '#5b6b62' }}>{t.totalInterestEarned}</span>
+          <strong style={{ color: '#1b7a4d' }}>${fmt(interestEarned)}</strong>
         </div>
       </div>
     </div>

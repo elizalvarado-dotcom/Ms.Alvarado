@@ -45,7 +45,7 @@ function Quiz({ mod, lang, onComplete }) {
       <div style={S.quizCard}>
         <h3 style={{ ...S.lessonHeading, fontSize: '1.3rem' }}>{t.quizComplete}</h3>
         <p style={{ ...S.lessonPara, marginBottom: '18px' }}>{t.quizCompleteSub(finalScore, questions.length)}</p>
-        <button style={{ ...S.primaryBtn, background: 'linear-gradient(135deg,#a78bfa,#8b5cf6)', color: '#160f2b' }} onClick={retake}>
+        <button style={{ ...S.primaryBtn, background: 'linear-gradient(135deg,#a3790a,#8a6408)', color: '#fdf8ec' }} onClick={retake}>
           {t.retakeQuiz}
         </button>
       </div>
@@ -55,7 +55,7 @@ function Quiz({ mod, lang, onComplete }) {
   return (
     <div style={S.quizCard}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '14px' }}>
-        <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '.72rem', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', color: mod.color }}>
+        <span style={{ fontFamily: "'Manrope',sans-serif", fontSize: '.72rem', fontWeight: 800, letterSpacing: '1.2px', textTransform: 'uppercase', color: mod.color }}>
           {t.question} {idx + 1} / {questions.length}
         </span>
       </div>
@@ -77,14 +77,14 @@ function Quiz({ mod, lang, onComplete }) {
       {answered && (
         <div style={{
           marginTop: '10px', padding: '14px 16px', borderRadius: '14px',
-          background: selected === q.correct ? 'rgba(52,211,153,0.1)' : 'rgba(248,113,113,0.1)',
-          border: `1px solid ${selected === q.correct ? 'rgba(52,211,153,0.3)' : 'rgba(248,113,113,0.3)'}`,
+          background: selected === q.correct ? 'rgba(27,122,77,0.1)' : 'rgba(122,46,58,0.08)',
+          border: `1px solid ${selected === q.correct ? 'rgba(27,122,77,0.3)' : 'rgba(122,46,58,0.28)'}`,
         }}>
-          <p style={{ fontWeight: 800, marginBottom: '6px', color: selected === q.correct ? '#34d399' : '#f87171' }}>
+          <p style={{ fontWeight: 800, marginBottom: '6px', color: selected === q.correct ? '#1b7a4d' : '#7a2e3a' }}>
             {selected === q.correct ? t.correct : t.incorrect}
           </p>
-          <p style={{ fontSize: '.85rem', color: '#c3cadd', lineHeight: 1.5 }}>{L(q.explain, lang)}</p>
-          <button style={{ ...S.primaryBtn, marginTop: '14px', background: mod.color, color: '#04150f' }} onClick={next}>
+          <p style={{ fontSize: '.85rem', color: '#3c4a41', lineHeight: 1.5 }}>{L(q.explain, lang)}</p>
+          <button style={{ ...S.primaryBtn, marginTop: '14px', background: mod.color, color: '#fdf8ec' }} onClick={next}>
             {idx + 1 < questions.length ? t.nextQuestion : t.finishModule}
           </button>
         </div>

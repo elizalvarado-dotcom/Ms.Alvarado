@@ -41,16 +41,16 @@ export default function TeacherDashboard({ lang, setLang, onSignOut }) {
                     key={ci}
                     style={{
                       padding: '8px 14px', borderRadius: '10px', marginBottom: '6px', fontSize: '.88rem',
-                      background: ci === q.correct ? 'rgba(52,211,153,0.12)' : 'rgba(255,255,255,0.03)',
-                      border: `1px solid ${ci === q.correct ? 'rgba(52,211,153,0.4)' : 'rgba(255,255,255,0.07)'}`,
-                      color: ci === q.correct ? '#34d399' : '#c3cadd',
+                      background: ci === q.correct ? 'rgba(27,122,77,0.12)' : 'rgba(28,43,35,0.03)',
+                      border: `1px solid ${ci === q.correct ? 'rgba(27,122,77,0.4)' : 'rgba(28,43,35,0.10)'}`,
+                      color: ci === q.correct ? '#1b7a4d' : '#3c4a41',
                       fontWeight: ci === q.correct ? 700 : 400,
                     }}
                   >
                     {ci === q.correct ? '✓ ' : ''}{L(c, lang)}
                   </div>
                 ))}
-                <p style={{ fontSize: '.82rem', color: '#8a96b8', marginTop: '8px', lineHeight: 1.5 }}>{L(q.explain, lang)}</p>
+                <p style={{ fontSize: '.82rem', color: '#5b6b62', marginTop: '8px', lineHeight: 1.5 }}>{L(q.explain, lang)}</p>
               </div>
             ))}
           </div>
