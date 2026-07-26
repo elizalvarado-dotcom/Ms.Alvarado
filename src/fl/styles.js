@@ -109,8 +109,8 @@ export const S = {
     background: '#fbf8f0', color: '#1c2b23', fontSize: '.9rem', cursor: 'pointer', marginBottom: '10px',
     fontFamily: "'Manrope',sans-serif", transition: 'border-color .15s, background .15s',
   },
-  choiceCorrect: { borderColor: 'rgba(27,122,77,0.5)', background: 'rgba(27,122,77,0.12)' },
-  choiceWrong: { borderColor: 'rgba(122,46,58,0.4)', background: 'rgba(122,46,58,0.10)' },
+  choiceCorrect: { border: '1px solid rgba(27,122,77,0.5)', background: 'rgba(27,122,77,0.12)' },
+  choiceWrong: { border: '1px solid rgba(122,46,58,0.4)', background: 'rgba(122,46,58,0.10)' },
 
   toolCard: { background: '#fffdf7', border: '1px solid rgba(28,43,35,0.12)', borderRadius: '18px', padding: '28px', marginBottom: '20px', boxShadow: '0 2px 10px rgba(28,43,35,0.04)' },
 

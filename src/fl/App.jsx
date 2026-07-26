@@ -3,7 +3,7 @@ import {
   onAuthStateChanged, signInWithPopup, signOut, GoogleAuthProvider,
 } from 'firebase/auth'
 import { auth } from '../firebase.js'
-import { T, TEACHER_EMAIL } from './i18n.js'
+import { T, L, TEACHER_EMAIL } from './i18n.js'
 import { UNITS, findModule } from './lessons.js'
 import TeacherLogin from './TeacherLogin.jsx'
 import Home from './Home.jsx'
@@ -120,7 +120,7 @@ export default function App() {
           </div>
         </div>
         <ModuleView
-          mod={mod} lang={lang}
+          mod={mod} unitTitle={found ? L(found.unit.title, lang) : ''} lang={lang}
           onBack={() => setActiveModuleId(null)}
           onCompleteQuiz={handleQuizComplete}
         />
