@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Module 1 Topic 1 Mock Test</title>
+<meta name="author" content="Ms. Alvarado">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+:root{
+  --bg:#fcf7fa; --paper:#ffffff; --fg:#2b1d33; --muted:#6f5d78; --line:#eadbe5; --grid-bg:rgba(214,51,108,.06);
+  --accent:#c92a67; --accent-soft:#fbe3ee; --lilac:#6d4fc9; --lilac-soft:#ece6fb;
+  --ok:#1f8a5b; --ok-soft:#dff3e9; --bad:#c6362f; --bad-soft:#fbe4e2;
+  --g-grid:#ecdfe8; --g-axis:#4a3a54; --g-curve:#c92a67; --g-lbl:#7a6884;
+  --f-display:"Young Serif",Georgia,"Times New Roman",serif;
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-math:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1a1320; --paper:#241a2b; --fg:#f5eaf2; --muted:#bba9c4; --line:#3d2f46; --grid-bg:rgba(255,122,168,.05);
+  --accent:#ff7aa8; --accent-soft:#40202f; --lilac:#b7a1ff; --lilac-soft:#2e2545;
+  --ok:#5fd39a; --ok-soft:#173327; --bad:#ff8a80; --bad-soft:#3d1e1d;
+  --g-grid:#35283d; --g-axis:#d9c8e0; --g-curve:#ff7aa8; --g-lbl:#b09fba; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1a1320; --paper:#241a2b; --fg:#f5eaf2; --muted:#bba9c4; --line:#3d2f46; --grid-bg:rgba(255,122,168,.05);
+  --accent:#ff7aa8; --accent-soft:#40202f; --lilac:#b7a1ff; --lilac-soft:#2e2545;
+  --ok:#5fd39a; --ok-soft:#173327; --bad:#ff8a80; --bad-soft:#3d1e1d;
+  --g-grid:#35283d; --g-axis:#d9c8e0; --g-curve:#ff7aa8; --g-lbl:#b09fba; color-scheme:dark}
+
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.55;
+  background-image:linear-gradient(var(--grid-bg) 1px,transparent 1px),linear-gradient(90deg,var(--grid-bg) 1px,transparent 1px);
+  background-size:24px 24px}
+body:not(.es) .es{display:none!important}
+body.es .en{display:none!important}
+
+.wrap{max-width:840px;margin:0 auto;padding-inline:16px;padding-block:32px 24px}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;text-wrap:balance;margin:0}
+h1{font-size:clamp(1.9rem,5vw,2.6rem);line-height:1.1;padding-right:96px}
+.eyebrow{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.lede{color:var(--muted);max-width:62ch;margin:.6rem 0 0}
+header{display:grid;gap:.4rem;margin-bottom:1.4rem}
+.meta{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.8rem}
+.chip{font-size:.8rem;padding:.25rem .65rem;border-radius:999px;background:var(--lilac-soft);color:var(--lilac);font-weight:600;text-decoration:none}
+a.chip:hover{background:var(--accent-soft);color:var(--accent)}
+.howto{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin:0 0 1.6rem;display:grid;gap:.3rem}
+.howto p{margin:0}
+.m{font-family:var(--f-math);font-size:.92em;white-space:nowrap}
+
+.lang{position:fixed;z-index:20;top:calc(env(safe-area-inset-top,0px) + 14px);right:14px;display:flex;align-items:center;gap:2px;
+  background:var(--paper);border:1.5px solid var(--line);border-radius:999px;padding:3px;box-shadow:0 6px 22px rgba(60,20,50,.18);touch-action:none;user-select:none}
+.lang .grip{width:22px;height:34px;display:grid;place-items:center;cursor:grab;color:var(--muted);border-radius:999px}
+.lang.dragging .grip{cursor:grabbing}
+.lang .grip svg{width:10px;height:16px}
+.lang .grip circle{fill:currentColor}
+.lang button.seg{border:0;min-height:34px;padding:0 .8rem;border-radius:999px;background:transparent;color:var(--muted);font-weight:700;letter-spacing:.04em}
+.lang button.seg[aria-pressed="true"]{background:var(--accent);color:var(--paper)}
+.lang.dragging{box-shadow:0 10px 30px rgba(60,20,50,.28)}
+
+.q{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:18px;display:grid;gap:14px;scroll-margin-top:16px}
+.qhead{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:36px;height:36px;border-radius:10px;background:var(--accent);color:var(--paper);display:grid;place-items:center;font-family:var(--f-display);font-size:1.1rem}
+.qhead h2{font-size:1.2rem;line-height:1.3}
+.qhead .skill{font-size:.78rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;font-weight:600;margin-top:2px}
+.qhead .score{margin-left:auto;font-size:.8rem;font-weight:700;padding:.2rem .6rem;border-radius:999px;white-space:nowrap}
+.score.good{background:var(--ok-soft);color:var(--ok)} .score.meh{background:var(--bad-soft);color:var(--bad)}
+.prompt{margin:0}
+.split{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start}
+.split > *{min-width:0}
+.split .gbox{flex:0 1 300px}
+.split .parts{flex:1 1 280px}
+.parts{display:grid;gap:14px}
+.part{display:grid;gap:6px}
+.part > .lab{font-weight:600}
+.scen{border-left:3px solid var(--lilac);padding-left:12px;display:grid;gap:8px}
+.row{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.row > label{font-weight:600;min-width:9.5rem}
+
+select,input.num{font:inherit;font-size:.95rem;color:var(--fg);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:.4rem .6rem;min-height:40px;max-width:100%}
+input.num{width:7rem;font-family:var(--f-math)}
+select:focus-visible,input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(--lilac);outline-offset:2px}
+select.ok,input.num.ok{border-color:var(--ok);background:var(--ok-soft)}
+select.bad,input.num.bad{border-color:var(--bad);background:var(--bad-soft)}
+
+.rg,.cg{display:flex;flex-wrap:wrap;gap:8px;border-radius:12px;padding:4px;border:1.5px solid transparent}
+.rg.col{flex-direction:column}
+.rg.ok,.cg.ok{border-color:var(--ok)} .rg.bad,.cg.bad{border-color:var(--bad)}
+label.opt{display:flex;gap:8px;align-items:center;padding:.45rem .75rem;border:1.5px solid var(--line);border-radius:10px;cursor:pointer;background:var(--bg)}
+label.opt:hover{border-color:var(--accent)}
+label.opt:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+label.opt input{accent-color:var(--accent);width:18px;height:18px;margin:0}
+body.key label.opt:has(input[data-ok])::after{content:"✓";font-size:.85rem;font-weight:700;color:var(--ok);margin-left:4px}
+
+.gbox{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:8px}
+svg.graph{display:block;width:100%;height:auto;font-family:var(--f-body)}
+.g-grid{stroke:var(--g-grid);stroke-width:1}
+.g-axis{stroke:var(--g-axis);stroke-width:1.4}
+.g-curve{stroke:var(--g-curve);stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.g-dot{fill:var(--g-curve)} .g-open{fill:var(--paper);stroke:var(--g-curve);stroke-width:2}
+.g-mc{fill:var(--g-curve)} .g-ma{fill:var(--g-axis)}
+.g-lbl{fill:var(--g-lbl);font-size:9px;font-variant-numeric:tabular-nums}
+.g-title{fill:var(--fg);font-size:10.5px;font-weight:600}
+.g-name{fill:var(--fg);font-size:14px;font-family:var(--f-display)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.card{border:1px solid var(--line);border-radius:14px;padding:10px;display:grid;gap:8px;align-content:start;background:var(--bg)}
+.card .tag{font-family:var(--f-display);font-size:1.05rem}
+.card select{width:100%}
+.six{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:520px){.six{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.93rem}
+th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700;background:var(--bg)}
+td.c,th.c{text-align:center}
+tr:last-child td{border-bottom:0}
+tr.ok td:first-child{box-shadow:inset 4px 0 var(--ok)} tr.bad td:first-child{box-shadow:inset 4px 0 var(--bad)}
+td input[type=checkbox]{width:20px;height:20px;accent-color:var(--accent)}
+body.key td:has(input[data-ok]){background:var(--ok-soft)}
+.xy{border-collapse:collapse;min-width:0;width:auto;font-family:var(--f-math)}
+.xy th,.xy td{border:1px solid var(--line);padding:4px 16px;text-align:center}
+.fn-rows{display:grid;gap:12px}
+.fn-row{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--bg)}
+.fn-row .what{flex:1 1 220px;min-width:0}
+.bank{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.85rem}
+.bank b{margin-right:4px}
+.bank > span:not(:first-child){border:1.5px dashed var(--lilac);color:var(--lilac);border-radius:8px;padding:.15rem .5rem;font-weight:600}
+.sent{display:grid;gap:4px}
+.sent select{width:min(100%,17rem)}
+
+.why{border-radius:12px;background:var(--lilac-soft);padding:12px 16px;display:grid;gap:6px}
+.why h3{font-family:var(--f-body);font-weight:700;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--lilac)}
+.why p,.why ul,.why ol{margin:0} .why ul,.why ol{padding-left:1.2rem}
+.why strong{color:var(--fg)}
+
+.bar{position:sticky;bottom:0;z-index:5;margin-top:24px;background:var(--paper);border-top:1px solid var(--line);
+  padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 20px rgba(0,0,0,.06)}
+.bar .in{max-width:840px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.total{font-weight:700;margin-right:auto;font-variant-numeric:tabular-nums}
+.total small{display:block;font-weight:500;color:var(--muted);font-size:.8rem}
+button{font:inherit;font-weight:700;border-radius:10px;padding:.55rem 1rem;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);min-height:42px}
+button.primary{background:var(--accent);color:var(--paper)}
+button:hover{filter:brightness(1.05)}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+</head>
+<body>
+<div class="lang" id="lang" role="group" aria-label="Language / Idioma">
+  <span class="grip" id="grip" title="Drag to move / Arrastra para mover" aria-hidden="true"><svg viewBox="0 0 10 16"><circle cx="2.5" cy="3" r="1.5"/><circle cx="7.5" cy="3" r="1.5"/><circle cx="2.5" cy="8" r="1.5"/><circle cx="7.5" cy="8" r="1.5"/><circle cx="2.5" cy="13" r="1.5"/><circle cx="7.5" cy="13" r="1.5"/></svg></span>
+  <button class="seg" type="button" data-l="en" aria-pressed="true">EN</button>
+  <button class="seg" type="button" data-l="es" aria-pressed="false">ES</button>
+</div>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow"><span class="en">Algebra 1 · Module 1 · Topic 1</span><span class="es">Álgebra 1 · Módulo 1 · Tema 1</span></div>
+    <h1><span class="en">Quantities &amp; Relationships Mock Test</span><span class="es">Examen de práctica: Cantidades y relaciones</span></h1>
+    <p class="lede"><span class="en">Practice for the Topic 1 Test. Answer every question, then press <strong>Check my answers</strong>. Every question has a step-by-step explanation, so you can learn from each mistake before the real test.</span><span class="es">Practica para el examen del Tema 1. Contesta todas las preguntas y luego presiona <strong>Revisar mis respuestas</strong>. Cada pregunta tiene una explicación paso a paso para que aprendas de cada error antes del examen real.</span></p>
+    <nav class="meta" id="nav" aria-label="Questions"></nav>
+  </header>
+
+  <div class="howto">
+    <p><span class="en"><strong>11 questions · 50 points.</strong> Each dropdown, answer choice group, table row, or number box is worth 1 point.</span><span class="es"><strong>11 preguntas · 50 puntos.</strong> Cada menú, grupo de opciones, fila de tabla o casilla de número vale 1 punto.</span></p>
+    <p><span class="en">Tap <strong>ES</strong> at any time to read the test in Spanish. Drag the dots to move the button.</span><span class="es">Toca <strong>EN</strong> en cualquier momento para leer el examen en inglés. Arrastra los puntos para mover el botón.</span></p>
+  </div>
+
+  <main id="test"></main>
+</div>
+
+<div class="bar" role="region" aria-label="Score">
+  <div class="in">
+    <div class="total" id="total"></div>
+    <button class="primary" id="check" type="button"><span class="en">Check my answers</span><span class="es">Revisar mis respuestas</span></button>
+    <button id="key" type="button"></button>
+    <button id="reset" type="button"><span class="en">Start over</span><span class="es">Empezar de nuevo</span></button>
+  </div>
+</div>
+
+<script>
+const T=(en,es)=>`<span class="en">${en}</span><span class="es" lang="es">${es}</span>`;
+let LANG='en';
+
+let UID=0;
+function graph(o){
+  const w=o.w||260,h=o.h||260,xmin=o.xmin??-5,xmax=o.xmax??5,ymin=o.ymin??-5,ymax=o.ymax??5;
+  const pl=o.pl??16,pr=o.pr??16,pt=o.pt??16,pb=o.pb??16,xs=o.xs||1,ys=o.ys||1;
+  const sx=x=>pl+(x-xmin)/(xmax-xmin)*(w-pl-pr), sy=y=>h-pb-(y-ymin)/(ymax-ymin)*(h-pt-pb);
+  const id='g'+(++UID);
+  let s=`<svg viewBox="0 0 ${w} ${h}" class="graph" role="img" aria-label="${o.alt||'Graph'}"><defs>
+  <marker id="${id}c" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0.5 L10,5 L0,9.5 z" class="g-mc"/></marker>
+  <marker id="${id}a" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0.5 L10,5 L0,9.5 z" class="g-ma"/></marker></defs>`;
+  for(let x=Math.ceil(xmin/xs)*xs;x<=xmax+1e-9;x+=xs) s+=`<line class="g-grid" x1="${sx(x)}" y1="${sy(ymin)}" x2="${sx(x)}" y2="${sy(ymax)}"/>`;
+  for(let y=Math.ceil(ymin/ys)*ys;y<=ymax+1e-9;y+=ys) s+=`<line class="g-grid" x1="${sx(xmin)}" y1="${sy(y)}" x2="${sx(xmax)}" y2="${sy(y)}"/>`;
+  const ax=(ymin<=0&&ymax>=0)?sy(0):sy(ymin), ay=(xmin<=0&&xmax>=0)?sx(0):sx(xmin);
+  s+=`<line class="g-axis" x1="${sx(xmin)}" y1="${ax}" x2="${sx(xmax)+6}" y2="${ax}" marker-end="url(#${id}a)" ${xmin<0?`marker-start="url(#${id}a)"`:''}/>`;
+  s+=`<line class="g-axis" x1="${ay}" y1="${sy(ymin)}" x2="${ay}" y2="${sy(ymax)-6}" marker-end="url(#${id}a)" ${ymin<0?`marker-start="url(#${id}a)"`:''}/>`;
+  if(o.ticks!==false){
+    const tx=o.tx||1,ty=o.ty||1;
+    for(let x=Math.ceil(xmin/tx)*tx;x<=xmax+1e-9;x+=tx){ if(Math.abs(x)<1e-9||x>=xmax-1e-9) continue; s+=`<text class="g-lbl" x="${sx(x)}" y="${ax+11}" text-anchor="middle">${fmt(x)}</text>`; }
+    for(let y=Math.ceil(ymin/ty)*ty;y<=ymax+1e-9;y+=ty){ if(Math.abs(y)<1e-9||y>=ymax-1e-9) continue; s+=`<text class="g-lbl" x="${ay-4}" y="${sy(y)+3}" text-anchor="end">${fmt(y)}</text>`; }
+    if(xmin===0&&ymin===0) s+=`<text class="g-lbl" x="${ay-4}" y="${ax+11}" text-anchor="end">0</text>`;
+  }
+  if(o.names!==false && !o.xt){ s+=`<text class="g-lbl" style="font-style:italic;font-size:11px" x="${sx(xmax)+2}" y="${ax-6}" text-anchor="end">x</text><text class="g-lbl" style="font-style:italic;font-size:11px" x="${ay+7}" y="${sy(ymax)+4}">y</text>`; }
+  if(o.xt) o.xt.forEach((t,i)=>{ s+=`<text class="g-title ${i?'es':'en'}" x="${(sx(xmin)+sx(xmax))/2}" y="${h-4}" text-anchor="middle">${t}</text>`; });
+  if(o.yt) o.yt.forEach((t,i)=>{ s+=`<text class="g-title ${i?'es':'en'}" transform="translate(11 ${(sy(ymin)+sy(ymax))/2}) rotate(-90)" text-anchor="middle">${t}</text>`; });
+  if(o.name) s+=`<text class="g-name" x="${pl+4}" y="${pt+12}">${o.name}</text>`;
+  for(const it of o.items||[]){
+    let pts=[];
+    if(it.fn){const n=it.n||160;for(let i=0;i<=n;i++){const x=it.a+(it.b-it.a)*i/n;pts.push([x,it.fn(x)]);}}
+    else if(it.param){const n=it.n||200;for(let i=0;i<=n;i++){const t=it.a+(it.b-it.a)*i/n;pts.push(it.param(t));}}
+    else if(it.line){pts=it.line;}
+    if(it.dots){ for(const [x,y] of it.dots) s+=`<circle class="g-dot" cx="${sx(x)}" cy="${sy(y)}" r="3.6"/>`; continue; }
+    const d=pts.map((p,i)=>(i?'L':'M')+sx(p[0]).toFixed(2)+','+sy(p[1]).toFixed(2)).join(' ')+(it.close?' Z':'');
+    const e=it.ends||[];
+    s+=`<path class="g-curve" d="${d}" ${e[0]==='arrow'?`marker-start="url(#${id}c)"`:''} ${e[1]==='arrow'?`marker-end="url(#${id}c)"`:''}/>`;
+    [[e[0],pts[0]],[e[1],pts[pts.length-1]]].forEach(([k,p])=>{ if(k==='closed') s+=`<circle class="g-dot" cx="${sx(p[0])}" cy="${sy(p[1])}" r="4"/>`; if(k==='open') s+=`<circle class="g-open" cx="${sx(p[0])}" cy="${sy(p[1])}" r="4"/>`; });
+  }
+  return s+'</svg>';
+}
+function fmt(n){return (Math.round(n*100)/100).toString().replace('-','−');}
+
+let RN=0;
+const sel=(opts,ans,label)=>`<select data-ans="${ans}" aria-label="${label||'Choose an answer'}"><option value="" data-en="Choose…" data-es="Elige…">Choose…</option>${opts.map(o=>{const [en,es]=Array.isArray(o)?o:[o,o];return `<option value="${en}" data-en="${en}" data-es="${es}">${en}</option>`;}).join('')}</select>`;
+const rg=(opts,cls='')=>{const n='r'+(++RN);return `<div class="rg ${cls}" role="radiogroup">${opts.map(([t,ok])=>`<label class="opt"><input type="radio" name="${n}" ${ok?'data-ok':''}><span>${t}</span></label>`).join('')}</div>`;};
+const cg=(opts)=>`<div class="cg">${opts.map(([t,ok])=>`<label class="opt"><input type="checkbox" ${ok?'data-ok':''}><span>${t}</span></label>`).join('')}</div>`;
+const num=(ans,label)=>`<input class="num" type="text" inputmode="decimal" autocomplete="off" data-ans="${ans}" aria-label="${label}">`;
+const why=(html)=>`<div class="why" hidden><h3>${T('Explanation','Explicación')}</h3>${html}</div>`;
+const M=t=>`<span class="m">${t}</span>`;
+
+const Q=[];
+
+const o1=[['Hours worked','Horas trabajadas'],['Money earned (dollars)','Dinero ganado (dólares)']];
+const o1b=[['Time (hours)','Tiempo (horas)'],['Height of the candle (inches)','Altura de la vela (pulgadas)']];
+const IND=T('Independent quantity','Cantidad independiente'), DEP=T('Dependent quantity','Cantidad dependiente');
+Q.push({skill:T('Independent &amp; dependent quantities','Cantidades independientes y dependientes'),title:['Identify the quantities','Identifica las cantidades'],html:`
+<p class="prompt">${T('For each scenario, choose the independent quantity and the dependent quantity.','Para cada situación, elige la cantidad independiente y la cantidad dependiente.')}</p>
+<div class="parts">
+ <div class="scen"><p class="prompt"><strong>A.</strong> ${T('Maya babysits. She earns $15 for every hour she works.','Maya cuida niños. Gana $15 por cada hora que trabaja.')}</p>
+  <div class="row"><label>${IND}</label>${sel(o1,'Hours worked','Scenario A independent')}</div>
+  <div class="row"><label>${DEP}</label>${sel(o1,'Money earned (dollars)','Scenario A dependent')}</div></div>
+ <div class="scen"><p class="prompt"><strong>B.</strong> ${T('A candle is 12 inches tall. It burns down 1.5 inches every hour.','Una vela mide 12 pulgadas de alto. Se quema 1.5 pulgadas cada hora.')}</p>
+  <div class="row"><label>${IND}</label>${sel(o1b,'Time (hours)','Scenario B independent')}</div>
+  <div class="row"><label>${DEP}</label>${sel(o1b,'Height of the candle (inches)','Scenario B dependent')}</div></div>
+</div>`,why:T(`
+<p>Use the sentence test: “<em>dependent</em> depends on <em>independent</em>.”</p>
+<ul><li><strong>A:</strong> The money Maya earns depends on how many hours she works. Independent = <strong>hours worked</strong>. Dependent = <strong>money earned</strong>.</li>
+<li><strong>B:</strong> The height of the candle depends on how long it has been burning. Independent = <strong>time</strong>. Dependent = <strong>height</strong>.</li></ul>
+<p>Time is almost always the independent quantity.</p>`,`
+<p>Usa la prueba de la oración: “la <em>dependiente</em> depende de la <em>independiente</em>.”</p>
+<ul><li><strong>A:</strong> El dinero que gana Maya depende de cuántas horas trabaja. Independiente = <strong>horas trabajadas</strong>. Dependiente = <strong>dinero ganado</strong>.</li>
+<li><strong>B:</strong> La altura de la vela depende de cuánto tiempo lleva quemándose. Independiente = <strong>tiempo</strong>. Dependiente = <strong>altura</strong>.</li></ul>
+<p>El tiempo casi siempre es la cantidad independiente.</p>`)});
+
+Q.push({skill:T('Reading a graph in context','Interpretar una gráfica en contexto'),title:['Sofia’s bike ride','El paseo en bicicleta de Sofía'],html:`
+<p class="prompt">${T('Sofia rode her bike from home to the park and stayed there for a while. Then she rode to the store and shopped for an hour. Finally, she rode back home. The graph shows her trip.','Sofía fue en bicicleta de su casa al parque y se quedó allí un rato. Luego fue a la tienda y compró por una hora. Finalmente, regresó a su casa. La gráfica muestra su viaje.')}</p>
+<div class="split"><div class="gbox">${graph({xmin:0,xmax:8,ymin:0,ymax:6,w:280,h:230,pl:34,pb:34,xt:['Time (hours)','Tiempo (horas)'],yt:['Distance from home (miles)','Distancia de casa (millas)'],alt:'Sofia distance from home over time',
+  items:[{line:[[0,0],[1,3],[3,3],[4,5],[5,5],[7,0]]}]})}</div>
+<div class="parts">
+ <div class="part"><span class="lab">${T('a) What is the independent quantity?','a) ¿Cuál es la cantidad independiente?')}</span>${rg([[T('time, in hours','tiempo, en horas'),1],[T('distance from home, in miles','distancia de casa, en millas')],[T('the name of the park','el nombre del parque')],[T('the store Sofia visits','la tienda que visita Sofía')]],'col')}</div>
+</div></div>
+<div class="parts">
+ <div class="part"><span class="lab">${T('b) What is Sofia doing between hour 1 and hour 3?','b) ¿Qué hace Sofía entre la hora 1 y la hora 3?')}</span>${rg([[T('Riding away from home','Alejándose de casa')],[T('Staying at the park','Quedándose en el parque'),1],[T('Riding back home','Regresando a casa')],[T('Staying at home','Quedándose en casa')]])}</div>
+ <div class="part"><span class="lab">${T('c) How far is the store from Sofia’s home?','c) ¿A qué distancia está la tienda de la casa de Sofía?')}</span>${rg([[T('3 miles','3 millas')],[T('4 miles','4 millas')],[T('5 miles','5 millas'),1],[T('7 miles','7 millas')]])}</div>
+</div>`,why:T(`
+<ul><li><strong>a)</strong> The independent quantity is on the x-axis: <strong>time, in hours</strong>. Her distance depends on how long she has been riding.</li>
+<li><strong>b)</strong> From hour 1 to hour 3 the graph is <strong>flat</strong> at 3 miles. Her distance from home is not changing, so she is <strong>staying at the park</strong>.</li>
+<li><strong>c)</strong> The second flat piece (hour 4 to hour 5) is where she shops. It is at a height of <strong>5 miles</strong>.</li></ul>
+<p>Watch out: a flat piece means “not moving,” not “at home.” She is home only when the distance is 0.</p>`,`
+<ul><li><strong>a)</strong> La cantidad independiente está en el eje x: <strong>tiempo, en horas</strong>. Su distancia depende de cuánto tiempo lleva montando.</li>
+<li><strong>b)</strong> De la hora 1 a la hora 3 la gráfica es <strong>plana</strong> en 3 millas. Su distancia de casa no cambia, así que se está <strong>quedando en el parque</strong>.</li>
+<li><strong>c)</strong> La segunda parte plana (de la hora 4 a la hora 5) es cuando compra. Está a una altura de <strong>5 millas</strong>.</li></ul>
+<p>Cuidado: una parte plana significa “no se mueve,” no “en casa.” Está en casa solo cuando la distancia es 0.</p>`)});
+
+Q.push({skill:T('Domain &amp; range from a graph','Dominio y rango de una gráfica'),title:['Domain and range (interval notation)','Dominio y rango (notación de intervalo)'],html:`
+<p class="prompt">${T('What is the domain and range of the graph below? Both endpoints are closed dots.','¿Cuál es el dominio y el rango de la gráfica? Los dos extremos son puntos cerrados.')}</p>
+<div class="split"><div class="gbox">${graph({alt:'Curve from (-4,-4) up to (-2,4), down to (2,-4), up to (3,-2.25)',items:[{fn:x=>0.25*x**3-3*x,a:-4,b:3,ends:['closed','closed']}]})}</div>
+<div class="parts">
+ <div class="part"><span class="lab">${T('Domain','Dominio')}</span><div class="row" style="gap:6px">[ ${sel(['−5','−4','−2','0'],'−4','Domain left')} , ${sel(['2','3','4','5'],'3','Domain right')} ]</div></div>
+ <div class="part"><span class="lab">${T('Range','Rango')}</span><div class="row" style="gap:6px">[ ${sel(['−5','−4','−2.25','0'],'−4','Range low')} , ${sel(['−2.25','3','4','5'],'4','Range high')} ]</div></div>
+</div></div>`,why:T(`
+<ul><li><strong>Domain</strong> (x-values, left to right): the graph starts at the closed dot where x = −4 and ends at the closed dot where x = 3. Domain = <strong>[−4, 3]</strong>.</li>
+<li><strong>Range</strong> (y-values, bottom to top): the lowest points are at y = −4 (at x = −4 and at x = 2). The highest point is y = 4 (at x = −2). Range = <strong>[−4, 4]</strong>.</li></ul>
+<p>Common mistake: the right endpoint is at y = −2.25, but it is not the lowest or highest point, so it is not part of the range answer.</p>`,`
+<ul><li><strong>Dominio</strong> (valores de x, de izquierda a derecha): la gráfica empieza en el punto cerrado donde x = −4 y termina en el punto cerrado donde x = 3. Dominio = <strong>[−4, 3]</strong>.</li>
+<li><strong>Rango</strong> (valores de y, de abajo hacia arriba): los puntos más bajos están en y = −4 (en x = −4 y en x = 2). El punto más alto es y = 4 (en x = −2). Rango = <strong>[−4, 4]</strong>.</li></ul>
+<p>Error común: el extremo derecho está en y = −2.25, pero no es el punto más bajo ni el más alto, así que no es parte del rango.</p>`)});
+
+Q.push({skill:T('Domain &amp; range with inequalities','Dominio y rango con desigualdades'),title:['Domain and range (inequalities)','Dominio y rango (desigualdades)'],html:`
+<p class="prompt">${T('Write the domain and range of this parabola as inequalities. Both endpoints are closed dots.','Escribe el dominio y el rango de esta parábola como desigualdades. Los dos extremos son puntos cerrados.')}</p>
+<div class="split"><div class="gbox">${graph({ymin:-6,ymax:5,alt:'Downward parabola with vertex (1,4) and endpoints (-2,-5) and (4,-5)',items:[{fn:x=>-((x-1)**2)+4,a:-2,b:4,ends:['closed','closed']}]})}</div>
+<div class="parts">
+ <div class="part"><span class="lab">${T('Domain','Dominio')}</span><div class="row" style="gap:6px">${sel(['−5','−2','1','4'],'−2','Domain lower bound')} ${M('≤ x ≤')} ${sel(['−2','1','4','5'],'4','Domain upper bound')}</div></div>
+ <div class="part"><span class="lab">${T('Range','Rango')}</span><div class="row" style="gap:6px">${sel(['−6','−5','−2','1'],'−5','Range lower bound')} ${M('≤ y ≤')} ${sel(['1','4','5','−5'],'4','Range upper bound')}</div></div>
+</div></div>`,why:T(`
+<ul><li><strong>Domain:</strong> leftmost x = −2, rightmost x = 4, so <strong>−2 ≤ x ≤ 4</strong>.</li>
+<li><strong>Range:</strong> the lowest points are the endpoints at y = −5. The highest point is the vertex at y = 4. So <strong>−5 ≤ y ≤ 4</strong>.</li></ul>
+<p>We use ≤ (not &lt;) because the closed dots mean the endpoints are included.</p>`,`
+<ul><li><strong>Dominio:</strong> la x más a la izquierda = −2, la x más a la derecha = 4, así que <strong>−2 ≤ x ≤ 4</strong>.</li>
+<li><strong>Rango:</strong> los puntos más bajos son los extremos en y = −5. El punto más alto es el vértice en y = 4. Entonces <strong>−5 ≤ y ≤ 4</strong>.</li></ul>
+<p>Usamos ≤ (no &lt;) porque los puntos cerrados significan que los extremos están incluidos.</p>`)});
+
+const typeOpts=[['Linear','Lineal'],['Quadratic','Cuadrática'],['Exponential','Exponencial'],['Not a function','No es función']], dcOpts=[['Discrete','Discreta'],['Continuous','Continua']];
+const card=(tag,g,t,dc)=>`<div class="card"><span class="tag">${tag}</span><div class="gbox">${g}</div>${sel(typeOpts,t,'Type')}${sel(dcOpts,dc,'Discrete or continuous')}</div>`;
+Q.push({skill:T('Function families · discrete vs. continuous','Familias de funciones · discreta vs. continua'),title:['Classify each relation','Clasifica cada relación'],html:`
+<p class="prompt">${T('For each relation, choose <strong>two</strong> answers: (1) Linear, Quadratic, Exponential, or Not a function, and (2) Discrete or Continuous.','Para cada relación, elige <strong>dos</strong> respuestas: (1) Lineal, Cuadrática, Exponencial o No es función, y (2) Discreta o Continua.')}</p>
+<div class="cards">
+ ${card(T('Relation A','Relación A'),graph({xmin:0,xmax:9,ymin:0,ymax:900,ys:100,ty:200,w:240,h:200,pl:40,pb:32,xt:['Years','Años'],yt:['Phone value ($)','Valor del teléfono ($)'],alt:'Separate points decreasing quickly then leveling off',items:[{dots:[0,1,2,3,4,5,6,7,8].map(x=>[x,800*0.7**x])}]}),'Exponential','Discrete')}
+ ${card(T('Relation B','Relación B'),graph({w:240,h:220,alt:'Straight line with arrows rising left to right',items:[{fn:x=>x/2+1,a:-5,b:5,ends:['arrow','arrow']}]}),'Linear','Continuous')}
+ ${card(T('Relation C','Relación C'),graph({w:240,h:220,alt:'Circle centered at (0,1) with radius 3',items:[{param:t=>[3*Math.cos(t),1+3*Math.sin(t)],a:0,b:2*Math.PI,close:true}]}),'Not a function','Continuous')}
+ ${card(T('Relation D','Relación D'),graph({ymax:6,w:240,h:220,alt:'Seven separate points in a U shape',items:[{dots:[-3,-2,-1,0,1,2,3].map(x=>[x,x*x-4])}]}),'Quadratic','Discrete')}
+</div>`,why:T(`
+<ul><li><strong>A: Exponential, Discrete.</strong> The value drops fast at first, then levels off. That curve shape is exponential decay. The points are separate dots (one per year), so it is discrete.</li>
+<li><strong>B: Linear, Continuous.</strong> A straight, connected line with arrows.</li>
+<li><strong>C: Not a function, Continuous.</strong> A vertical line through a circle hits it twice, so it fails the vertical line test. It is still one connected curve, so it is continuous.</li>
+<li><strong>D: Quadratic, Discrete.</strong> The dots form a U shape (a parabola), but they are not connected.</li></ul>
+<p>Remember: discrete/continuous is about <em>dots vs. connected</em>. The family is about the <em>shape</em>.</p>`,`
+<ul><li><strong>A: Exponencial, Discreta.</strong> El valor baja rápido al principio y luego se nivela. Esa forma es decrecimiento exponencial. Los puntos están separados (uno por año), así que es discreta.</li>
+<li><strong>B: Lineal, Continua.</strong> Una línea recta y conectada con flechas.</li>
+<li><strong>C: No es función, Continua.</strong> Una línea vertical cruza el círculo dos veces, así que no pasa la prueba de la línea vertical. Sigue siendo una curva conectada, así que es continua.</li>
+<li><strong>D: Cuadrática, Discreta.</strong> Los puntos forman una U (una parábola), pero no están conectados.</li></ul>
+<p>Recuerda: discreta/continua se trata de <em>puntos vs. conectado</em>. La familia se trata de la <em>forma</em>.</p>`)});
+
+const vals=['−2','−1','0','1','3','4','5'];
+const YES=T('Yes','Sí'), NO=T('No','No');
+Q.push({skill:T('Functions from ordered pairs','Funciones con pares ordenados'),title:['Ordered pairs','Pares ordenados'],html:`
+<div class="parts">
+ <div class="scen"><p class="prompt"><strong>A.</strong> ${M('{(3, 1), (−1, 4), (0, −2), (3, 5)}')}</p>
+  <div class="part"><span class="lab">${T('Is the relation a function?','¿La relación es una función?')}</span>${rg([[YES],[NO,1]])}</div>
+  <div class="part"><span class="lab">${T('Domain (choose all that apply)','Dominio (elige todos los que apliquen)')}</span>${cg(vals.map(v=>[v,['−1','0','3'].includes(v)]))}</div>
+  <div class="part"><span class="lab">${T('Range (choose all that apply)','Rango (elige todos los que apliquen)')}</span>${cg(vals.map(v=>[v,['−2','1','4','5'].includes(v)]))}</div></div>
+ <div class="scen"><p class="prompt"><strong>B.</strong> ${M('{(−3, 2), (−1, 2), (1, 2), (4, 6)}')}</p>
+  <div class="part"><span class="lab">${T('Is the relation a function?','¿La relación es una función?')}</span>${rg([[YES,1],[NO]])}</div></div>
+</div>`,why:T(`
+<ul><li><strong>A is not a function.</strong> The input x = 3 goes to two different outputs, 1 and 5.</li>
+<li><strong>Domain of A</strong> = all the x-values: <strong>{−1, 0, 3}</strong>. List 3 only once.</li>
+<li><strong>Range of A</strong> = all the y-values: <strong>{−2, 1, 4, 5}</strong>.</li>
+<li><strong>B is a function.</strong> Every x-value (−3, −1, 1, 4) appears only once. The y-value 2 repeats, and that is allowed.</li></ul>
+<p>Rule: x can’t repeat with a different y. y is allowed to repeat.</p>`,`
+<ul><li><strong>A no es una función.</strong> La entrada x = 3 va a dos salidas diferentes, 1 y 5.</li>
+<li><strong>Dominio de A</strong> = todos los valores de x: <strong>{−1, 0, 3}</strong>. El 3 se escribe una sola vez.</li>
+<li><strong>Rango de A</strong> = todos los valores de y: <strong>{−2, 1, 4, 5}</strong>.</li>
+<li><strong>B es una función.</strong> Cada valor de x (−3, −1, 1, 4) aparece una sola vez. El valor y = 2 se repite, y eso está permitido.</li></ul>
+<p>Regla: x no se puede repetir con una y diferente. La y sí se puede repetir.</p>`)});
+
+const mapSvg=`<svg viewBox="0 0 200 130" class="graph" role="img" aria-label="Mapping: 1 to -2, 5 to 3, 9 to 3" style="max-width:200px">
+<defs><marker id="mapA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0.5 L10,5 L0,9.5 z" class="g-ma"/></marker></defs>
+<rect x="18" y="8" width="46" height="114" rx="14" fill="none" class="g-axis"/><rect x="136" y="20" width="46" height="90" rx="14" fill="none" class="g-axis"/>
+<text class="g-name" x="41" y="40" text-anchor="middle">1</text><text class="g-name" x="41" y="71" text-anchor="middle">5</text><text class="g-name" x="41" y="102" text-anchor="middle">9</text>
+<text class="g-name" x="159" y="52" text-anchor="middle">−2</text><text class="g-name" x="159" y="90" text-anchor="middle">3</text>
+<line class="g-axis" x1="52" y1="35" x2="140" y2="47" marker-end="url(#mapA)"/><line class="g-axis" x1="52" y1="66" x2="140" y2="83" marker-end="url(#mapA)"/><line class="g-axis" x1="52" y1="97" x2="140" y2="88" marker-end="url(#mapA)"/></svg>`;
+const fr=(what,isF)=>`<div class="fn-row"><div class="what">${what}</div>${rg([[T('Function','Función'),isF],[T('Not a function','No es función'),!isF]])}</div>`;
+Q.push({skill:T('Functions in every representation','Funciones en toda representación'),title:['Function or not?','¿Función o no?'],html:`
+<p class="prompt">${T('Decide whether each relation is a function.','Decide si cada relación es una función.')}</p>
+<div class="fn-rows">
+ ${fr(M('(1, 5), (2, 5), (3, 7), (4, 9)'),true)}
+ ${fr(mapSvg,true)}
+ ${fr(`<table class="xy"><tr><th>x</th><th>y</th></tr><tr><td>3</td><td>2</td></tr><tr><td>5</td><td>4</td></tr><tr><td>5</td><td>6</td></tr><tr><td>7</td><td>8</td></tr></table>`,false)}
+ ${fr(`<div class="gbox" style="max-width:220px">${graph({w:220,h:200,alt:'Parabola opening to the right with vertex (-3,0)',items:[{param:t=>[t*t/2-3,t],a:-3.2,b:3.2,ends:['arrow','arrow']}]})}</div>`,false)}
+ ${fr(`<div class="gbox" style="max-width:220px">${graph({w:220,h:200,alt:'V shape with vertex (1,-2)',items:[{fn:x=>Math.abs(x-1)-2,a:-4,b:5,ends:['arrow','arrow']}]})}</div>`,true)}
+</div>`,why:T(`
+<ul><li><strong>Ordered pairs: Function.</strong> Each x (1, 2, 3, 4) appears once. The repeated 5 is a y-value, which is fine.</li>
+<li><strong>Mapping: Function.</strong> Only one arrow leaves each input. Two inputs (5 and 9) can share the output 3.</li>
+<li><strong>Table: Not a function.</strong> x = 5 goes to both 4 and 6.</li>
+<li><strong>Sideways parabola: Not a function.</strong> A vertical line (for example x = 0) crosses it twice.</li>
+<li><strong>V shape: Function.</strong> Every vertical line crosses it only once.</li></ul>`,`
+<ul><li><strong>Pares ordenados: Función.</strong> Cada x (1, 2, 3, 4) aparece una vez. El 5 repetido es un valor de y, y eso está bien.</li>
+<li><strong>Diagrama de flechas: Función.</strong> Solo sale una flecha de cada entrada. Dos entradas (5 y 9) pueden compartir la salida 3.</li>
+<li><strong>Tabla: No es función.</strong> x = 5 va a 4 y también a 6.</li>
+<li><strong>Parábola de lado: No es función.</strong> Una línea vertical (por ejemplo x = 0) la cruza dos veces.</li>
+<li><strong>Forma de V: Función.</strong> Cada línea vertical la cruza solo una vez.</li></ul>`)});
+
+const fams=[T('Linear','Lineal'),T('Exponential','Exponencial'),T('Quadratic','Cuadrática'),T('Linear absolute value','Valor absoluto lineal')];
+const famRows=[
+ [T('The graph has an absolute maximum or an absolute minimum (a vertex).','La gráfica tiene un máximo absoluto o un mínimo absoluto (un vértice).'),[0,0,1,1]],
+ [T('The graph can be increasing over the entire domain.','La gráfica puede ser creciente en todo el dominio.'),[1,1,0,0]],
+ [T('The graph is a smooth U shape with one increasing interval and one decreasing interval.','La gráfica es una U suave con un intervalo creciente y un intervalo decreciente.'),[0,0,1,0]],
+ [T('The graph is made of two straight rays that meet at a point (a V shape).','La gráfica está formada por dos rayos rectos que se unen en un punto (forma de V).'),[0,0,0,1]],
+ [T('The graph is a smooth curve with no maximum or minimum that gets closer and closer to a horizontal line.','La gráfica es una curva suave sin máximo ni mínimo que se acerca cada vez más a una línea horizontal.'),[0,1,0,0]],
+ [T('The graph is a straight line with a constant rate of change.','La gráfica es una línea recta con una razón de cambio constante.'),[1,0,0,0]]];
+Q.push({skill:T('Characteristics of function families','Características de las familias de funciones'),title:['Match the characteristics','Relaciona las características'],html:`
+<p class="prompt">${T('Check every function family that fits each description. There is <strong>at least one</strong> correct answer in each row, and some rows have two.','Marca cada familia de funciones que corresponda a cada descripción. Hay <strong>al menos una</strong> respuesta correcta en cada fila, y algunas filas tienen dos.')}</p>
+<div class="tablewrap"><table><thead><tr><th>${T('Characteristic','Característica')}</th>${fams.map(f=>`<th class="c">${f}</th>`).join('')}</tr></thead><tbody>
+${famRows.map(([t,a],i)=>`<tr class="cgrow"><td>${t}</td>${a.map((ok,j)=>`<td class="c"><input type="checkbox" ${ok?'data-ok':''} aria-label="Row ${i+1}, column ${j+1}"></td>`).join('')}</tr>`).join('')}
+</tbody></table></div>`,why:T(`
+<ul><li><strong>Row 1: Quadratic, Linear absolute value.</strong> Both have a vertex, which is a max or a min.</li>
+<li><strong>Row 2: Linear, Exponential.</strong> A line with positive slope and an exponential growth curve both go up the whole way.</li>
+<li><strong>Row 3: Quadratic.</strong> Smooth U = parabola.</li>
+<li><strong>Row 4: Linear absolute value.</strong> Two straight pieces meeting at a vertex = V.</li>
+<li><strong>Row 5: Exponential.</strong> It flattens toward a horizontal line and never turns around.</li>
+<li><strong>Row 6: Linear.</strong> Constant rate of change = straight line.</li></ul>`,`
+<ul><li><strong>Fila 1: Cuadrática, Valor absoluto lineal.</strong> Las dos tienen un vértice, que es un máximo o un mínimo.</li>
+<li><strong>Fila 2: Lineal, Exponencial.</strong> Una línea con pendiente positiva y una curva de crecimiento exponencial suben todo el tiempo.</li>
+<li><strong>Fila 3: Cuadrática.</strong> U suave = parábola.</li>
+<li><strong>Fila 4: Valor absoluto lineal.</strong> Dos partes rectas que se unen en un vértice = V.</li>
+<li><strong>Fila 5: Exponencial.</strong> Se aplana hacia una línea horizontal y nunca da la vuelta.</li>
+<li><strong>Fila 6: Lineal.</strong> Razón de cambio constante = línea recta.</li></ul>`)});
+
+const bank=[['Increasing function','Función creciente'],['Decreasing function','Función decreciente'],['Constant function','Función constante'],['Absolute maximum','Máximo absoluto'],['Absolute minimum','Mínimo absoluto'],['Function notation','Notación de función'],['Relation','Relación']];
+const sent=(t,a)=>`<div class="sent"><span>${t}</span>${sel(bank,a)}</div>`;
+Q.push({skill:T('Vocabulary','Vocabulario'),title:['Choose the best term','Elige el mejor término'],html:`
+<p class="prompt">${T('Choose the term that best completes each statement. One term in the bank is not used.','Elige el término que mejor completa cada oración. Un término del banco no se usa.')}</p>
+<div class="bank"><b>${T('Word bank:','Banco de palabras:')}</b>${bank.map(([en,es])=>`<span>${T(en,es)}</span>`).join('')}</div>
+<div class="parts">
+ ${sent(T('1) As the independent variable increases, the dependent variable decreases across the entire domain. This is a(n):','1) Cuando la variable independiente aumenta, la variable dependiente disminuye en todo el dominio. Esto es una:'),'Decreasing function')}
+ ${sent(T('2) The point on a graph with a y-coordinate that is less than every other y-coordinate is the:','2) El punto de una gráfica con una coordenada y menor que todas las demás coordenadas y es el:'),'Absolute minimum')}
+ ${sent(T('3) The graph is a horizontal line because the dependent variable never changes. This is a(n):','3) La gráfica es una línea horizontal porque la variable dependiente nunca cambia. Esto es una:'),'Constant function')}
+ ${sent(T('4) The point on a graph with a y-coordinate that is greater than every other y-coordinate is the:','4) El punto de una gráfica con una coordenada y mayor que todas las demás coordenadas y es el:'),'Absolute maximum')}
+ ${sent(T('5) As the independent variable increases, the dependent variable also increases across the entire domain. This is a(n):','5) Cuando la variable independiente aumenta, la variable dependiente también aumenta en todo el dominio. Esto es una:'),'Increasing function')}
+ ${sent(T('6) Writing y as f(x), read “f of x,” is called:','6) Escribir y como f(x), que se lee “f de x,” se llama:'),'Function notation')}
+</div>`,why:T(`
+<ol><li><strong>Decreasing function</strong>: going down from left to right.</li><li><strong>Absolute minimum</strong>: the lowest point.</li><li><strong>Constant function</strong>: flat, y stays the same.</li><li><strong>Absolute maximum</strong>: the highest point.</li><li><strong>Increasing function</strong>: going up from left to right.</li><li><strong>Function notation</strong>: f(x).</li></ol>
+<p>“Relation” was the extra term. A relation is any set of ordered pairs, function or not.</p>`,`
+<ol><li><strong>Función decreciente</strong>: baja de izquierda a derecha.</li><li><strong>Mínimo absoluto</strong>: el punto más bajo.</li><li><strong>Función constante</strong>: plana, y no cambia.</li><li><strong>Máximo absoluto</strong>: el punto más alto.</li><li><strong>Función creciente</strong>: sube de izquierda a derecha.</li><li><strong>Notación de función</strong>: f(x).</li></ol>
+<p>“Relación” era el término extra. Una relación es cualquier conjunto de pares ordenados, sea función o no.</p>`)});
+
+const small=(name,o)=>`<div class="gbox">${graph(Object.assign({w:150,h:150,pl:8,pr:8,pt:8,pb:8,ticks:false,names:false,name},o))}</div>`;
+Q.push({skill:T('Symmetry · vertical line test','Simetría · prueba de la línea vertical'),title:['Graph characteristics','Características de las gráficas'],html:`
+<div class="six">
+ ${small('A',{alt:'Graph A: upward parabola with vertex (1,-2)',items:[{fn:x=>(x-1)**2-2,a:-1.4,b:3.4,ends:['arrow','arrow']}]})}
+ ${small('B',{alt:'Graph B: exponential growth curve',items:[{fn:x=>2**x,a:-5,b:2.25,ends:['arrow','arrow']}]})}
+ ${small('C',{alt:'Graph C: upside-down V with vertex (-1,3)',items:[{fn:x=>-Math.abs(x+1)+3,a:-5,b:3,ends:['arrow','arrow']}]})}
+ ${small('D',{alt:'Graph D: straight line with positive slope',items:[{fn:x=>2*x-1,a:-1.8,b:2.8,ends:['arrow','arrow']}]})}
+ ${small('E',{alt:'Graph E: tall ellipse centered at (0,1)',items:[{param:t=>[1.5*Math.cos(t),1+3*Math.sin(t)],a:0,b:2*Math.PI,close:true}]})}
+ ${small('F',{alt:'Graph F: S-shaped cubic curve through the origin',items:[{fn:x=>0.3*x**3-1.5*x,a:-3.1,b:3.1,ends:['arrow','arrow']}]})}
+</div>
+<div class="parts">
+ <div class="part"><span class="lab">${T('a) Select every graph that has a vertical line of symmetry.','a) Selecciona cada gráfica que tiene una línea de simetría vertical.')}</span>${cg(['A','B','C','D','E','F'].map(l=>[l,'ACE'.includes(l)]))}</div>
+ <div class="part"><span class="lab">${T('b) Select every graph that represents a function.','b) Selecciona cada gráfica que representa una función.')}</span>${cg(['A','B','C','D','E','F'].map(l=>[l,l!=='E']))}</div>
+</div>`,why:T(`
+<ul><li><strong>a) A, C, E.</strong> If you fold along a vertical line, both sides match: A folds on x = 1, C folds on x = −1, E folds on x = 0. B, D, and F do not match when folded.</li>
+<li><strong>b) A, B, C, D, F.</strong> Only E (the oval) fails the vertical line test, because a vertical line crosses it twice.</li></ul>
+<p>Having symmetry and being a function are separate questions. E has symmetry but is not a function.</p>`,`
+<ul><li><strong>a) A, C, E.</strong> Si doblas por una línea vertical, los dos lados coinciden: A se dobla en x = 1, C en x = −1, E en x = 0. B, D y F no coinciden al doblarse.</li>
+<li><strong>b) A, B, C, D, F.</strong> Solo E (el óvalo) no pasa la prueba de la línea vertical, porque una línea vertical lo cruza dos veces.</li></ul>
+<p>Tener simetría y ser función son preguntas diferentes. E tiene simetría pero no es función.</p>`)});
+
+Q.push({skill:T('Function notation','Notación de función'),title:['Evaluate the functions','Evalúa las funciones'],html:`
+<div class="parts">
+ <div class="row"><label>a) ${M('f(x) = −3x + 8')}</label>${M('f(5) =')} ${num(-7,'f(5)')}</div>
+ <div class="row"><label>b) ${M('f(x) = −3x + 8')}</label>${M('f(−2) =')} ${num(14,'f(-2)')}</div>
+ <div class="row"><label>c) ${M('g(x) = x² − 4')}</label>${M('g(−3) =')} ${num(5,'g(-3)')}</div>
+ <div class="row"><label>d) ${M('h(x) = 2x − 6')}</label>${T('If','Si')} ${M('h(x) = 10')}, ${T('then','entonces')} ${M('x =')} ${num(8,'x')}</div>
+</div>`,why:T(`
+<ul><li><strong>a)</strong> ${M('f(5) = −3(5) + 8 = −15 + 8 = −7')}</li>
+<li><strong>b)</strong> ${M('f(−2) = −3(−2) + 8 = 6 + 8 = 14')}. Negative times negative is positive.</li>
+<li><strong>c)</strong> ${M('g(−3) = (−3)² − 4 = 9 − 4 = 5')}. Square the whole −3 with parentheses: ${M('(−3)² = 9')}.</li>
+<li><strong>d)</strong> This time the <em>output</em> is 10. Solve ${M('2x − 6 = 10')} → ${M('2x = 16')} → ${M('x = 8')}.</li></ul>
+<p>f(5) means “input 5.” h(x) = 10 means “the output is 10.” Read carefully which one you are given.</p>`,`
+<ul><li><strong>a)</strong> ${M('f(5) = −3(5) + 8 = −15 + 8 = −7')}</li>
+<li><strong>b)</strong> ${M('f(−2) = −3(−2) + 8 = 6 + 8 = 14')}. Negativo por negativo es positivo.</li>
+<li><strong>c)</strong> ${M('g(−3) = (−3)² − 4 = 9 − 4 = 5')}. Eleva al cuadrado todo el −3 con paréntesis: ${M('(−3)² = 9')}.</li>
+<li><strong>d)</strong> Esta vez la <em>salida</em> es 10. Resuelve ${M('2x − 6 = 10')} → ${M('2x = 16')} → ${M('x = 8')}.</li></ul>
+<p>f(5) significa “la entrada es 5.” h(x) = 10 significa “la salida es 10.” Lee con cuidado cuál te dan.</p>`)});
+
+const test=document.getElementById('test'), nav=document.getElementById('nav');
+Q.forEach((q,i)=>{
+  q.id='q'+(i+1);
+  const sec=document.createElement('section'); sec.className='q'; sec.id=q.id;
+  sec.innerHTML=`<div class="qhead"><div class="num">${i+1}</div><div><h2>${T(q.title[0],q.title[1])}</h2><div class="skill">${q.skill}</div></div><span class="score" hidden></span></div>${q.html}${why(q.why)}`;
+  test.appendChild(sec);
+  nav.insertAdjacentHTML('beforeend',`<a class="chip" href="#${q.id}">${i+1}. ${T(q.title[0],q.title[1])}</a>`);
+});
+
+let RESULT=null;
+const toNum=v=>parseFloat(String(v).trim().replace(/[−–]/g,'-'));
+function mark(el,ok){el.classList.remove('ok','bad');el.classList.add(ok?'ok':'bad');}
+function grade(sec){
+  let got=0,tot=0; const add=(el,ok)=>{tot++;if(ok)got++;mark(el,ok);};
+  sec.querySelectorAll('select[data-ans]').forEach(s=>add(s,s.value===s.dataset.ans));
+  sec.querySelectorAll('.rg').forEach(g=>{const c=g.querySelector('input:checked');add(g,!!c&&c.hasAttribute('data-ok'));});
+  sec.querySelectorAll('.cg').forEach(g=>add(g,[...g.querySelectorAll('input')].every(i=>i.checked===i.hasAttribute('data-ok'))));
+  sec.querySelectorAll('tr.cgrow').forEach(r=>add(r,[...r.querySelectorAll('input')].every(i=>i.checked===i.hasAttribute('data-ok'))));
+  sec.querySelectorAll('input.num').forEach(i=>add(i,i.value.trim()!==''&&Math.abs(toNum(i.value)-toNum(i.dataset.ans))<1e-9));
+  return [got,tot];
+}
+function renderTotal(){
+  const el=document.getElementById('total'), es=LANG==='es';
+  if(!RESULT){ el.innerHTML=es?'Sin revisar<small>50 puntos posibles</small>':'Not checked yet<small>50 points possible</small>'; return; }
+  const [G,Tt]=RESULT, pct=Math.round(G/Tt*100);
+  const msg=pct>=90?(es?'¡Excelente! Estás listo.':'Excellent! You are ready.'):pct>=75?(es?'Buen trabajo. Repasa las preguntas marcadas en rojo.':'Nice work. Review the questions marked in red.'):(es?'Lee cada explicación y vuelve a intentarlo.':'Read each explanation, then try again.');
+  el.innerHTML=`${G} / ${Tt} ${es?'puntos':'points'} · ${pct}%<small>${msg}</small>`;
+}
+function renderKeyBtn(){
+  const on=document.body.classList.contains('key'), es=LANG==='es';
+  document.getElementById('key').textContent=on?(es?'Ocultar respuestas':'Hide answer key'):(es?'Ver respuestas':'Show answer key');
+}
+function checkAll(){
+  let G=0,Tt=0;
+  document.querySelectorAll('section.q').forEach(sec=>{
+    const [g,t]=grade(sec); G+=g; Tt+=t;
+    const b=sec.querySelector('.score'); b.hidden=false; b.textContent=`${g} / ${t}`; b.className='score '+(g===t?'good':'meh');
+    sec.querySelector('.why').hidden=false;
+  });
+  document.body.classList.add('key'); RESULT=[G,Tt]; renderTotal(); renderKeyBtn();
+}
+function toggleKey(){
+  const on=!document.body.classList.contains('key');
+  document.body.classList.toggle('key',on);
+  document.querySelectorAll('.why').forEach(w=>w.hidden=!on);
+  renderKeyBtn();
+}
+function resetAll(){
+  document.querySelectorAll('main select').forEach(s=>s.value='');
+  document.querySelectorAll('main input[type=radio],main input[type=checkbox]').forEach(i=>i.checked=false);
+  document.querySelectorAll('main input.num').forEach(i=>i.value='');
+  document.querySelectorAll('.ok,.bad').forEach(e=>e.classList.remove('ok','bad'));
+  document.querySelectorAll('.why').forEach(w=>w.hidden=true);
+  document.querySelectorAll('.score').forEach(s=>s.hidden=true);
+  document.body.classList.remove('key'); RESULT=null; renderTotal(); renderKeyBtn();
+  window.scrollTo({top:0});
+}
+document.getElementById('check').addEventListener('click',checkAll);
+document.getElementById('key').addEventListener('click',toggleKey);
+document.getElementById('reset').addEventListener('click',resetAll);
+
+function setLang(l){
+  LANG=l; document.body.classList.toggle('es',l==='es'); document.documentElement.lang=l;
+  document.querySelectorAll('#lang .seg').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.l===l)));
+  document.querySelectorAll('option[data-es]').forEach(o=>{o.textContent=o.dataset[l];});
+  renderTotal(); renderKeyBtn();
+  try{localStorage.setItem('mt-lang',l);}catch(e){}
+}
+let SUPPRESS=false;
+document.querySelectorAll('#lang .seg').forEach(b=>b.addEventListener('click',()=>{ if(!SUPPRESS) setLang(b.dataset.l); }));
+
+(function(){
+  const box=document.getElementById('lang'), grip=document.getElementById('grip');
+  let sx,sy,bx,by,drag=false;
+  function clamp(x,y){const r=box.getBoundingClientRect();return [Math.min(Math.max(4,x),innerWidth-r.width-4),Math.min(Math.max(4,y),innerHeight-r.height-4)];}
+  function place(x,y){[x,y]=clamp(x,y);box.style.left=x+'px';box.style.top=y+'px';box.style.right='auto';}
+  box.addEventListener('pointerdown',e=>{
+    if(e.target.closest('.seg')&&e.pointerType==='mouse') return;    const r=box.getBoundingClientRect(); sx=e.clientX; sy=e.clientY; bx=r.left; by=r.top; drag=false;
+    const move=ev=>{const dx=ev.clientX-sx,dy=ev.clientY-sy; if(!drag&&Math.hypot(dx,dy)<6) return; drag=true; box.classList.add('dragging'); place(bx+dx,by+dy); ev.preventDefault();};
+    const up=()=>{removeEventListener('pointermove',move);removeEventListener('pointerup',up);box.classList.remove('dragging');
+      if(drag){try{localStorage.setItem('mt-pos',JSON.stringify([parseFloat(box.style.left),parseFloat(box.style.top)]));}catch(err){}
+        SUPPRESS=true; setTimeout(()=>{SUPPRESS=false;},80);}};
+    addEventListener('pointermove',move,{passive:false}); addEventListener('pointerup',up);
+  });
+  addEventListener('resize',()=>{ if(box.style.left) place(parseFloat(box.style.left),parseFloat(box.style.top)); });
+  try{const p=JSON.parse(localStorage.getItem('mt-pos')||'null'); if(p) place(p[0],p[1]);}catch(e){}
+})();
+
+let startLang='en'; try{startLang=localStorage.getItem('mt-lang')||'en';}catch(e){}
+setLang(startLang==='es'?'es':'en');
+</script>
+</body>
+</html>
